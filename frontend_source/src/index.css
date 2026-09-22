@@ -45,18 +45,110 @@ html.light, html.light body {
 }
 
 /* =========================================================================
-   LIGHT THEME ADAPTATION SYSTEM
+   LIGHT THEME ADAPTATION SYSTEM (HIGH CONTRAST & VISIBILITY)
    ========================================================================= */
+html.light,
+html.light body,
+html.light #root {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
 html.light {
-  /* Background re-mappings */
-  --color-bg-base: #f1f5f9;
+  --color-bg-base: #f8fafc;
   --color-bg-card: #ffffff;
   --color-border: #cbd5e1;
   --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
-  --color-surface: #e2e8f0;
+  --color-surface: #f1f5f9;
 }
 
+/* 1. Base Headings and Text Colors */
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6 {
+  color: #0f172a;
+}
+
+/* 2. Text Color Mappings for High Contrast */
+html.light .text-white {
+  color: #0f172a !important;
+}
+
+html.light .text-slate-100,
+html.light .text-slate-200,
+html.light .text-slate-300,
+html.light .text-gray-100,
+html.light .text-gray-200,
+html.light .text-gray-300,
+html.light .text-zinc-100,
+html.light .text-zinc-200,
+html.light .text-zinc-300 {
+  color: #1e293b !important;
+}
+
+html.light .text-slate-400,
+html.light .text-gray-400,
+html.light .text-zinc-400,
+html.light .text-\[\#88a0c0\],
+html.light .text-\[\#8892a4\],
+html.light .text-\[\#7090b0\] {
+  color: #475569 !important;
+}
+
+html.light .text-slate-500,
+html.light .text-gray-500,
+html.light .text-zinc-500,
+html.light .text-slate-600 {
+  color: #64748b !important;
+}
+
+/* 3. High-Contrast Accent & Status Colors (No washed-out text on white) */
+html.light .text-\[\#00d4ff\],
+html.light .text-cyan-300,
+html.light .text-cyan-400,
+html.light .text-sky-300,
+html.light .text-sky-400 {
+  color: #0284c7 !important;
+}
+
+html.light .text-cyan-500,
+html.light .text-sky-500 {
+  color: #0369a1 !important;
+}
+
+html.light .text-\[\#00c851\],
+html.light .text-emerald-300,
+html.light .text-emerald-400,
+html.light .text-green-300,
+html.light .text-green-400 {
+  color: #047857 !important;
+}
+
+html.light .text-\[\#ff9500\],
+html.light .text-yellow-200,
+html.light .text-yellow-300,
+html.light .text-yellow-400,
+html.light .text-amber-300,
+html.light .text-amber-400,
+html.light .text-orange-300,
+html.light .text-orange-400 {
+  color: #b45309 !important;
+}
+
+html.light .text-\[\#ff3b3b\],
+html.light .text-\[\#ff1744\],
+html.light .text-red-300,
+html.light .text-red-400,
+html.light .text-rose-300,
+html.light .text-rose-400 {
+  color: #dc2626 !important;
+}
+
+/* 4. Background & Gradient re-mappings for Cards, Drawers, Sidebars */
 html.light .bg-\[\#0a1628\] {
   background-color: #f8fafc !important;
 }
@@ -74,15 +166,15 @@ html.light .bg-\[\#0a1628\]\/95 {
 }
 
 html.light .bg-\[\#0a1628\]\/90 {
-  background-color: rgba(248, 250, 252, 0.92) !important;
+  background-color: rgba(248, 250, 252, 0.94) !important;
 }
 
 html.light .bg-\[\#0a1628\]\/40 {
-  background-color: rgba(241, 245, 249, 0.65) !important;
+  background-color: rgba(241, 245, 249, 0.8) !important;
 }
 
 html.light .bg-\[\#050d1a\] {
-  background-color: #e2e8f0 !important;
+  background-color: #f1f5f9 !important;
 }
 
 html.light .bg-\[\#102a4c\] {
@@ -93,36 +185,138 @@ html.light .bg-\[\#0f2444\] {
   background-color: #e2e8f0 !important;
 }
 
-html.light .bg-black {
-  background-color: #0f172a !important;
+html.light .bg-\[\#0f274a\] {
+  background-color: #e0f2fe !important;
 }
 
-/* Border re-mappings */
-html.light .border-\[\#1a3a6b\] {
+html.light .bg-\[\#0e2a22\] {
+  background-color: #ecfdf5 !important;
+}
+
+html.light .bg-\[\#0b2847\] {
+  background-color: #f0f9ff !important;
+}
+
+html.light .bg-black,
+html.light .bg-black\/80,
+html.light .bg-black\/70 {
+  background-color: #ffffff !important;
+}
+
+/* Gradient backgrounds in Light Mode */
+html.light .bg-gradient-to-br.from-\[\#0d1f3c\] {
+  background-image: linear-gradient(to bottom right, #ffffff, #f1f5f9, #ffffff) !important;
+}
+
+html.light .bg-gradient-to-b.from-\[\#0a1628\] {
+  background-image: linear-gradient(to bottom, #f8fafc, #ffffff, #f8fafc) !important;
+}
+
+html.light .bg-gradient-to-b.from-\[\#0e2a22\] {
+  background-image: linear-gradient(to bottom, #ecfdf5, #ffffff) !important;
+}
+
+html.light .bg-gradient-to-b.from-\[\#0b2847\] {
+  background-image: linear-gradient(to bottom, #f0f9ff, #ffffff) !important;
+}
+
+/* 5. Border re-mappings */
+html.light .border-\[\#1a3a6b\],
+html.light .border-white {
   border-color: #cbd5e1 !important;
 }
 
 html.light .border-\[\#1a3a6b\]\/80,
 html.light .border-\[\#1a3a6b\]\/60,
-html.light .border-\[\#1a3a6b\]\/40 {
-  border-color: rgba(203, 213, 225, 0.75) !important;
+html.light .border-\[\#1a3a6b\]\/40,
+html.light .border-white\/20,
+html.light .border-white\/10 {
+  border-color: rgba(203, 213, 225, 0.8) !important;
 }
 
-/* Text readability in light mode */
-html.light .text-white {
-  color: #0f172a !important;
+/* 6. Alert Banners, Pills & Badges in Light Mode */
+html.light .bg-yellow-500\/20,
+html.light .bg-yellow-500\/10,
+html.light .bg-amber-500\/20,
+html.light .bg-amber-500\/10,
+html.light .bg-orange-500\/10 {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #fcd34d !important;
 }
 
-/* Ensure buttons with solid colored backgrounds keep their high-contrast text */
+html.light .bg-emerald-500\/20,
+html.light .bg-emerald-500\/15,
+html.light .bg-emerald-500\/10,
+html.light .bg-green-500\/10 {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+  border-color: #6ee7b7 !important;
+}
+
+html.light .bg-red-500\/20,
+html.light .bg-red-500\/10,
+html.light .bg-red-950\/40,
+html.light .bg-red-950\/30,
+html.light .bg-red-950\/20 {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border-color: #fca5a5 !important;
+}
+
+html.light .bg-cyan-500\/20,
+html.light .bg-cyan-500\/10,
+html.light .bg-blue-500\/20,
+html.light .bg-blue-500\/10,
+html.light .bg-sky-500\/20 {
+  background-color: #e0f2fe !important;
+  color: #075985 !important;
+  border-color: #7dd3fc !important;
+}
+
+html.light .bg-emerald-950\/40 {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border-color: #6ee7b7 !important;
+}
+
+html.light .bg-yellow-950\/40 {
+  background-color: #fffbeb !important;
+  color: #92400e !important;
+  border-color: #fde68a !important;
+}
+
+/* 7. Filled Action Buttons (Preserve legible text on solid background) */
 html.light button.bg-\[\#00d4ff\],
 html.light button.bg-cyan-400,
 html.light button.bg-cyan-500,
-html.light .bg-gradient-to-r.from-cyan-400,
-html.light .bg-gradient-to-r.from-emerald-500,
+html.light a.bg-\[\#00d4ff\],
+html.light .bg-\[\#00d4ff\] {
+  color: #0f172a !important;
+}
+
+html.light button.bg-red-600,
+html.light button.bg-rose-700,
+html.light button.bg-emerald-500,
+html.light button.bg-emerald-600,
+html.light button.bg-teal-600,
+html.light button.bg-blue-600,
+html.light a.bg-red-600,
 html.light .bg-gradient-to-r.from-red-600,
-html.light .bg-red-600,
-html.light .bg-rose-700,
-html.light .bg-emerald-600 {
+html.light .bg-gradient-to-r.from-emerald-500,
+html.light .bg-gradient-to-r.from-cyan-500,
+html.light .bg-gradient-to-r.from-blue-600 {
+  color: #ffffff !important;
+}
+
+html.light button.bg-red-600 *,
+html.light button.bg-rose-700 *,
+html.light button.bg-emerald-500 *,
+html.light button.bg-emerald-600 *,
+html.light .bg-gradient-to-r.from-red-600 *,
+html.light .bg-gradient-to-r.from-emerald-500 *,
+html.light .bg-gradient-to-r.from-cyan-500 *,
+html.light .bg-gradient-to-r.from-blue-600 * {
   color: #ffffff !important;
 }
 
@@ -131,37 +325,36 @@ html.light .text-black {
   color: #0f172a !important;
 }
 
-html.light .text-slate-200,
-html.light .text-slate-300,
-html.light .text-gray-300,
-html.light .text-zinc-300 {
+/* 8. Tables and Data Grids in Light Mode */
+html.light table thead tr {
+  background-color: #f1f5f9 !important;
   color: #334155 !important;
+  border-color: #cbd5e1 !important;
 }
 
-html.light .text-slate-400,
-html.light .text-gray-400,
-html.light .text-zinc-400,
-html.light .text-\[\#88a0c0\],
-html.light .text-\[\#8892a4\],
-html.light .text-\[\#7090b0\] {
-  color: #475569 !important;
+html.light table thead th {
+  color: #334155 !important;
+  font-weight: 700 !important;
 }
 
-html.light .text-slate-600 {
-  color: #94a3b8 !important;
+html.light table tbody tr {
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
 }
 
-/* Light mode shadows & glassmorphism */
-html.light .shadow-2xl,
-html.light .shadow-xl {
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04) !important;
+html.light table tbody tr:hover {
+  background-color: #f1f5f9 !important;
 }
 
-/* Inputs & selects in Light Mode */
+html.light table tbody td {
+  color: #1e293b !important;
+}
+
+/* 9. Inputs, Selects, and Textareas */
 html.light input:not([type="checkbox"]):not([type="radio"]),
 html.light select,
 html.light textarea {
-  background-color: #ffffff;
+  background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #cbd5e1 !important;
 }
@@ -171,7 +364,22 @@ html.light select option {
   color: #0f172a !important;
 }
 
-/* Leaflet map container & popups in light mode */
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* 10. Modals, Shadows & Glassmorphism */
+html.light .shadow-2xl,
+html.light .shadow-xl {
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04) !important;
+}
+
+html.light .bg-black\/80 {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+}
+
+/* 11. Leaflet Map Container & Popups in Light Mode */
 .leaflet-container {
   width: 100%;
   height: 100%;
@@ -197,7 +405,7 @@ html.light .leaflet-popup-content div[style*="#0d1f3c"] {
   border-color: #cbd5e1 !important;
 }
 
-/* Charts & Recharts in light mode */
+/* 12. Charts & Recharts in Light Mode */
 html.light .recharts-default-tooltip {
   background-color: #ffffff !important;
   border-color: #cbd5e1 !important;
@@ -205,8 +413,32 @@ html.light .recharts-default-tooltip {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
 }
 
+html.light .recharts-tooltip-label {
+  color: #0284c7 !important;
+  font-weight: 700 !important;
+}
+
+html.light .recharts-tooltip-item {
+  color: #0f172a !important;
+}
+
 html.light .recharts-cartesian-grid line {
   stroke: #e2e8f0 !important;
+}
+
+html.light .recharts-polar-grid line,
+html.light .recharts-polar-grid path {
+  stroke: #cbd5e1 !important;
+}
+
+html.light .recharts-polar-angle-axis-tick text {
+  fill: #475569 !important;
+}
+
+html.light .recharts-text,
+html.light .recharts-legend-item-text {
+  fill: #475569 !important;
+  color: #475569 !important;
 }
 
 @media (max-width: 768px) {

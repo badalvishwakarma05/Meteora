@@ -193,11 +193,9 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
                   {trackData.map((row, i) => (
                     <tr
                       key={i}
-                      className="border-b border-[#1a3a6b]/60 hover:bg-[#102a4c] transition-colors font-mono"
-                      style={{
-                        color: row.predicted ? '#00d4ff' : '#ffffff',
-                        fontStyle: row.predicted ? 'italic' : 'normal',
-                      }}
+                      className={`border-b border-[#1a3a6b]/60 hover:bg-[#102a4c] transition-colors font-mono ${
+                        row.predicted ? 'text-cyan-500 font-semibold italic' : 'text-slate-100'
+                      }`}
                     >
                       <td className="px-3.5 py-2">{row.time}</td>
                       <td className="px-3.5 py-2">{row.lat}°N, {row.lon}°E</td>
