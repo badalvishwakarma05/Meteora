@@ -1,0 +1,2461 @@
+{% load static i18n %}
+<!--
+================================================================================
+TERMINAL COMMANDS TO GENERATE & COMPILE TRANSLATION PO/MO FILES:
+1. Generate .po translation catalogs:
+   django-admin makemessages -l hi
+   django-admin makemessages -l bn
+   django-admin makemessages -l or
+2. Compile binary .mo translation catalogs:
+   django-admin compilemessages
+================================================================================
+-->
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>METEORA AI | {% trans "MOSDAC Satellite Downlink & DvorakNet Cyclone Analytics" %}</title>
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        'bg-dark': '#040914',
+                        'bg-card': '#0a1628',
+                        'bg-header': '#071120',
+                        'accent-cyan': '#00d4ff',
+                        'accent-blue': '#0077ff',
+                        'accent-emerald': '#10b981',
+                        'accent-amber': '#f59e0b',
+                        'accent-rose': '#f43f5e',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Leaflet GIS Map Engine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        .leaflet-container {
+            background-color: #050b14 !important;
+            font-family: 'Inter', system-ui, sans-serif !important;
+        }
+        .buoy-tooltip {
+            background: rgba(8, 18, 32, 0.95) !important;
+            border: 1px solid rgba(0, 212, 255, 0.5) !important;
+            color: #ffffff !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 212, 255, 0.3) !important;
+            border-radius: 12px !important;
+            padding: 8px 12px !important;
+            font-size: 11px !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        .buoy-tooltip::before {
+            border-top-color: rgba(0, 212, 255, 0.5) !important;
+        }
+        .storm-pulse-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .storm-pulse-ring {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #ff3b3b;
+            animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        .storm-pulse-core {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ff3b3b;
+            box-shadow: 0 0 16px #ff3b3b;
+            border: 2px solid #ffffff;
+            z-index: 10;
+        }
+        .leaflet-popup-content-wrapper {
+            background: rgba(8, 18, 32, 0.95) !important;
+            border: 1px solid rgba(0, 212, 255, 0.35) !important;
+            color: #ffffff !important;
+            border-radius: 14px !important;
+            box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.7) !important;
+            backdrop-filter: blur(12px) !important;
+        }
+        .leaflet-popup-tip {
+            background: rgba(8, 18, 32, 0.95) !important;
+            border: 1px solid rgba(0, 212, 255, 0.35) !important;
+        }
+    </style>
+
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{% static 'viewer/css/style.css' %}">
+</head>
+<body class="bg-[#040914] text-white font-sans min-h-screen flex flex-col antialiased selection:bg-[#00d4ff] selection:text-black overflow-x-hidden">
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed top-16 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- TOP NAVIGATION HEADER BAR -->
+    <header class="h-14 border-b border-white/[0.08] bg-[#071120]/90 backdrop-blur-xl sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 select-none">
+        <!-- Left: Brand & Live Sync Badge -->
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 font-black text-black text-sm tracking-tighter">
+                    M
+                </div>
+                <div class="leading-none">
+                    <span class="font-extrabold text-sm tracking-tight text-white block">METEORA <span class="text-[#00d4ff]">AI</span></span>
+                    <span class="text-[9px] text-gray-400 font-mono">MOSDAC Downlink v2.4</span>
+                </div>
+            </div>
+
+            <div class="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span>{% trans "DOWNLINK LIVE" %}</span>
+            </div>
+
+            <div class="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-md bg-white/[0.05] border border-white/10 text-gray-300 text-xs font-mono">
+                <span class="text-[#00d4ff] font-bold">INSAT-3D / 3DR</span>
+                <span>• TIR1 10.8μm</span>
+            </div>
+        </div>
+
+        <!-- Right Status, Language Switcher, Coastal State Selector & Clock -->
+        <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Multi-Language i18n Dropdown Switcher -->
+            <form action="{% url 'set_language' %}" method="post" id="i18n-language-form" class="flex items-center">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                <div class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-[#0c1b33]/90 border border-cyan-500/40 text-xs text-white hover:border-[#00d4ff] transition-all shadow-md shadow-cyan-500/10">
+                    <i data-lucide="globe" class="w-3.5 h-3.5 text-[#00d4ff]"></i>
+                    <span class="text-[10px] font-bold uppercase text-[#8892a4] hidden xl:inline">{% trans "Language" %}:</span>
+                    <select name="language" onchange="document.getElementById('i18n-language-form').submit()" class="bg-transparent text-xs font-bold text-[#00d4ff] focus:outline-none cursor-pointer border-none py-0.5">
+                        <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %} class="bg-[#0c1b33] text-white">🇬🇧 English</option>
+                        <option value="hi" {% if LANGUAGE_CODE == 'hi' %}selected{% endif %} class="bg-[#0c1b33] text-white">🇮🇳 हिन्दी (Hindi)</option>
+                        <option value="bn" {% if LANGUAGE_CODE == 'bn' %}selected{% endif %} class="bg-[#0c1b33] text-white">🇮🇳 বাংলা (Bengali)</option>
+                        <option value="or" {% if LANGUAGE_CODE == 'or' %}selected{% endif %} class="bg-[#0c1b33] text-white">🇮🇳 ଓଡ଼ିଆ (Odia)</option>
+                    </select>
+                </div>
+            </form>
+
+            <!-- Coastal State / Monitoring Zone Selector -->
+            <div class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-xs text-white">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#00d4ff] animate-pulse"></i>
+                <span class="text-[10px] font-bold uppercase text-[#8892a4] hidden xl:inline">{% trans "State / Zone:" %}</span>
+                <select id="coastal-state-selector" onchange="changeCoastalState(this.value)" class="bg-transparent text-xs font-bold text-[#00d4ff] focus:outline-none cursor-pointer border-none py-0.5">
+                    <option value="OD" class="bg-[#0c1b33] text-white">🏛️ Odisha Coast (Puri / Paradip)</option>
+                    <option value="WB" class="bg-[#0c1b33] text-white">🌴 West Bengal & Sundarbans</option>
+                    <option value="AP" class="bg-[#0c1b33] text-white">⚡ Andhra Pradesh (Vizag)</option>
+                    <option value="TN" class="bg-[#0c1b33] text-white">⚓ Tamil Nadu (Chennai)</option>
+                    <option value="GJ" class="bg-[#0c1b33] text-white">🦁 Gujarat Coast (Porbandar)</option>
+                    <option value="MH" class="bg-[#0c1b33] text-white">🏙️ Maharashtra (Mumbai)</option>
+                    <option value="KL" class="bg-[#0c1b33] text-white">🌊 Kerala & Lakshadweep</option>
+                </select>
+            </div>
+
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-mono">
+                <i data-lucide="wifi" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span id="header-downlink-speed">14.2 MB/s (Chunk Stream)</span>
+            </div>
+
+            <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-cyan-300">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-[#00d4ff]"></i>
+                <span id="live-ist-clock">Loading Clock...</span>
+            </div>
+
+            <!-- Profile Badge -->
+            <div class="flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-white/[0.06] border border-white/10 text-xs">
+                <div class="w-5 h-5 rounded-full bg-cyan-400 text-black font-bold flex items-center justify-center text-[10px]">
+                    MK
+                </div>
+                <span class="hidden md:inline font-semibold text-gray-200">Dr. M. Kumar</span>
+            </div>
+        </div>
+    </header>
+
+
+            <div class="pt-4 text-xs text-[#8892a4] space-x-2">
+                <span>Need custom credentials?</span>
+                <button onclick="openAuthModal('citizen_signup')" class="text-[#00d4ff] hover:underline font-semibold cursor-pointer">Register Citizen Account</button>
+                <span>·</span>
+                <button onclick="openAuthModal('forecaster_signup')" class="text-[#00d4ff] hover:underline font-semibold cursor-pointer">Register Forecaster ID</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== PORTAL 2: CITIZEN SAFETY PORTAL ==================== -->
+    <div id="view-citizen" class="portal-view hidden flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
+            <div>
+                <div class="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-2">
+                    <i data-lucide="life-buoy" class="w-4 h-4"></i>
+                    <span>{% trans "Public Safety & Disaster Relief Services" %}</span>
+                </div>
+                <h1 class="text-2xl lg:text-3xl font-extrabold text-white">{% trans "Citizen Safety & Emergency Evacuation Portal" %}</h1>
+            </div>
+            <a href="tel:1077" class="px-4 py-2 rounded-xl bg-rose-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-all self-start">
+                <i data-lucide="phone-call" class="w-4 h-4 animate-bounce"></i>
+                <span>{% trans "Disaster Helpline: 1077 / 112" %}</span>
+            </a>
+        </div>
+
+        <div class="p-6 rounded-3xl bg-rose-500/10 border border-rose-500/30 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+            <div class="space-y-1 text-center md:text-left">
+                <span class="px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[11px] font-bold uppercase tracking-wider">
+                    {% trans "CRITICAL STORM WARNING · CYCLONE DANA" %}
+                </span>
+                <h2 class="text-xl font-bold text-white pt-1">{% trans "Landfall Target: Odisha Coast (Near Puri Sector)" %}</h2>
+                <p class="text-xs text-gray-300">{% trans "Sustained Surface Wind:" %} <strong class="text-amber-300 font-mono">185 km/h</strong> &bull; {% trans "Storm Surge Height:" %} <strong class="text-cyan-300 font-mono">3.5m – 4.2m</strong></p>
+            </div>
+
+            <div class="flex items-center gap-3 bg-black/50 px-6 py-3 rounded-2xl border border-rose-500/40">
+                <div class="text-center"><span class="text-2xl font-black font-mono text-rose-400">18</span><span class="text-[10px] block text-[#8892a4]">HOURS</span></div>
+                <span class="text-xl font-bold text-rose-500">:</span>
+                <div class="text-center"><span class="text-2xl font-black font-mono text-rose-400">42</span><span class="text-[10px] block text-[#8892a4]">MINS</span></div>
+                <span class="text-xl font-bold text-rose-500">:</span>
+                <div class="text-center"><span class="text-2xl font-black font-mono text-rose-400">15</span><span class="text-[10px] block text-[#8892a4]">SECS</span></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 space-y-6">
+                <div class="p-6 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+                        <h3 class="font-bold text-base text-white flex items-center gap-2">
+                            <i data-lucide="send" class="w-5 h-5 text-rose-400"></i>
+                            {% trans "1-Click Emergency SOS Rescue Dispatch" %}
+                        </h3>
+                        <span class="text-[10px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 px-2 py-0.5 rounded">NDRF Direct</span>
+                    </div>
+
+                    <form onsubmit="handleCitizenSOS(event)" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block text-[#8892a4] mb-1 font-semibold">Full Name</label>
+                            <input type="text" value="Rajesh Mohapatra" required class="form-input text-xs">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[#8892a4] mb-1 font-semibold">Mobile Number</label>
+                                <input type="tel" value="+91 98765 43210" required class="form-input text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[#8892a4] mb-1 font-semibold">District</label>
+                                <select class="form-select text-xs">
+                                    <option>Puri</option>
+                                    <option>Bhadrak</option>
+                                    <option>Kendrapara</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[#8892a4] mb-1 font-semibold">Location / Address</label>
+                            <input type="text" value="Near Grand Road / Light House Colony" required class="form-input text-xs">
+                        </div>
+
+                        <div>
+                            <label class="block text-[#8892a4] mb-1 font-semibold">Assistance Required</label>
+                            <select class="form-select text-xs">
+                                <option>Emergency Evacuation & NDRF Rescue</option>
+                                <option>Medical Assistance & Ambulance</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full mt-2 py-3.5 px-4 rounded-xl text-sm font-extrabold text-white bg-rose-600 hover:bg-rose-500 shadow-lg shadow-rose-500/30 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                            <i data-lucide="radio" class="w-4 h-4"></i>
+                            <span>{% trans "DISPATCH EMERGENCY SOS RESCUE BEACON" %}</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 space-y-6">
+                <div class="rounded-2xl bg-[#0d1f3c] border border-white/[0.08] overflow-hidden shadow-xl">
+                    <div class="px-5 py-4 bg-[#0c1b33] border-b border-white/[0.08] flex items-center justify-between">
+                        <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i>
+                            {% trans "Verified Multi-Purpose Cyclone Shelters" %} (Puri District)
+                        </h3>
+                        <span class="text-xs font-mono text-emerald-400 font-bold">4 Shelters Available</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-[#081220] text-[#8892a4] uppercase font-bold border-b border-white/[0.08]">
+                                <tr>
+                                    <th class="p-3.5">Shelter Name</th>
+                                    <th class="p-3.5">Location</th>
+                                    <th class="p-3.5">Occupancy</th>
+                                    <th class="p-3.5">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/[0.08]">
+                                <tr>
+                                    <td class="p-3.5 font-bold text-white">Puri High School Shelter</td>
+                                    <td class="p-3.5 text-[#8892a4]">Grand Road, Puri</td>
+                                    <td class="p-3.5 font-mono text-emerald-400 font-bold">450 / 600</td>
+                                    <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">OPEN & SAFE</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3.5 font-bold text-white">Paradip Govt Primary Shelter</td>
+                                    <td class="p-3.5 text-[#8892a4]">Port Area, Paradip</td>
+                                    <td class="p-3.5 font-mono text-amber-300 font-bold">320 / 500</td>
+                                    <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">OPEN & SAFE</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== PORTAL 3: ADMINISTRATOR COMMAND CENTER ==================== -->
+    <div id="view-command" class="portal-view hidden flex-1 flex overflow-hidden">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside id="sidebar-nav" class="w-60 flex flex-col border-r border-white/[0.08] bg-[#081220]/95 backdrop-blur-xl transition-all duration-300 relative z-30 select-none flex-shrink-0">
+            <div class="p-4 border-b border-white/[0.08] flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-cyan-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                    <i data-lucide="zap" class="w-4 h-4 text-black stroke-[2.5]"></i>
+                </div>
+                <div class="sidebar-text">
+                    <span class="font-extrabold text-sm text-white tracking-wider block">METEORA</span>
+                    <span class="text-[9px] text-[#8892a4]">Predict. Prepare. Protect.</span>
+                </div>
+            </div>
+
+            <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+                <button id="nav-dashboard" onclick="switchTab('dashboard')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-[#00d4ff] text-black shadow-lg shadow-cyan-500/20 transition-all cursor-pointer">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 stroke-[2.5]"></i>
+                    <span class="sidebar-text truncate">{% trans "Dashboard" %}</span>
+                </button>
+
+                <button id="nav-satellite" onclick="switchTab('satellite')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#8892a4] hover:bg-white/[0.06] hover:text-white transition-all cursor-pointer">
+                    <i data-lucide="satellite" class="w-4 h-4"></i>
+                    <span class="sidebar-text truncate">{% trans "Satellite Feed (TIR1)" %}</span>
+                </button>
+
+                <button id="nav-detection" onclick="switchTab('detection')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#8892a4] hover:bg-white/[0.06] hover:text-white transition-all cursor-pointer">
+                    <i data-lucide="scan-line" class="w-4 h-4"></i>
+                    <span class="sidebar-text truncate">{% trans "Detection" %}</span>
+                </button>
+
+                <button id="nav-classification" onclick="switchTab('classification')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#8892a4] hover:bg-white/[0.06] hover:text-white transition-all cursor-pointer">
+                    <i data-lucide="tags" class="w-4 h-4"></i>
+                    <span class="sidebar-text truncate">{% trans "Classification" %}</span>
+                </button>
+
+                <button id="nav-forecast" onclick="switchTab('forecast')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#8892a4] hover:bg-white/[0.06] hover:text-white transition-all cursor-pointer">
+                    <i data-lucide="route" class="w-4 h-4"></i>
+                    <span class="sidebar-text truncate">{% trans "Track & Forecast" %}</span>
+                </button>
+
+                <button id="nav-historical" onclick="switchTab('historical')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#8892a4] hover:bg-white/[0.06] hover:text-white transition-all cursor-pointer">
+                    <i data-lucide="database" class="w-4 h-4"></i>
+                    <span class="sidebar-text truncate">{% trans "Historical Data" %}</span>
+                </button>
+
+                <button id="nav-reports" onclick="switchTab('reports')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#8892a4] hover:bg-white/[0.06] hover:text-white transition-all cursor-pointer">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <span class="sidebar-text truncate">{% trans "Reports" %}</span>
+                </button>
+
+                <button id="nav-settings" onclick="switchTab('settings')" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#8892a4] hover:bg-white/[0.06] hover:text-white transition-all cursor-pointer">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    <span class="sidebar-text truncate">{% trans "Settings" %}</span>
+                </button>
+            </nav>
+
+            <div class="p-3 border-t border-white/[0.08]">
+                <button onclick="switchPortal('landing')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span class="sidebar-text">{% trans "Sign Out" %}</span>
+                </button>
+            </div>
+        </aside>
+
+
+        <!-- COMMAND CENTER WORKSPACE -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6">
+
+            <!-- TAB 1: DASHBOARD (Exact Match to Screenshot) -->
+            <div id="tab-dashboard" class="tab-content space-y-5">
+                
+                <!-- TOP SYNOPTIC ASSESSMENT BANNER CARD (From Screenshot) -->
+                <div class="p-5 rounded-2xl bg-[#0d1f3c] border border-cyan-500/30 backdrop-blur-xl shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative overflow-hidden" style="background: radial-gradient(circle at 10% 50%, rgba(0, 212, 255, 0.08) 0%, rgba(13, 31, 60, 0.95) 70%);">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 flex-shrink-0 mt-0.5">
+                            <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h2 class="text-lg font-bold text-white">Forecasted Meteorological Assessment</h2>
+                                <span id="dash-assessment-tag" class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-bold">Safe / Normal Watch</span>
+                            </div>
+                            <div id="dash-assessment-storm" class="text-xs font-mono text-cyan-400 font-bold">[DEPRESSION BOB-01]</div>
+                            <p id="dash-assessment-sub" class="text-xs text-[#8892a4]">Authoritative IMD forecast stream directly synchronized with Citizen Emergency Portal</p>
+                        </div>
+                    </div>
+
+                    <!-- Alert Level Pills & Glowing Lamp Widget (From Screenshot) -->
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center gap-2 p-1 rounded-xl bg-[#081220] border border-white/10 text-xs">
+                            <span class="text-[10px] font-bold text-[#8892a4] px-2 uppercase">SYNOPTIC ALERT LEVEL:</span>
+                            <button id="alert-lvl-safe" onclick="setDashboardCondition('safe')" class="px-3 py-1 rounded-lg font-bold bg-[#00d4ff] text-black shadow-md shadow-cyan-500/30 transition-all cursor-pointer">Safe</button>
+                            <button id="alert-lvl-inter" onclick="setDashboardCondition('intermediate')" class="px-3 py-1 rounded-lg font-bold text-amber-300 hover:bg-amber-500/20 border border-transparent transition-all cursor-pointer">Intermediate</button>
+                            <button id="alert-lvl-severe" onclick="setDashboardCondition('severe')" class="px-3 py-1 rounded-lg font-bold text-rose-400 hover:bg-rose-500/20 border border-transparent transition-all cursor-pointer">Severe</button>
+                        </div>
+
+                        <!-- Live Status Light Bulb Lamp Widget -->
+                        <div class="flex items-center gap-3 px-4 py-2 rounded-xl bg-[#081220] border border-white/10">
+                            <div class="text-[10px] font-bold text-[#8892a4] leading-tight">
+                                <div>LIVE STREAM: <span class="text-cyan-300 font-mono">25s</span></div>
+                                <div class="mt-0.5">STATUS LIGHT:</div>
+                            </div>
+                            <div id="status-lamp-bulb" class="w-8 h-8 rounded-full bg-cyan-400 shadow-[0_0_20px_#00d4ff] animate-pulse flex items-center justify-center text-black font-extrabold text-[10px]">
+                                SAFE
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meteorological Status Alert Strip -->
+                <div id="dash-status-strip" class="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-500/30 text-cyan-300 flex items-center gap-2.5 text-xs font-semibold">
+                    <i data-lucide="info" class="w-4 h-4 text-[#00d4ff] flex-shrink-0"></i>
+                    <span id="dash-status-text">METEOROLOGICAL STATUS: SAFE — Basin synoptic parameters within safe thresholds. Low pressure dissipation.</span>
+                </div>
+
+                <!-- ==================== GEOGRAPHIC REGIONAL RISK ALERT CARD MODULE ==================== -->
+                <div id="regional-risk-module" class="p-5 rounded-2xl bg-[#0d1f3c] border border-cyan-500/30 shadow-xl space-y-4 relative overflow-hidden flex-shrink-0" style="background: linear-gradient(135deg, rgba(13,31,60,0.95) 0%, rgba(8,18,32,0.98) 100%);">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 border border-cyan-500/40 flex items-center justify-center text-[#00d4ff] flex-shrink-0">
+                                <i data-lucide="map" class="w-5 h-5 animate-pulse"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-sm text-white flex items-center gap-2">
+                                    GEOGRAPHIC REGIONAL RISK ALERT & SPATIAL VULNERABILITY INDEX
+                                </h3>
+                                <div class="text-[11px] text-[#8892a4]">Automated spatial boundary lookup & coastal state impact rating based on MOSDAC telemetry</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                                SPATIAL ENGINE ACTIVE
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Risk State Cards Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5" id="spatial-risk-cards-container">
+                        {% if regional_risk_data and regional_risk_data.state_evaluations %}
+                            {% for st in regional_risk_data.state_evaluations|slice:":4" %}
+                                <div class="p-4 rounded-xl bg-[#081220] border {{ st.header_glow }} space-y-2.5 transition-all hover:scale-[1.01]">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-white uppercase tracking-wide">{{ st.name }}</span>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold border {{ st.badge_color }}">
+                                            {{ st.severity_code }} RISK
+                                        </span>
+                                    </div>
+
+                                    <div class="flex items-baseline justify-between">
+                                        <div class="text-2xl font-black font-mono text-white">
+                                            {{ st.vulnerability_score }}<span class="text-xs text-[#8892a4]">/100</span>
+                                        </div>
+                                        <div class="text-[10px] font-mono text-cyan-400">
+                                            {{ st.distance_km }} km to Eye
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-1 text-[11px] font-mono text-[#8892a4] pt-1 border-t border-white/[0.06]">
+                                        <div class="flex justify-between">
+                                            <span>Est. Wind:</span>
+                                            <strong class="text-gray-200">{{ st.predicted_wind_kmh }} km/h</strong>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Storm Surge:</span>
+                                            <strong class="text-cyan-300">{{ st.predicted_surge_m }} m</strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-[10px] text-gray-300 font-semibold pt-1 border-t border-white/[0.06] line-clamp-1" title="{{ st.evacuation_directive }}">
+                                        ⚡ {{ st.action_urgency }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Default Pre-rendered State Cards -->
+                            <div class="p-4 rounded-xl bg-[#081220] border border-rose-500/30 space-y-2.5 shadow-lg shadow-rose-500/10">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-white uppercase tracking-wide">Odisha</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold border bg-rose-500/20 text-rose-400 border-rose-500/40">HIGH RISK</span>
+                                </div>
+                                <div class="flex items-baseline justify-between">
+                                    <div class="text-2xl font-black font-mono text-white">88.4<span class="text-xs text-[#8892a4]">/100</span></div>
+                                    <div class="text-[10px] font-mono text-cyan-400">182 km to Eye</div>
+                                </div>
+                                <div class="space-y-1 text-[11px] font-mono text-[#8892a4] pt-1 border-t border-white/[0.06]">
+                                    <div class="flex justify-between"><span>Est. Wind:</span><strong class="text-gray-200">185 km/h</strong></div>
+                                    <div class="flex justify-between"><span>Storm Surge:</span><strong class="text-cyan-300">4.2 m</strong></div>
+                                </div>
+                                <div class="text-[10px] text-rose-400 font-bold pt-1 border-t border-white/[0.06]">⚡ MANDATORY EVACUATION DISPATCH</div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-[#081220] border border-amber-500/30 space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-white uppercase tracking-wide">West Bengal</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold border bg-amber-500/20 text-amber-300 border-amber-500/40">MODERATE RISK</span>
+                                </div>
+                                <div class="flex items-baseline justify-between">
+                                    <div class="text-2xl font-black font-mono text-white">62.1<span class="text-xs text-[#8892a4]">/100</span></div>
+                                    <div class="text-[10px] font-mono text-cyan-400">310 km to Eye</div>
+                                </div>
+                                <div class="space-y-1 text-[11px] font-mono text-[#8892a4] pt-1 border-t border-white/[0.06]">
+                                    <div class="flex justify-between"><span>Est. Wind:</span><strong class="text-gray-200">125 km/h</strong></div>
+                                    <div class="flex justify-between"><span>Storm Surge:</span><strong class="text-cyan-300">2.8 m</strong></div>
+                                </div>
+                                <div class="text-[10px] text-amber-300 font-bold pt-1 border-t border-white/[0.06]">⚠️ PREPARE EMERGENCY SHELTERS</div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-[#081220] border border-emerald-500/30 space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-white uppercase tracking-wide">Andhra Pradesh</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold border bg-emerald-500/20 text-emerald-400 border-emerald-500/40">SAFE WATCH</span>
+                                </div>
+                                <div class="flex items-baseline justify-between">
+                                    <div class="text-2xl font-black font-mono text-white">24.5<span class="text-xs text-[#8892a4]">/100</span></div>
+                                    <div class="text-[10px] font-mono text-cyan-400">460 km to Eye</div>
+                                </div>
+                                <div class="space-y-1 text-[11px] font-mono text-[#8892a4] pt-1 border-t border-white/[0.06]">
+                                    <div class="flex justify-between"><span>Est. Wind:</span><strong class="text-gray-200">75 km/h</strong></div>
+                                    <div class="flex justify-between"><span>Storm Surge:</span><strong class="text-cyan-300">1.0 m</strong></div>
+                                </div>
+                                <div class="text-[10px] text-emerald-400 font-bold pt-1 border-t border-white/[0.06]">✅ MONITOR METEOROLOGICAL BULLETINS</div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-[#081220] border border-emerald-500/30 space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-white uppercase tracking-wide">Tamil Nadu</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold border bg-emerald-500/20 text-emerald-400 border-emerald-500/40">SAFE WATCH</span>
+                                </div>
+                                <div class="flex items-baseline justify-between">
+                                    <div class="text-2xl font-black font-mono text-white">12.8<span class="text-xs text-[#8892a4]">/100</span></div>
+                                    <div class="text-[10px] font-mono text-cyan-400">680 km to Eye</div>
+                                </div>
+                                <div class="space-y-1 text-[11px] font-mono text-[#8892a4] pt-1 border-t border-white/[0.06]">
+                                    <div class="flex justify-between"><span>Est. Wind:</span><strong class="text-gray-200">45 km/h</strong></div>
+                                    <div class="flex justify-between"><span>Storm Surge:</span><strong class="text-cyan-300">0.4 m</strong></div>
+                                </div>
+                                <div class="text-[10px] text-emerald-400 font-bold pt-1 border-t border-white/[0.06]">✅ NORMAL COASTAL OPERATIONS</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- 4 KPI SUMMARY CARDS (Exact Match to Screenshot) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] hover:border-cyan-500/40 transition-all">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] font-bold uppercase mb-1">
+                            <span>ACTIVE CYCLONES</span>
+                            <i data-lucide="activity" class="w-4 h-4 text-[#00d4ff]"></i>
+                        </div>
+                        <div class="text-2xl font-black text-[#00d4ff] font-mono">3 Systems</div>
+                        <div class="text-[11px] text-[#8892a4] mt-1">1 Severe &bull; 1 Moderate &bull; 1 Low</div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] hover:border-cyan-500/40 transition-all">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] font-bold uppercase mb-1">
+                            <span>MONITORING ZONES</span>
+                            <i data-lucide="eye" class="w-4 h-4 text-cyan-400"></i>
+                        </div>
+                        <div class="text-2xl font-black text-cyan-300 font-mono">7 Basins</div>
+                        <div class="text-[11px] text-[#8892a4] mt-1">BoB &bull; Arabian Sea &bull; Indian Ocean</div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] hover:border-cyan-500/40 transition-all">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] font-bold uppercase mb-1">
+                            <span>SATELLITE FEEDS</span>
+                            <i data-lucide="radio" class="w-4 h-4 text-emerald-400"></i>
+                        </div>
+                        <div class="text-2xl font-black text-emerald-400 font-mono">3 Active</div>
+                        <div class="text-[11px] text-[#8892a4] mt-1">INSAT-3D &bull; INSAT-3DR &bull; GOES</div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] hover:border-cyan-500/40 transition-all">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] font-bold uppercase mb-1">
+                            <span>NEXT DOWNLINK</span>
+                            <i data-lucide="refresh-cw" class="w-4 h-4 text-amber-400"></i>
+                        </div>
+                        <div class="text-2xl font-black text-amber-300 font-mono">03:17</div>
+                        <div class="text-[11px] text-[#8892a4] mt-1">Auto-refresh every 30 min</div>
+                    </div>
+                </div>
+
+                <!-- MAIN WORKSPACE GRID (GIS Map Left, Storm Cards Right) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- GIS MAP (Left 7 Cols) -->
+                    <div class="lg:col-span-7 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] p-5 flex flex-col justify-between shadow-xl">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-white/[0.08] pb-3">
+                            <div>
+                                <h3 class="font-extrabold text-sm text-white flex items-center gap-2">
+                                    <i data-lucide="globe" class="w-4 h-4 text-[#00d4ff]"></i>
+                                    REAL-TIME SYNOPTIC GIS SURFACE TRACKING — NORTH INDIAN OCEAN
+                                </h3>
+                                <div class="text-[11px] text-[#8892a4] font-mono mt-0.5">High-Density Multi-Layer Simulation &bull; RSMC New Delhi</div>
+                            </div>
+                            
+                            <!-- Visual Layer Toggles -->
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <button id="layer-btn-buoys" onclick="toggleGisLayer('buoys')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-cyan-500/20 text-[#00d4ff] border border-cyan-500/40 shadow-sm cursor-pointer">
+                                    <span class="w-2 h-2 rounded-full bg-[#00d4ff] animate-pulse"></span>
+                                    <span>Ocean Buoys (40)</span>
+                                </button>
+                                <button id="layer-btn-ensemble" onclick="toggleGisLayer('ensemble')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm cursor-pointer">
+                                    <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                                    <span>Ensemble Tracks (3)</span>
+                                </button>
+                                <button id="layer-btn-coastal" onclick="toggleGisLayer('coastal')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm cursor-pointer">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                    <span>Coastal Zones</span>
+                                </button>
+                                
+                                <div class="flex items-center gap-1 bg-[#081220] p-1 rounded-xl border border-white/10 text-[11px]">
+                                    <button id="basemap-dark" onclick="setBaseMap('dark')" class="px-2 py-0.5 rounded-lg bg-[#00d4ff] text-black font-bold">Dark</button>
+                                    <button id="basemap-satellite" onclick="setBaseMap('satellite')" class="px-2 py-0.5 rounded-lg text-[#8892a4] hover:text-white font-medium">Sat</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Real Leaflet GIS Map Canvas Box -->
+                        <div class="relative w-full h-[450px] rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+                            <div id="gis-synoptic-map" class="w-full h-full z-0"></div>
+
+                            <!-- Live Telemetry Coordinates HUD (Top-Left overlay) -->
+                            <div class="absolute top-3 left-3 z-[400] pointer-events-none bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/15 text-[10px] font-mono text-cyan-300 flex items-center gap-2 shadow-lg">
+                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                                <span id="map-telemetry-coords">Center: {{ target_lat|default:"15.4" }}°N, {{ target_lon|default:"87.2" }}°E</span>
+                                <span class="text-white/40">|</span>
+                                <span class="text-emerald-400">INCOIS BUOY NET: 40/40 ACTIVE</span>
+                            </div>
+
+                            <!-- GIS Map Legend Overlay (Bottom Left) -->
+                            <div class="absolute bottom-3 left-3 z-[400] bg-black/85 backdrop-blur-md p-3 rounded-xl border border-white/15 text-[10px] space-y-1.5 font-mono shadow-xl max-w-[250px]">
+                                <div class="font-bold text-gray-200 border-b border-white/10 pb-1 flex items-center justify-between">
+                                    <span>SYNOPTIC GIS LAYERS</span>
+                                    <span class="text-[9px] text-[#00d4ff]">LIVE</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-200">
+                                    <span class="w-3.5 h-1 bg-rose-500 rounded"></span> Primary Track (Cat 3 VSCS)
+                                </div>
+                                <div class="flex items-center gap-2 text-purple-300">
+                                    <span class="w-3.5 h-0.5 border-t-2 border-dashed border-purple-400"></span> Ensemble Perturbations (3)
+                                </div>
+                                <div class="flex items-center gap-2 text-cyan-300">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#00d4ff] shadow-[0_0_8px_#00d4ff]"></span> Ocean Buoy Sensors (40)
+                                </div>
+                                <div class="flex items-center gap-2 text-emerald-400">
+                                    <span class="w-2.5 h-2.5 rounded bg-cyan-500/40 border border-[#00d4ff]"></span> Coastal Impact Zones
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVE TROPICAL SYSTEMS CARDS (Right 5 Cols - Exact Match) -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                                <i data-lucide="disc" class="w-4 h-4 text-[#00d4ff] animate-spin"></i>
+                                ACTIVE TROPICAL SYSTEMS (3)
+                            </h3>
+                            <button onclick="switchTab('forecast')" class="text-xs text-[#00d4ff] hover:underline font-semibold flex items-center gap-1">
+                                <span>View All Tracks</span>
+                                <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+
+                        <!-- CARD 1: CYCLONE DANA (From Screenshot) -->
+                        <div class="p-5 rounded-2xl bg-[#0d1f3c] border border-rose-500/40 hover:border-rose-400 shadow-xl space-y-3 transition-all relative" style="background: radial-gradient(circle at 10% 10%, rgba(255, 23, 68, 0.08) 0%, rgba(13, 31, 60, 0.95) 70%);">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[10px] font-black uppercase">CAT 3</span>
+                                    <span class="text-xs font-bold text-rose-400">Very Severe Cyclonic Storm</span>
+                                </div>
+                                <button onclick="switchTab('satellite')" class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-extrabold hover:bg-cyan-500 hover:text-black transition-all cursor-pointer">
+                                    ⚡ FORECAST THIS
+                                </button>
+                            </div>
+
+                            <div>
+                                <h4 class="text-2xl font-black text-white">CYCLONE DANA</h4>
+                                <div class="flex items-center gap-4 text-xs font-mono text-gray-300 mt-1">
+                                    <span>Wind: <strong class="text-white">185 km/h</strong></span>
+                                    <span>Pressure: <strong class="text-white">955 hPa</strong></span>
+                                </div>
+                                <div class="text-xs text-[#8892a4] mt-1 flex items-center gap-2">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-cyan-400"></i>
+                                    <span>Bay of Bengal &bull; <strong class="text-cyan-300 font-mono">15.4°N, 87.2°E</strong></span>
+                                </div>
+                            </div>
+
+                            <!-- Landfall Warning Box -->
+                            <div class="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 space-y-0.5">
+                                <div class="text-[11px] font-extrabold text-rose-400 flex items-center gap-1.5">
+                                    <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+                                    <span>LANDFALL IMMINENT</span>
+                                </div>
+                                <div class="text-xs font-bold text-white font-mono">14-Sep 18:00 IST</div>
+                                <div class="text-[11px] text-gray-300">Odisha Coast (near Puri Sector)</div>
+                            </div>
+
+                            <button onclick="switchTab('forecast')" class="w-full py-2.5 rounded-xl border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 text-xs font-bold transition-all cursor-pointer">
+                                View Trajectory & Ensemble →
+                            </button>
+                        </div>
+
+                        <!-- CARD 2: CYCLONE REMAL -->
+                        <div class="p-4 rounded-2xl bg-[#0d1f3c]/70 border border-white/[0.08] hover:border-amber-400/40 space-y-2 transition-all">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold uppercase">CAT 1</span>
+                                    <span class="text-xs font-bold text-amber-300">Cyclonic Storm</span>
+                                </div>
+                                <button onclick="switchTab('satellite')" class="px-2.5 py-1 rounded-lg bg-white/10 text-gray-300 text-[10px] font-bold hover:bg-cyan-500 hover:text-black">
+                                    ⚡ FORECAST THIS
+                                </button>
+                            </div>
+                            <h4 class="text-lg font-bold text-white">CYCLONE REMAL</h4>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- TAB 2: SATELLITE FEED (TIR1) -->
+            <div id="tab-satellite" class="tab-content hidden space-y-6">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
+                    <div>
+                        <div class="flex items-center gap-2 text-xs font-medium text-[#00d4ff] mb-1">
+                            <i data-lucide="radio" class="w-3.5 h-3.5"></i>
+                            <span>Multi-Sensor Telemetry & High-Precision HDF5 Processing</span>
+                        </div>
+                        <h1 class="text-2xl lg:text-3xl font-extrabold tracking-tight text-white">
+                            MOSDAC Satellite Cyclone Thermal Processor
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c]/70 border border-white/[0.08] backdrop-blur-md">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] mb-2 font-medium">
+                            <span>SELECTED HDF5 FILE</span>
+                            <i data-lucide="file-code" class="w-4 h-4 text-[#00d4ff]"></i>
+                        </div>
+                        <div class="text-base font-bold text-white truncate font-mono" title="{{ selected_file|default:'None Selected' }}">
+                            {{ selected_file|default:"No file loaded" }}
+                        </div>
+                        <div class="text-[11px] text-emerald-400 mt-1 font-medium flex items-center gap-1">
+                            <i data-lucide="check-circle" class="w-3 h-3"></i> Validated HDF5 Structure
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c]/70 border border-white/[0.08] backdrop-blur-md">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] mb-2 font-medium">
+                            <span>TARGET COORDINATES</span>
+                            <i data-lucide="map-pin" class="w-4 h-4 text-cyan-400"></i>
+                        </div>
+                        <div class="text-lg font-bold text-cyan-300 font-mono">
+                            {{ target_lat|default:"15.0" }}° N, {{ target_lon|default:"72.0" }}° E
+                        </div>
+                        <div class="text-[11px] text-[#8892a4] mt-1 font-medium">
+                            Nearest Grid: {{ metadata.nearest_lat|default:target_lat }}°, {{ metadata.nearest_lon|default:target_lon }}°
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c]/70 border border-white/[0.08] backdrop-blur-md">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] mb-2 font-medium">
+                            <span>CENTER PIXEL (Y, X)</span>
+                            <i data-lucide="crosshair" class="w-4 h-4 text-rose-400"></i>
+                        </div>
+                        <div class="text-lg font-bold text-rose-300 font-mono">
+                            {% if metadata %}Y: {{ metadata.center_y }}, X: {{ metadata.center_x }}{% else %}Y: --, X: --{% endif %}
+                        </div>
+                        <div class="text-[11px] text-[#8892a4] mt-1 font-medium">Sub-grid index location</div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c]/70 border border-white/[0.08] backdrop-blur-md">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] mb-2 font-medium">
+                            <span>PATCH DIMENSIONS</span>
+                            <i data-lucide="maximize-2" class="w-4 h-4 text-purple-400"></i>
+                        </div>
+                        <div class="text-lg font-bold text-purple-300 font-mono">
+                            {{ patch_size|default:128 }} × {{ patch_size|default:128 }} px
+                        </div>
+                        <div class="text-[11px] text-[#8892a4] mt-1 font-medium">
+                            Colormap: <span class="text-white font-semibold capitalize">{{ colormap|default:"inferno" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% if error_message %}
+                <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 flex items-start gap-3 text-sm">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5"></i>
+                    <div class="flex-1"><div class="font-bold mb-0.5">Processing Alert</div><div>{{ error_message }}</div></div>
+                </div>
+                {% endif %}
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <section class="lg:col-span-5 xl:col-span-4 flex flex-col gap-6">
+                        <div class="rounded-2xl bg-[#0d1f3c]/80 border border-white/[0.08] backdrop-blur-xl shadow-xl overflow-hidden">
+                            <div class="px-5 py-4 bg-[#0c1b33] border-b border-white/[0.08] flex items-center justify-between">
+                                <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                                    <i data-lucide="sliders" class="w-4 h-4 text-[#00d4ff]"></i>
+                                    Target Extraction Controls
+                                </h2>
+                                <span class="text-[10px] text-gray-400 bg-white/[0.05] px-2 py-0.5 rounded border border-white/10 font-mono">HDF5 API</span>
+                            </div>
+
+                            <div class="p-5 space-y-5">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-[#8892a4] mb-2.5">Quick Target Presets</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button type="button" onclick="setPreset(15.0, 72.0)" class="preset-btn p-2.5 rounded-xl bg-[#081220] border border-white/[0.08] hover:border-[#00d4ff] hover:bg-[#00d4ff]/10 text-left transition-all group">
+                                            <div class="text-xs font-bold text-gray-200 group-hover:text-[#00d4ff]">Arabian Sea</div>
+                                            <div class="text-[10px] font-mono text-[#8892a4]">15.0° N, 72.0° E</div>
+                                        </button>
+                                        <button type="button" onclick="setPreset(16.5, 88.0)" class="preset-btn p-2.5 rounded-xl bg-[#081220] border border-white/[0.08] hover:border-[#00d4ff] hover:bg-[#00d4ff]/10 text-left transition-all group">
+                                            <div class="text-xs font-bold text-gray-200 group-hover:text-[#00d4ff]">Bay of Bengal</div>
+                                            <div class="text-[10px] font-mono text-[#8892a4]">16.5° N, 88.0° E</div>
+                                        </button>
+                                        <button type="button" onclick="setPreset(20.0, 69.5)" class="preset-btn p-2.5 rounded-xl bg-[#081220] border border-white/[0.08] hover:border-[#00d4ff] hover:bg-[#00d4ff]/10 text-left transition-all group">
+                                            <div class="text-xs font-bold text-gray-200 group-hover:text-[#00d4ff]">Gujarat Coast</div>
+                                            <div class="text-[10px] font-mono text-[#8892a4]">20.0° N, 69.5° E</div>
+                                        </button>
+                                        <button type="button" onclick="setPreset(12.5, 82.5)" class="preset-btn p-2.5 rounded-xl bg-[#081220] border border-white/[0.08] hover:border-[#00d4ff] hover:bg-[#00d4ff]/10 text-left transition-all group">
+                                            <div class="text-xs font-bold text-gray-200 group-hover:text-[#00d4ff]">Chennai Offshore</div>
+                                            <div class="text-[10px] font-mono text-[#8892a4]">12.5° N, 82.5° E</div>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <hr class="border-white/[0.08]">
+
+                                <form method="POST" action="{% url 'patch_viewer' %}" class="space-y-4">
+                                    {% csrf_token %}
+                                    <div>
+                                        <label for="{{ form.file_name.id_for_label }}" class="block text-xs font-semibold text-gray-300 mb-1.5 flex items-center justify-between">
+                                            <span>{{ form.file_name.label }}</span>
+                                            <i data-lucide="database" class="w-3.5 h-3.5 text-[#8892a4]"></i>
+                                        </label>
+                                        {{ form.file_name }}
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div><label for="{{ form.target_lat.id_for_label }}" class="block text-xs font-semibold text-gray-300 mb-1.5">{{ form.target_lat.label }}</label>{{ form.target_lat }}</div>
+                                        <div><label for="{{ form.target_lon.id_for_label }}" class="block text-xs font-semibold text-gray-300 mb-1.5">{{ form.target_lon.label }}</label>{{ form.target_lon }}</div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div><label for="{{ form.patch_size.id_for_label }}" class="block text-xs font-semibold text-gray-300 mb-1.5">{{ form.patch_size.label }}</label>{{ form.patch_size }}</div>
+                                        <div><label for="{{ form.colormap.id_for_label }}" class="block text-xs font-semibold text-gray-300 mb-1.5">{{ form.colormap.label }}</label>{{ form.colormap }}</div>
+                                    </div>
+                                    <button type="submit" class="w-full mt-2 py-3 px-4 rounded-xl text-sm font-bold text-black flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 hover:scale-[1.01] transition-all cursor-pointer" style="background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%);">
+                                        <i data-lucide="cpu" class="w-4 h-4 stroke-[2.5]"></i>
+                                        <span>Extract & Render Thermal Patch</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
+                        <div class="rounded-2xl bg-[#0d1f3c]/80 border border-white/[0.08] backdrop-blur-xl shadow-xl overflow-hidden flex flex-col flex-1">
+                            <div class="px-5 py-4 bg-[#0c1b33] border-b border-white/[0.08] flex items-center justify-between gap-3">
+                                <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                                    <i data-lucide="eye" class="w-4 h-4 text-[#00d4ff]"></i>
+                                    Extracted Thermal Imagery & Detailed Telemetry
+                                </h2>
+                                {% if image_uri %}
+                                <a href="{{ image_uri }}" download="cyclone_patch_{{ target_lat }}_{{ target_lon }}.png" class="px-3 py-1.5 rounded-lg bg-[#00d4ff]/20 text-[#00d4ff] border border-[#00d4ff]/30 text-xs font-bold flex items-center gap-1.5 hover:bg-[#00d4ff] hover:text-black transition-all">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    <span>Export Image</span>
+                                </a>
+                                {% endif %}
+                            </div>
+
+                            <div class="p-5 flex flex-col flex-1">
+                                {% if image_uri %}
+                                <div class="relative w-full rounded-2xl bg-[#060c17] border border-white/[0.1] p-4 flex flex-col items-center justify-center overflow-hidden shadow-inner">
+                                    <div class="absolute top-6 left-6 z-10 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-md border border-white/15 text-[11px] font-mono text-cyan-300 flex items-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                                        <span>Target Center: {{ target_lat }}°N, {{ target_lon }}°E</span>
+                                    </div>
+                                    <div class="relative max-w-full overflow-hidden rounded-xl border border-cyan-500/20 shadow-2xl">
+                                        <img src="{{ image_uri }}" alt="MOSDAC Satellite Thermal Patch" class="max-w-full h-auto object-contain max-h-[520px]">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-5">
+                                    <div class="p-3 rounded-xl bg-[#081220] border border-white/[0.08] text-center">
+                                        <div class="text-[10px] font-bold text-[#8892a4] uppercase mb-1">MIN IR VALUE</div>
+                                        <div class="text-base font-bold font-mono text-cyan-300">{{ stats.min }}</div>
+                                    </div>
+                                    <div class="p-3 rounded-xl bg-[#081220] border border-white/[0.08] text-center">
+                                        <div class="text-[10px] font-bold text-[#8892a4] uppercase mb-1">MAX IR VALUE</div>
+                                        <div class="text-base font-bold font-mono text-amber-300">{{ stats.max }}</div>
+                                    </div>
+                                    <div class="p-3 rounded-xl bg-[#081220] border border-white/[0.08] text-center">
+                                        <div class="text-[10px] font-bold text-[#8892a4] uppercase mb-1">MEAN COUNT</div>
+                                        <div class="text-base font-bold font-mono text-emerald-300">{{ stats.mean }}</div>
+                                    </div>
+                                    <div class="p-3 rounded-xl bg-[#081220] border border-white/[0.08] text-center">
+                                        <div class="text-[10px] font-bold text-[#8892a4] uppercase mb-1">STD DEV</div>
+                                        <div class="text-base font-bold font-mono text-purple-300">{{ stats.std }}</div>
+                                    </div>
+                                    <div class="p-3 rounded-xl bg-[#081220] border border-white/[0.08] text-center">
+                                        <div class="text-[10px] font-bold text-[#8892a4] uppercase mb-1">CENTER (Y, X)</div>
+                                        <div class="text-xs font-bold font-mono text-rose-300 mt-1">{{ metadata.center_y }}, {{ metadata.center_x }}</div>
+                                    </div>
+                                    <div class="p-3 rounded-xl bg-[#081220] border border-white/[0.08] text-center">
+                                        <div class="text-[10px] font-bold text-[#8892a4] uppercase mb-1">GRID LAT/LON</div>
+                                        <div class="text-xs font-bold font-mono text-cyan-400 mt-1">{{ metadata.nearest_lat }}°, {{ metadata.nearest_lon }}°</div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="flex-1 min-h-[380px] flex flex-col items-center justify-center p-8 text-center bg-[#060c17]/50 rounded-2xl border border-dashed border-white/10">
+                                    <div class="w-16 h-16 rounded-full bg-[#00d4ff]/10 border border-[#00d4ff]/20 flex items-center justify-center text-[#00d4ff] mb-4">
+                                        <i data-lucide="satellite-dish" class="w-8 h-8"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-white mb-1">No Thermal Patch Selected</h3>
+                                    <p class="text-xs text-[#8892a4] max-w-sm">Select an HDF5 dataset file and geographic target coordinates on the left panel, then click <strong class="text-white">Extract & Render Thermal Patch</strong>.</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- TAB 3: DETECTION -->
+            <div id="tab-detection" class="tab-content hidden space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-[#00d4ff] font-bold uppercase tracking-wider mb-1">Deep Learning Computer Vision</div>
+                        <h1 class="text-2xl font-extrabold text-white">YOLO-v8 / ViT AI Detection Engine</h1>
+                    </div>
+                    <button onclick="showToast('Inference complete (0.28s). Detected 3 structures.', 'success')" class="px-4 py-2 rounded-xl bg-[#00d4ff] text-black font-bold text-xs cursor-pointer">Execute Neural Inference</button>
+                </div>
+                <div class="p-6 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] text-xs text-[#8892a4]">AI Detection Canvas Active (YOLO-v8 Weather v2.4)</div>
+            </div>
+
+            <!-- TAB 4: CLASSIFICATION -->
+            <div id="tab-classification" class="tab-content hidden space-y-6">
+                <h1 class="text-2xl font-extrabold text-white">Automated Dvorak Technique (ADT) Gauges</h1>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="p-5 rounded-2xl bg-[#0d1f3c] border border-white/10 text-center"><div class="text-4xl font-black text-[#00d4ff] font-mono">T5.5</div><div class="text-xs text-rose-400 font-bold mt-1">Very Severe Cyclonic Storm</div></div>
+                    <div class="p-5 rounded-2xl bg-[#0d1f3c] border border-white/10 text-center"><div class="text-4xl font-black text-amber-300 font-mono">968 hPa</div><div class="text-xs text-emerald-400 font-bold mt-1">Central Pressure</div></div>
+                    <div class="p-5 rounded-2xl bg-[#0d1f3c] border border-white/10 text-center"><div class="text-4xl font-black text-rose-400 font-mono">185 km/h</div><div class="text-xs text-gray-300 font-bold mt-1">Max Sustained Wind</div></div>
+                </div>
+            </div>
+
+            <!-- TAB 5: FORECAST -->
+            <div id="tab-forecast" class="tab-content hidden space-y-6">
+                <h1 class="text-2xl font-extrabold text-white">96-Hour Trajectory Ensemble Forecast</h1>
+                <div class="p-5 rounded-2xl bg-[#0d1f3c] border border-white/10 text-xs font-mono text-cyan-300">Target Trajectory Model: Landfall Near Puri (Odisha) on 14-Sep 18:00 IST</div>
+            </div>
+
+            <!-- TAB 6: HISTORICAL CYCLONE TRACK MAPPING & SYNOPTIC PLAYBACK -->
+            <div id="tab-historical" class="tab-content hidden space-y-6">
+                <!-- Header & Cyclone Archive Selector -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
+                    <div>
+                        <div class="flex items-center gap-2 text-xs font-bold text-[#00d4ff] uppercase tracking-wider mb-1">
+                            <i data-lucide="history" class="w-4 h-4"></i>
+                            <span>{% trans "NOAA IBTrACS & IMD Ground-Truth Archive" %}</span>
+                        </div>
+                        <h1 class="text-2xl lg:text-3xl font-extrabold text-white">
+                            {% trans "Historical Cyclone Track Mapping & Trajectory Playback" %}
+                        </h1>
+                    </div>
+
+                    <!-- Interactive Cyclone Selector & Controls -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0c1b33] border border-cyan-500/40 text-xs text-white shadow-lg">
+                            <i data-lucide="disc" class="w-4 h-4 text-[#00d4ff] animate-spin"></i>
+                            <span class="text-[11px] font-bold uppercase text-[#8892a4]">{% trans "Cyclone Archive" %}:</span>
+                            <select id="historical-cyclone-select" onchange="fetchHistoricalTrack(this.value)" class="bg-transparent text-xs font-bold text-[#00d4ff] focus:outline-none cursor-pointer border-none py-0.5">
+                                <option value="Biparjoy" selected class="bg-[#0c1b33] text-white">🌀 Cyclone Biparjoy (Jun 2023 · Arabian Sea)</option>
+                                <option value="Michaung" class="bg-[#0c1b33] text-white">🌀 Cyclone Michaung (Dec 2023 · Bay of Bengal)</option>
+                                <option value="Mocha" class="bg-[#0c1b33] text-white">🌀 Cyclone Mocha (May 2023 · Bay of Bengal)</option>
+                                <option value="Amphan" class="bg-[#0c1b33] text-white">🌀 Super Cyclone Amphan (May 2020 · Bay of Bengal)</option>
+                                <option value="Tauktae" class="bg-[#0c1b33] text-white">🌀 Cyclone Tauktae (May 2021 · Arabian Sea)</option>
+                            </select>
+                        </div>
+
+                        <button onclick="fetchHistoricalTrack(document.getElementById('historical-cyclone-select').value)" class="px-3.5 py-2 rounded-xl bg-cyan-500/20 text-[#00d4ff] border border-cyan-500/40 text-xs font-bold hover:bg-cyan-500 hover:text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                            <span>{% trans "Reload Track" %}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Summary Cards for Selected Historical Cyclone -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] hover:border-cyan-500/40 transition-all shadow-xl">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] font-bold uppercase mb-1">
+                            <span>{% trans "PEAK SUSTAINED WIND" %}</span>
+                            <i data-lucide="wind" class="w-4 h-4 text-rose-400"></i>
+                        </div>
+                        <div id="hist-kpi-wind" class="text-2xl font-black text-rose-400 font-mono">105.0 kts</div>
+                        <div id="hist-kpi-wind-kmh" class="text-[11px] text-[#8892a4] mt-1">194.5 km/h &bull; <span id="hist-kpi-category" class="text-rose-300 font-bold">ESCS</span></div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] hover:border-cyan-500/40 transition-all shadow-xl">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] font-bold uppercase mb-1">
+                            <span>{% trans "MIN CENTRAL PRESSURE" %}</span>
+                            <i data-lucide="gauge" class="w-4 h-4 text-cyan-400"></i>
+                        </div>
+                        <div id="hist-kpi-pressure" class="text-2xl font-black text-cyan-300 font-mono">946.0 hPa</div>
+                        <div class="text-[11px] text-[#8892a4] mt-1">Deep convective eye barometric drop</div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] hover:border-cyan-500/40 transition-all shadow-xl">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] font-bold uppercase mb-1">
+                            <span>{% trans "TOTAL TRACK WAYPOINTS" %}</span>
+                            <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i>
+                        </div>
+                        <div id="hist-kpi-waypoints" class="text-2xl font-black text-emerald-400 font-mono">56 Points</div>
+                        <div id="hist-kpi-dates" class="text-[11px] text-[#8892a4] mt-1 truncate">06 Jun 2023 – 16 Jun 2023</div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-[#0d1f3c] border border-white/[0.08] hover:border-cyan-500/40 transition-all shadow-xl">
+                        <div class="flex items-center justify-between text-xs text-[#8892a4] font-bold uppercase mb-1">
+                            <span>{% trans "BASIN & LANDFALL" %}</span>
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i>
+                        </div>
+                        <div id="hist-kpi-basin" class="text-lg font-black text-amber-300 truncate">Arabian Sea</div>
+                        <div id="hist-kpi-landfall" class="text-[11px] text-[#8892a4] mt-1 truncate">Jakhau Port, Gujarat</div>
+                    </div>
+                </div>
+
+                <!-- MAIN WORKSPACE: Interactive Map & Step-by-Step Trajectory Player -->
+                <div class="rounded-2xl bg-[#0d1f3c] border border-white/[0.08] p-5 shadow-2xl space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 border border-cyan-500/40 flex items-center justify-center text-[#00d4ff]">
+                                <i data-lucide="route" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 id="hist-map-title" class="font-extrabold text-sm text-white">
+                                    CYCLONE BIPARJOY (2023) — FULL SYNOPTIC BEST-TRACK RECONSTRUCTION
+                                </h3>
+                                <div class="text-[11px] text-[#8892a4] font-mono">Ground-Truth Spatial Polyline with Dynamic Eye Movement Simulation</div>
+                            </div>
+                        </div>
+
+                        <!-- Map Layer Style Toggle -->
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1 bg-[#081220] p-1 rounded-xl border border-white/10 text-[11px]">
+                                <button id="hist-basemap-dark" onclick="setHistBaseMap('dark')" class="px-2.5 py-0.5 rounded-lg bg-[#00d4ff] text-black font-bold">Dark</button>
+                                <button id="hist-basemap-satellite" onclick="setHistBaseMap('satellite')" class="px-2.5 py-0.5 rounded-lg text-[#8892a4] hover:text-white font-medium">Satellite</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real Leaflet GIS Map Canvas -->
+                    <div class="relative w-full h-[520px] rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+                        <div id="historical-gis-map" class="w-full h-full z-0"></div>
+
+                        <!-- Live Telemetry Coordinates & Step HUD (Top-Left overlay) -->
+                        <div class="absolute top-3 left-3 z-[400] bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-xl border border-cyan-500/30 text-xs font-mono text-cyan-300 flex items-center gap-3 shadow-xl">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                            <span id="hist-hud-step" class="font-bold text-white">Step 1 / 56</span>
+                            <span class="text-white/30">|</span>
+                            <span id="hist-hud-time" class="text-amber-300">2023-06-06 00:00:00</span>
+                            <span class="text-white/30">|</span>
+                            <span id="hist-hud-coords" class="text-[#00d4ff]">11.50°N, 66.00°E</span>
+                        </div>
+
+                        <!-- GIS Map Legend Overlay (Bottom Left) -->
+                        <div class="absolute bottom-3 left-3 z-[400] bg-black/90 backdrop-blur-md p-3 rounded-xl border border-white/15 text-[10px] space-y-1.5 font-mono shadow-2xl max-w-[260px]">
+                            <div class="font-bold text-gray-200 border-b border-white/10 pb-1 flex items-center justify-between">
+                                <span>INTENSITY COLOR CODE</span>
+                                <span class="text-[9px] text-[#00d4ff]">IMD / WMO</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-rose-400">
+                                <span class="w-3 h-3 rounded-full bg-[#ef4444]"></span> SuCS (≥ 120 kts)
+                            </div>
+                            <div class="flex items-center gap-2 text-orange-400">
+                                <span class="w-3 h-3 rounded-full bg-[#f97316]"></span> ESCS (90 – 119 kts)
+                            </div>
+                            <div class="flex items-center gap-2 text-amber-300">
+                                <span class="w-3 h-3 rounded-full bg-[#eab308]"></span> VSCS (64 – 89 kts)
+                            </div>
+                            <div class="flex items-center gap-2 text-cyan-300">
+                                <span class="w-3 h-3 rounded-full bg-[#06b6d4]"></span> SCS (48 – 63 kts)
+                            </div>
+                            <div class="flex items-center gap-2 text-emerald-400">
+                                <span class="w-3 h-3 rounded-full bg-[#10b981]"></span> CS (34 – 47 kts)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP-BY-STEP PLAYBACK & SCRUBBER CONTROLLER DECK -->
+                    <div class="p-4 rounded-xl bg-[#081220] border border-white/[0.08] space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <!-- Playback Control Buttons -->
+                            <div class="flex items-center gap-2">
+                                <button id="hist-play-btn" onclick="toggleHistoricalPlay()" class="px-4 py-2 rounded-xl bg-[#00d4ff] text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-cyan-500/20 hover:bg-cyan-400 transition-all cursor-pointer">
+                                    <i id="hist-play-icon" data-lucide="play" class="w-4 h-4 fill-black"></i>
+                                    <span id="hist-play-text">PLAY ANIMATION</span>
+                                </button>
+
+                                <button onclick="stepHistoricalAnimation(-1)" title="Previous Step" class="p-2 rounded-xl bg-white/10 text-gray-200 hover:bg-white/20 hover:text-white transition-all cursor-pointer border border-white/10">
+                                    <i data-lucide="skip-back" class="w-4 h-4"></i>
+                                </button>
+
+                                <button onclick="stepHistoricalAnimation(1)" title="Next Step" class="p-2 rounded-xl bg-white/10 text-gray-200 hover:bg-white/20 hover:text-white transition-all cursor-pointer border border-white/10">
+                                    <i data-lucide="skip-forward" class="w-4 h-4"></i>
+                                </button>
+
+                                <button onclick="resetHistoricalAnimation()" title="Reset to Start" class="p-2 rounded-xl bg-white/10 text-gray-200 hover:bg-white/20 hover:text-white transition-all cursor-pointer border border-white/10">
+                                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                </button>
+
+                                <div class="flex items-center gap-1 ml-2 text-xs text-[#8892a4] font-mono">
+                                    <span>Speed:</span>
+                                    <select id="hist-speed-select" onchange="setHistoricalSpeed(this.value)" class="bg-[#0d1f3c] text-cyan-300 font-bold text-xs rounded-lg px-2 py-1 border border-white/10 cursor-pointer focus:outline-none">
+                                        <option value="1200">0.5x (Slow)</option>
+                                        <option value="600" selected>1.0x (Normal)</option>
+                                        <option value="300">2.0x (Fast)</option>
+                                        <option value="120">5.0x (Ultra)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Live Telemetry Metric Badges for Current Step -->
+                            <div class="flex items-center gap-3 font-mono text-xs">
+                                <div class="px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+                                    Wind: <strong id="hist-active-wind" class="text-white">25.0 kts</strong> (<span id="hist-active-wind-kmh">46.3 km/h</span>)
+                                </div>
+                                <div class="px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+                                    Pressure: <strong id="hist-active-press" class="text-white">1000.0 hPa</strong>
+                                </div>
+                                <div id="hist-active-badge" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold uppercase text-[10px]">
+                                    Cyclonic Storm
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Scrubber Range Slider -->
+                        <div class="space-y-1 pt-1">
+                            <div class="flex items-center justify-between text-[11px] font-mono text-[#8892a4]">
+                                <span>Timeline Progress: <span id="hist-scrubber-label" class="text-white font-bold">Genesis (Step 1)</span></span>
+                                <span id="hist-slider-time" class="text-cyan-300">2023-06-06 00:00:00</span>
+                            </div>
+                            <input id="hist-time-slider" type="range" min="0" max="55" value="0" oninput="seekHistoricalStep(parseInt(this.value))" class="w-full h-2 bg-[#0d1f3c] rounded-lg appearance-none cursor-pointer accent-[#00d4ff] border border-white/10">
+                        </div>
+                    </div>
+
+                    <!-- Chronological Waypoint Table Archive -->
+                    <div class="rounded-xl border border-white/[0.08] overflow-hidden">
+                        <div class="px-4 py-3 bg-[#0c1b33] border-b border-white/[0.08] flex items-center justify-between">
+                            <h4 class="font-bold text-xs text-white flex items-center gap-2">
+                                <i data-lucide="list" class="w-4 h-4 text-[#00d4ff]"></i>
+                                Chronological Waypoint Log (Click any row to jump map focus)
+                            </h4>
+                            <span id="hist-table-count" class="text-[11px] font-mono text-cyan-400">56 Synoptic Observations</span>
+                        </div>
+
+                        <div class="max-h-64 overflow-y-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-[#081220] text-[#8892a4] uppercase font-bold border-b border-white/[0.08] sticky top-0 z-10 font-mono text-[10px]">
+                                    <tr>
+                                        <th class="p-2.5">Step</th>
+                                        <th class="p-2.5">Timestamp (UTC)</th>
+                                        <th class="p-2.5">Coordinates</th>
+                                        <th class="p-2.5">Sustained Wind</th>
+                                        <th class="p-2.5">Central Pressure</th>
+                                        <th class="p-2.5">Intensity Classification</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hist-waypoints-table-body" class="divide-y divide-white/[0.06] font-mono">
+                                    <!-- Populated dynamically by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- TAB 7: REPORTS -->
+            <div id="tab-reports" class="tab-content hidden space-y-6">
+                <h1 class="text-2xl font-extrabold text-white">IMD Tropical Cyclone Advisory Bulletins</h1>
+                <div class="p-5 rounded-2xl bg-[#0d1f3c] border border-white/10 text-xs font-mono text-emerald-300">National Bulletin No. 14 Issued &bull; Great Danger Signal IX Hoisted</div>
+            </div>
+
+            <!-- TAB 8: SETTINGS -->
+            <div id="tab-settings" class="tab-content hidden space-y-6">
+                <h1 class="text-2xl font-extrabold text-white">Telemetry & Sensor Settings</h1>
+                <div class="p-5 rounded-2xl bg-[#0d1f3c] border border-white/10 text-xs text-[#8892a4]">MOSDAC API Endpoint: https://mosdac.gov.in/download_api</div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- MISSION CONTROL FOOTER -->
+    <footer class="py-3 px-6 border-t border-white/[0.08] bg-[#081220] text-xs text-[#8892a4] flex flex-col sm:flex-row items-center justify-between gap-2 select-none">
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>MOSDAC Satellite HDF5 Cyclone Processing Core &bull; Django & Matplotlib</span>
+        </div>
+        <div>
+            National Tropical Cyclone Warning Centre &bull; India Meteorological Department (IMD)
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT ENGINE -->
+    <script>
+        // Global variables & Django context trajectory
+        window.PRIMARY_TRACK = {{ primary_track_json|default:'[]'|safe }};
+        window.TARGET_LAT = {{ target_lat|default:"15.4" }};
+        window.TARGET_LON = {{ target_lon|default:"87.2" }};
+        
+        let gisMap = null;
+        let buoyLayerGroup = null;
+        let ensembleLayerGroup = null;
+        let coastalLayerGroup = null;
+        let baseTileLayers = {};
+        let activeBaseMap = 'dark';
+
+        let showBuoys = true;
+        let showEnsemble = true;
+        let showCoastal = true;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initGISMap();
+            
+            {% if image_uri %}
+            switchPortal('command');
+            switchTab('satellite');
+            {% endif %}
+        });
+
+        // --------------------------------------------------------------------------
+        // 1. GIS Map Initialization Engine
+        // --------------------------------------------------------------------------
+        function initGISMap() {
+            const mapContainer = document.getElementById('gis-synoptic-map');
+            if (!mapContainer || gisMap) return;
+
+            // Center on North Indian Ocean / Target Cyclone Location
+            gisMap = L.map('gis-synoptic-map', {
+                center: [window.TARGET_LAT || 16.5, window.TARGET_LON || 85.0],
+                zoom: 5,
+                minZoom: 4,
+                maxZoom: 11,
+                zoomControl: true,
+                attributionControl: false
+            });
+            window.map = gisMap;
+
+            // CartoDB Dark Matter Base Tiles
+            baseTileLayers.dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(gisMap);
+
+            // ESRI World Imagery (Satellite)
+            baseTileLayers.satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 18
+            });
+
+            // Initialize Layer Groups
+            buoyLayerGroup = L.layerGroup().addTo(gisMap);
+            ensembleLayerGroup = L.layerGroup().addTo(gisMap);
+            coastalLayerGroup = L.layerGroup().addTo(gisMap);
+
+            // Populate Layers
+            renderOceanBuoysLayer();
+            renderEnsembleTracksLayer();
+            renderCoastalZonesLayer();
+
+            // Track mousemove for telemetry HUD
+            gisMap.on('mousemove', (e) => {
+                const hud = document.getElementById('map-telemetry-coords');
+                if (hud) {
+                    hud.textContent = `Cursor: ${e.latlng.lat.toFixed(2)}°N, ${e.latlng.lng.toFixed(2)}°E`;
+                }
+            });
+
+            gisMap.on('mouseout', () => {
+                const hud = document.getElementById('map-telemetry-coords');
+                if (hud) {
+                    hud.textContent = `Center: ${(window.TARGET_LAT || 15.4).toFixed(1)}°N, ${(window.TARGET_LON || 87.2).toFixed(1)}°E`;
+                }
+            });
+
+            setTimeout(() => gisMap.invalidateSize(), 250);
+        }
+
+        function setBaseMap(type) {
+            if (!gisMap) return;
+            if (type === 'dark') {
+                if (gisMap.hasLayer(baseTileLayers.satellite)) gisMap.removeLayer(baseTileLayers.satellite);
+                baseTileLayers.dark.addTo(gisMap);
+                document.getElementById('basemap-dark').className = "px-2 py-0.5 rounded-lg bg-[#00d4ff] text-black font-bold";
+                document.getElementById('basemap-satellite').className = "px-2 py-0.5 rounded-lg text-[#8892a4] hover:text-white font-medium";
+            } else {
+                if (gisMap.hasLayer(baseTileLayers.dark)) gisMap.removeLayer(baseTileLayers.dark);
+                baseTileLayers.satellite.addTo(gisMap);
+                document.getElementById('basemap-satellite').className = "px-2 py-0.5 rounded-lg bg-[#00d4ff] text-black font-bold";
+                document.getElementById('basemap-dark').className = "px-2 py-0.5 rounded-lg text-[#8892a4] hover:text-white font-medium";
+            }
+        }
+
+        function toggleGisLayer(layerName) {
+            if (!gisMap) return;
+            if (layerName === 'buoys') {
+                showBuoys = !showBuoys;
+                const btn = document.getElementById('layer-btn-buoys');
+                if (showBuoys) {
+                    buoyLayerGroup.addTo(gisMap);
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-cyan-500/20 text-[#00d4ff] border border-cyan-500/40 shadow-sm cursor-pointer";
+                    showToast("Ocean Buoy Sensor Layer (40 stations) Enabled", "info");
+                } else {
+                    gisMap.removeLayer(buoyLayerGroup);
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-[#081220] text-[#8892a4] border border-white/10 cursor-pointer";
+                    showToast("Ocean Buoy Sensor Layer Disabled", "info");
+                }
+            } else if (layerName === 'ensemble') {
+                showEnsemble = !showEnsemble;
+                const btn = document.getElementById('layer-btn-ensemble');
+                if (showEnsemble) {
+                    ensembleLayerGroup.addTo(gisMap);
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm cursor-pointer";
+                    showToast("Ensemble Uncertainty Tracks (3 models) Enabled", "info");
+                } else {
+                    gisMap.removeLayer(ensembleLayerGroup);
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-[#081220] text-[#8892a4] border border-white/10 cursor-pointer";
+                    showToast("Ensemble Tracks Disabled", "info");
+                }
+            } else if (layerName === 'coastal') {
+                showCoastal = !showCoastal;
+                const btn = document.getElementById('layer-btn-coastal');
+                if (showCoastal) {
+                    coastalLayerGroup.addTo(gisMap);
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm cursor-pointer";
+                    showToast("Coastal Vulnerability Zones GeoJSON Enabled", "info");
+                } else {
+                    gisMap.removeLayer(coastalLayerGroup);
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-[#081220] text-[#8892a4] border border-white/10 cursor-pointer";
+                    showToast("Coastal Zones Layer Disabled", "info");
+                }
+            }
+        }
+
+        // --------------------------------------------------------------------------
+        // 2. Requirement 1: Ocean Buoys Simulation (40 GeoJSON Markers + Tooltip)
+        // --------------------------------------------------------------------------
+        function renderOceanBuoysLayer() {
+            if (!buoyLayerGroup) return;
+            buoyLayerGroup.clearLayers();
+
+            const BUOY_POINTS = [
+                // Bay of Bengal (22 buoys)
+                { id: "INCOIS-BD01", name: "North Bay Deep Sea", lat: 19.85, lon: 89.20 },
+                { id: "INCOIS-BD02", name: "Paradip Offshore Sensor", lat: 19.12, lon: 87.45 },
+                { id: "INCOIS-BD03", name: "Puri Coastal Mooring", lat: 18.50, lon: 86.80 },
+                { id: "INCOIS-BD04", name: "Gopalpur Deep Mooring", lat: 17.80, lon: 85.90 },
+                { id: "INCOIS-BD05", name: "Visakhapatnam Deep Sea", lat: 16.90, lon: 84.80 },
+                { id: "INCOIS-BD06", name: "Kakinada Offshore Station", lat: 15.85, lon: 83.90 },
+                { id: "INCOIS-BD07", name: "Machilipatnam Synoptic", lat: 15.20, lon: 82.80 },
+                { id: "INCOIS-BD08", name: "Central BoB RAMA Array", lat: 15.00, lon: 88.50 },
+                { id: "INCOIS-BD09", name: "East Central BoB Mooring", lat: 14.20, lon: 90.10 },
+                { id: "INCOIS-BD10", name: "Andaman Sea North Array", lat: 13.50, lon: 92.80 },
+                { id: "INCOIS-BD11", name: "Port Blair Western Mooring", lat: 11.60, lon: 91.90 },
+                { id: "INCOIS-BD12", name: "Nicobar Deep Marine Buoy", lat: 8.50, lon: 92.50 },
+                { id: "INCOIS-BD13", name: "South Central BoB Array", lat: 10.50, lon: 86.50 },
+                { id: "INCOIS-BD14", name: "Chennai High-Seas Station", lat: 13.30, lon: 81.90 },
+                { id: "INCOIS-BD15", name: "Nellore Marine Observatory", lat: 14.10, lon: 81.20 },
+                { id: "INCOIS-BD16", name: "Puducherry Offshore Array", lat: 11.90, lon: 80.80 },
+                { id: "INCOIS-BD17", name: "Nagapattinam Synoptic", lat: 10.75, lon: 80.60 },
+                { id: "INCOIS-BD18", name: "Palk Strait Deep Sensor", lat: 9.80, lon: 80.20 },
+                { id: "INCOIS-BD19", name: "Gulf of Mannar Station", lat: 8.70, lon: 78.90 },
+                { id: "INCOIS-BD20", name: "Sundarbans Delta Mooring", lat: 21.20, lon: 88.80 },
+                { id: "INCOIS-BD21", name: "Digha Deep Water Sensor", lat: 20.90, lon: 87.90 },
+                { id: "INCOIS-BD22", name: "Myanmar Shelf Observatory", lat: 16.50, lon: 93.20 },
+
+                // Arabian Sea (18 buoys)
+                { id: "NIOT-AD01", name: "Kutch Offshore Observatory", lat: 22.40, lon: 68.20 },
+                { id: "NIOT-AD02", name: "Dwarka Deep Sea Station", lat: 21.80, lon: 68.50 },
+                { id: "NIOT-AD03", name: "Porbandar Coastal Buoy", lat: 20.90, lon: 69.10 },
+                { id: "NIOT-AD04", name: "Veraval Marine Platform", lat: 20.10, lon: 69.80 },
+                { id: "NIOT-AD05", name: "Gulf of Khambhat Deep", lat: 19.80, lon: 71.20 },
+                { id: "NIOT-AD06", name: "Mumbai High Offshore", lat: 19.20, lon: 71.60 },
+                { id: "NIOT-AD07", name: "Alibaug Deep Sea Mooring", lat: 18.50, lon: 72.10 },
+                { id: "NIOT-AD08", name: "Ratnagiri Marine Array", lat: 16.80, lon: 72.40 },
+                { id: "NIOT-AD09", name: "Goa Central Offshore", lat: 15.30, lon: 73.10 },
+                { id: "NIOT-AD10", name: "Karwar Synoptic Buoy", lat: 14.60, lon: 73.50 },
+                { id: "NIOT-AD11", name: "Mangalore High-Seas Station", lat: 12.80, lon: 74.10 },
+                { id: "NIOT-AD12", name: "Kozhikode Marine Platform", lat: 11.20, lon: 74.80 },
+                { id: "NIOT-AD13", name: "Kochi Deep Marine Mooring", lat: 9.80, lon: 75.30 },
+                { id: "NIOT-AD14", name: "Lakshadweep North Array", lat: 11.80, lon: 72.60 },
+                { id: "NIOT-AD15", name: "Kavaratti Deep Sea Sensor", lat: 10.50, lon: 72.20 },
+                { id: "NIOT-AD16", name: "Minicoy Marine Station", lat: 8.30, lon: 73.00 },
+                { id: "NIOT-AD17", name: "Central Arabian Sea RAMA-1", lat: 15.00, lon: 67.50 },
+                { id: "NIOT-AD18", name: "West Central Arabian Sea-2", lat: 17.50, lon: 66.20 }
+            ];
+
+            // GeoJSON FeatureCollection
+            const buoyGeoJSON = {
+                type: "FeatureCollection",
+                features: BUOY_POINTS.map((b, i) => {
+                    // Realistic simulated environmental parameters
+                    const temp = (27.2 + ((b.lat * 7 + b.lon * 3 + i * 5) % 38) / 10).toFixed(1); // 27.2°C - 31.0°C
+                    const pressure = (992.0 + ((b.lat * 11 + b.lon * 7 + i * 3) % 170) / 10).toFixed(1); // 992 - 1009 hPa
+                    const waveHeight = (1.8 + ((b.lat * 4 + b.lon * 9 + i * 7) % 26) / 10).toFixed(1); // 1.8 - 4.4 m
+                    const windSpeed = (16 + ((b.lat * 8 + b.lon * 6 + i) % 22)).toFixed(0); // 16 - 38 kt
+                    const salinity = (32.4 + ((b.lat + b.lon) % 30) / 10).toFixed(1);
+
+                    return {
+                        type: "Feature",
+                        geometry: { type: "Point", coordinates: [b.lon, b.lat] },
+                        properties: {
+                            id: b.id,
+                            name: b.name,
+                            temp: temp,
+                            pressure: pressure,
+                            waveHeight: waveHeight,
+                            windSpeed: windSpeed,
+                            salinity: salinity,
+                            status: "Active (Telemetry Synchronized)"
+                        }
+                    };
+                })
+            };
+
+            L.geoJSON(buoyGeoJSON, {
+                pointToLayer: function(feature, latlng) {
+                    const marker = L.circleMarker(latlng, {
+                        radius: 5,
+                        fillColor: "#00d4ff",
+                        color: "#ffffff",
+                        weight: 1.5,
+                        opacity: 0.95,
+                        fillOpacity: 0.85
+                    });
+
+                    const p = feature.properties;
+                    const tooltipHtml = `
+                        <div class="space-y-1.5 font-sans leading-tight min-w-[190px]">
+                            <div class="flex items-center justify-between border-b border-cyan-500/30 pb-1">
+                                <strong class="text-[#00d4ff] font-bold text-xs">${p.id}</strong>
+                                <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">ONLINE</span>
+                            </div>
+                            <div class="text-[11px] font-semibold text-gray-200">${p.name}</div>
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px] font-mono pt-1 text-gray-300">
+                                <div>Temp: <strong class="text-amber-300">${p.temp}°C</strong></div>
+                                <div>Press: <strong class="text-cyan-300">${p.pressure} hPa</strong></div>
+                                <div>Wave: <strong class="text-rose-300">${p.waveHeight} m</strong></div>
+                                <div>Wind: <strong class="text-white">${p.windSpeed} kt</strong></div>
+                            </div>
+                            <div class="text-[9px] text-[#8892a4] pt-1 border-t border-white/10 flex items-center justify-between font-mono">
+                                <span>Coords: ${latlng.lat.toFixed(2)}°, ${latlng.lng.toFixed(2)}°</span>
+                                <span class="text-cyan-400">INCOIS Net</span>
+                            </div>
+                        </div>
+                    `;
+
+                    marker.bindTooltip(tooltipHtml, {
+                        className: 'buoy-tooltip',
+                        direction: 'top',
+                        offset: [0, -6],
+                        opacity: 1
+                    });
+
+                    marker.on('mouseover', function() {
+                        this.setRadius(7.5);
+                        this.setStyle({ fillColor: '#ffffff', color: '#00d4ff', weight: 2.5 });
+                    });
+
+                    marker.on('mouseout', function() {
+                        this.setRadius(5);
+                        this.setStyle({ fillColor: '#00d4ff', color: '#ffffff', weight: 1.5 });
+                    });
+
+                    return marker;
+                }
+            }).addTo(buoyLayerGroup);
+        }
+
+        // --------------------------------------------------------------------------
+        // 3. Requirement 2: Ensemble Tracks with Math Variation
+        // --------------------------------------------------------------------------
+        function renderEnsembleTracksLayer() {
+            if (!ensembleLayerGroup) return;
+            ensembleLayerGroup.clearLayers();
+
+            let primaryTrack = window.PRIMARY_TRACK;
+            if (!primaryTrack || !Array.isArray(primaryTrack) || primaryTrack.length === 0) {
+                const targetLat = window.TARGET_LAT || 15.4;
+                const targetLon = window.TARGET_LON || 87.2;
+                primaryTrack = [
+                    { lat: targetLat - 3.2, lon: targetLon + 3.8, time: "T-24h", wind_kmh: 125, pressure_hpa: 984, stage: "Cyclonic Storm" },
+                    { lat: targetLat - 1.7, lon: targetLon + 2.1, time: "T-12h", wind_kmh: 155, pressure_hpa: 970, stage: "Severe Cyclonic Storm" },
+                    { lat: targetLat, lon: targetLon, time: "T-0h (Current Eye)", wind_kmh: 185, pressure_hpa: 955, stage: "Very Severe Cyclonic Storm (VSCS)" },
+                    { lat: targetLat + 1.5, lon: targetLon - 1.6, time: "T+12h (Forecast)", wind_kmh: 170, pressure_hpa: 962, stage: "Very Severe Cyclonic Storm" },
+                    { lat: targetLat + 3.1, lon: targetLon - 2.9, time: "T+24h (Landfall Sector)", wind_kmh: 145, pressure_hpa: 974, stage: "Imminent Landfall" },
+                    { lat: targetLat + 4.6, lon: targetLon - 4.1, time: "T+36h (Inland Dissipation)", wind_kmh: 75, pressure_hpa: 995, stage: "Deep Depression" }
+                ];
+            }
+
+            const primaryCoords = primaryTrack.map(pt => [pt.lat, pt.lon]);
+
+            // Draw Primary Track Solid Line
+            const primaryPolyline = L.polyline(primaryCoords, {
+                color: '#ff3b3b',
+                weight: 3.5,
+                opacity: 0.95,
+                lineJoin: 'round'
+            }).addTo(ensembleLayerGroup);
+
+            primaryPolyline.bindTooltip(`
+                <div class="font-mono text-xs font-bold text-rose-400">
+                    <div>PRIMARY OPERATIONAL FORECAST TRACK</div>
+                    <div class="text-[10px] text-gray-200">Category 3 VSCS &bull; Landfall Sector: Odisha/WB</div>
+                </div>
+            `, { className: 'buoy-tooltip', sticky: true });
+
+            // Waypoint Markers for Primary Track
+            primaryTrack.forEach((pt, idx) => {
+                const isCurrentEye = idx === 2 || (pt.time && pt.time.includes('Current'));
+                
+                if (isCurrentEye) {
+                    // Pulsing animated eye marker
+                    const eyeIcon = L.divIcon({
+                        className: 'storm-pulse-container',
+                        html: `
+                            <div class="storm-pulse-ring"></div>
+                            <div class="storm-pulse-core"></div>
+                        `,
+                        iconSize: [42, 42],
+                        iconAnchor: [21, 21]
+                    });
+
+                    const eyeMarker = L.marker([pt.lat, pt.lon], { icon: eyeIcon }).addTo(ensembleLayerGroup);
+                    eyeMarker.bindPopup(`
+                        <div class="p-2 space-y-1.5 font-sans">
+                            <div class="flex items-center justify-between border-b border-rose-500/40 pb-1">
+                                <span class="text-xs font-black text-rose-400">CYCLONE DANA (EYE)</span>
+                                <span class="text-[9px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono font-bold">CAT 3</span>
+                            </div>
+                            <div class="text-xs font-bold text-white">Very Severe Cyclonic Storm</div>
+                            <div class="grid grid-cols-2 gap-2 text-xs font-mono pt-1 text-gray-200">
+                                <div>Max Wind: <strong class="text-rose-400">${pt.wind_kmh || 185} km/h</strong></div>
+                                <div>Pressure: <strong class="text-cyan-300">${pt.pressure_hpa || 955} hPa</strong></div>
+                            </div>
+                            <div class="text-[10px] font-mono text-cyan-400 pt-1">Location: ${pt.lat.toFixed(2)}°N, ${pt.lon.toFixed(2)}°E</div>
+                        </div>
+                    `);
+                } else {
+                    const wpMarker = L.circleMarker([pt.lat, pt.lon], {
+                        radius: 4,
+                        fillColor: pt.time && pt.time.includes('T+') ? '#00d4ff' : '#f59e0b',
+                        color: '#ffffff',
+                        weight: 1.5,
+                        fillOpacity: 0.9
+                    }).addTo(ensembleLayerGroup);
+
+                    wpMarker.bindTooltip(`
+                        <div class="font-mono text-[10px]">
+                            <strong class="text-white">${pt.time}</strong><br>
+                            Wind: ${pt.wind_kmh || '--'} km/h | Press: ${pt.pressure_hpa || '--'} hPa<br>
+                            <span class="text-cyan-300">${pt.stage || ''}</span>
+                        </div>
+                    `, { className: 'buoy-tooltip', direction: 'top' });
+                }
+            });
+
+            // ----------------------------------------------------------------------
+            // 3 Ensemble Uncertainty Trajectories (Mathematical Variation)
+            // ----------------------------------------------------------------------
+            const ensembleModels = [
+                {
+                    name: "ECMWF Perturbation Member A (North-East Bias)",
+                    color: "#a855f7", // Purple
+                    dash: "4, 8",
+                    fn: (lat, lon, i) => [
+                        lat + (0.16 * Math.pow(i, 1.22)),
+                        lon - (0.12 * Math.pow(i, 1.18))
+                    ]
+                },
+                {
+                    name: "GFS-GEFS Perturbation Member B (South-West Bias)",
+                    color: "#f59e0b", // Amber
+                    dash: "3, 6",
+                    fn: (lat, lon, i) => [
+                        lat - (0.19 * Math.pow(i, 1.15)),
+                        lon + (0.14 * Math.pow(i, 1.10))
+                    ]
+                },
+                {
+                    name: "UKMET Perturbation Member C (Recurvature Wave)",
+                    color: "#38bdf8", // Sky Blue
+                    dash: "2, 6",
+                    fn: (lat, lon, i) => [
+                        lat + (Math.sin(i * 1.35) * 0.28),
+                        lon - (0.20 * Math.pow(i, 1.12))
+                    ]
+                }
+            ];
+
+            ensembleModels.forEach((model) => {
+                const ensCoords = primaryTrack.map((pt, i) => {
+                    if (i <= 1) return [pt.lat, pt.lon]; // Historical steps align exactly
+                    return model.fn(pt.lat, pt.lon, i - 1);
+                });
+
+                const ensPolyline = L.polyline(ensCoords, {
+                    color: model.color,
+                    weight: 2.2,
+                    opacity: 0.55,
+                    dashArray: model.dash,
+                    lineJoin: 'round'
+                }).addTo(ensembleLayerGroup);
+
+                ensPolyline.bindTooltip(`
+                    <div class="font-mono text-[10px] space-y-0.5">
+                        <div class="font-bold text-white">${model.name}</div>
+                        <div class="text-[#8892a4]">Forecast Uncertainty Spread Cone</div>
+                    </div>
+                `, { className: 'buoy-tooltip', sticky: true });
+            });
+        }
+
+        // --------------------------------------------------------------------------
+        // 4. Requirement 3: Coastal Zones GeoJSON with Faint Cyan Fill for Active States
+        // --------------------------------------------------------------------------
+        function renderCoastalZonesLayer() {
+            if (!coastalLayerGroup) return;
+            coastalLayerGroup.clearLayers();
+
+            // Lightweight GeoJSON Polygons for Coastal States of India
+            const COASTAL_STATES_GEOJSON = {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        type: "Feature",
+                        properties: { name: "Odisha", code: "OD", nearTrajectory: true, risk: "CRITICAL HIGH (88.4/100)", alert: "MANDATORY EVACUATION DISPATCH" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[84.8, 19.0], [85.5, 19.4], [86.8, 19.9], [87.5, 21.6], [86.9, 22.2], [85.2, 22.0], [83.8, 20.2], [84.1, 19.2], [84.8, 19.0]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { name: "West Bengal & Sundarbans", code: "WB", nearTrajectory: true, risk: "MODERATE RISK (62.1/100)", alert: "EMERGENCY SHELTER STANDBY" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[87.5, 21.6], [88.5, 21.5], [89.1, 21.8], [88.9, 23.2], [87.8, 23.5], [86.9, 22.2], [87.5, 21.6]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { name: "Andhra Pradesh", code: "AP", nearTrajectory: true, risk: "ELEVATED WATCH (48.2/100)", alert: "COASTAL GALE MONITORING" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[80.2, 13.5], [80.6, 15.8], [82.8, 16.9], [84.8, 19.0], [83.8, 18.5], [81.5, 16.5], [79.5, 14.2], [80.2, 13.5]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { name: "Tamil Nadu", code: "TN", nearTrajectory: false, risk: "LOW / NORMAL (12.8/100)", alert: "NORMAL HARBOR OPERATIONS" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[77.5, 8.1], [78.2, 9.2], [79.8, 10.3], [80.3, 13.4], [79.2, 13.0], [77.8, 11.2], [77.5, 8.1]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { name: "Gujarat", code: "GJ", nearTrajectory: false, risk: "SAFE (15.2/100)", alert: "NORMAL ADVISORY" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[68.2, 23.0], [69.0, 22.4], [70.5, 20.8], [72.8, 21.0], [73.2, 22.5], [71.5, 23.8], [68.8, 23.9], [68.2, 23.0]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { name: "Maharashtra", code: "MH", nearTrajectory: false, risk: "SAFE (18.6/100)", alert: "NORMAL ADVISORY" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[72.7, 18.9], [73.2, 16.0], [74.5, 16.5], [74.0, 20.0], [72.8, 20.1], [72.7, 18.9]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { name: "Kerala", code: "KL", nearTrajectory: false, risk: "SAFE (14.0/100)", alert: "NORMAL ADVISORY" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[75.0, 12.5], [76.2, 10.0], [77.2, 8.3], [77.5, 8.1], [76.5, 10.5], [75.0, 12.5]]]
+                        }
+                    }
+                ]
+            };
+
+            L.geoJSON(COASTAL_STATES_GEOJSON, {
+                style: function(feature) {
+                    const near = feature.properties.nearTrajectory;
+                    return {
+                        fillColor: near ? "#00d4ff" : "#38bdf8",
+                        fillOpacity: near ? 0.18 : 0.04,
+                        color: near ? "#00d4ff" : "#1e40af",
+                        weight: near ? 1.8 : 1.0,
+                        dashArray: near ? "4, 4" : null
+                    };
+                },
+                onEachFeature: function(feature, layer) {
+                    const p = feature.properties;
+                    
+                    // Hover highlight
+                    layer.on('mouseover', function(e) {
+                        const l = e.target;
+                        l.setStyle({
+                            fillOpacity: p.nearTrajectory ? 0.38 : 0.15,
+                            weight: 2.5,
+                            color: '#00d4ff'
+                        });
+                    });
+
+                    layer.on('mouseout', function(e) {
+                        const l = e.target;
+                        l.setStyle({
+                            fillOpacity: p.nearTrajectory ? 0.18 : 0.04,
+                            weight: p.nearTrajectory ? 1.8 : 1.0,
+                            color: p.nearTrajectory ? '#00d4ff' : '#1e40af'
+                        });
+                    });
+
+                    // Interactive Popup
+                    const popupContent = `
+                        <div class="p-2 space-y-1.5 font-sans min-w-[210px]">
+                            <div class="flex items-center justify-between border-b border-cyan-500/30 pb-1">
+                                <strong class="text-sm font-bold text-white">${p.name}</strong>
+                                <span class="text-[9px] px-2 py-0.5 rounded ${p.nearTrajectory ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-emerald-500/20 text-emerald-300'} font-mono font-bold">
+                                    ${p.code}
+                                </span>
+                            </div>
+                            <div class="text-xs font-mono text-[#8892a4]">Vulnerability Score: <strong class="text-white">${p.risk}</strong></div>
+                            <div class="text-[11px] font-bold ${p.nearTrajectory ? 'text-rose-400' : 'text-emerald-400'} pt-1 border-t border-white/10">
+                                ⚡ ${p.alert}
+                            </div>
+                            <div class="text-[9px] text-cyan-300 font-mono pt-1">
+                                Status: ${p.nearTrajectory ? 'Within 300km Active Storm Cone' : 'Beyond Immediate Threat Arc'}
+                            </div>
+                        </div>
+                    `;
+                    layer.bindPopup(popupContent);
+                }
+            }).addTo(coastalLayerGroup);
+        }
+
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto px-4 py-3 rounded-xl border backdrop-blur-xl text-xs font-bold shadow-2xl flex items-center gap-2.5 transition-all duration-300 transform translate-x-8 opacity-0`;
+            
+            if (type === 'success') {
+                toast.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300');
+                toast.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> <span>${message}</span>`;
+            } else if (type === 'warning') {
+                toast.classList.add('bg-amber-500/10', 'border-amber-500/30', 'text-amber-300');
+                toast.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i> <span>${message}</span>`;
+            } else {
+                toast.classList.add('bg-[#00d4ff]/10', 'border-[#00d4ff]/30', 'text-cyan-300');
+                toast.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-[#00d4ff]"></i> <span>${message}</span>`;
+            }
+
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => toast.classList.remove('translate-x-8', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('translate-x-8', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // Real-Time IST Clock Engine
+        function updateISTClock() {
+            const now = new Date();
+            const options = {
+                timeZone: 'Asia/Kolkata',
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false
+            };
+            const istString = now.toLocaleString('en-IN', options) + ' IST';
+            const clockEl = document.getElementById('live-ist-clock');
+            if (clockEl) clockEl.textContent = istString;
+        }
+        setInterval(updateISTClock, 1000);
+        updateISTClock();
+
+        // PORTAL SWITCHING ENGINE
+        function switchPortal(portalId) {
+            document.querySelectorAll('.portal-view').forEach(el => el.classList.add('hidden'));
+
+            const landingNav = document.getElementById('nav-portal-landing');
+            const citizenNav = document.getElementById('nav-portal-citizen');
+            const commandNav = document.getElementById('nav-portal-command');
+
+            [landingNav, citizenNav, commandNav].forEach(n => {
+                if (n) n.className = "px-3 py-1 rounded-lg text-xs font-semibold text-[#8892a4] hover:text-white flex items-center gap-1.5 transition-all cursor-pointer";
+            });
+
+            if (portalId === 'landing') {
+                const elLanding = document.getElementById('view-landing');
+                if (elLanding) elLanding.classList.remove('hidden');
+                if (landingNav) landingNav.className = "px-3 py-1 rounded-lg text-xs font-bold bg-[#00d4ff] text-black shadow-lg shadow-cyan-500/20 flex items-center gap-1.5 transition-all cursor-pointer";
+            } else if (portalId === 'citizen') {
+                const elCit = document.getElementById('view-citizen');
+                if (elCit) elCit.classList.remove('hidden');
+                if (citizenNav) citizenNav.className = "px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-black shadow-lg shadow-emerald-500/20 flex items-center gap-1.5 transition-all cursor-pointer";
+            } else if (portalId === 'command') {
+                const elCmd = document.getElementById('view-command');
+                if (elCmd) elCmd.classList.remove('hidden');
+                if (commandNav) commandNav.className = "px-3 py-1 rounded-lg text-xs font-bold bg-[#00d4ff] text-black shadow-lg shadow-cyan-500/20 flex items-center gap-1.5 transition-all cursor-pointer";
+                if (gisMap) setTimeout(() => gisMap.invalidateSize(), 150);
+            }
+            lucide.createIcons();
+        }
+
+        // TAB SWITCHING ENGINE INSIDE COMMAND CENTER
+        function switchTab(tabId) {
+            switchPortal('command');
+            document.querySelectorAll('#view-command .tab-content').forEach(el => el.classList.add('hidden'));
+
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.classList.remove('bg-[#00d4ff]', 'text-black', 'font-bold', 'shadow-lg', 'shadow-cyan-500/20');
+                el.classList.add('text-[#8892a4]', 'hover:bg-white/[0.06]', 'hover:text-white', 'font-semibold');
+                const icon = el.querySelector('i');
+                if (icon) icon.classList.remove('stroke-[2.5]');
+            });
+
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeNav) {
+                activeNav.classList.remove('text-[#8892a4]', 'hover:bg-white/[0.06]', 'hover:text-white', 'font-semibold');
+                activeNav.classList.add('bg-[#00d4ff]', 'text-black', 'font-bold', 'shadow-lg', 'shadow-cyan-500/20');
+                const icon = activeNav.querySelector('i');
+                if (icon) icon.classList.add('stroke-[2.5]');
+            }
+            if (gisMap && (tabId === 'dashboard' || tabId === 'forecast')) {
+                setTimeout(() => gisMap.invalidateSize(), 150);
+            }
+            lucide.createIcons();
+        }
+
+        // DASHBOARD CONDITION SYNOPTIC ALERT CONTROLLER (From Screenshot)
+        function setDashboardCondition(cond) {
+            const btnSafe = document.getElementById('alert-lvl-safe');
+            const btnInter = document.getElementById('alert-lvl-inter');
+            const btnSevere = document.getElementById('alert-lvl-severe');
+            const lampBulb = document.getElementById('status-lamp-bulb');
+            const tag = document.getElementById('dash-assessment-tag');
+            const stormTag = document.getElementById('dash-assessment-storm');
+            const statusStrip = document.getElementById('dash-status-strip');
+            const statusText = document.getElementById('dash-status-text');
+            const headerTag = document.getElementById('header-broadcast-tag');
+
+            [btnSafe, btnInter, btnSevere].forEach(b => {
+                b.className = "px-3 py-1 rounded-lg font-bold text-[#8892a4] hover:bg-white/10 border border-transparent transition-all cursor-pointer";
+            });
+
+            if (cond === 'safe') {
+                btnSafe.className = "px-3 py-1 rounded-lg font-bold bg-[#00d4ff] text-black shadow-md shadow-cyan-500/30 transition-all cursor-pointer";
+                lampBulb.className = "w-8 h-8 rounded-full bg-cyan-400 shadow-[0_0_20px_#00d4ff] animate-pulse flex items-center justify-center text-black font-extrabold text-[10px]";
+                lampBulb.textContent = "SAFE";
+                tag.className = "px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-bold";
+                tag.textContent = "Safe / Normal Watch";
+                stormTag.textContent = "[DEPRESSION BOB-01]";
+                statusStrip.className = "p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-500/30 text-cyan-300 flex items-center gap-2.5 text-xs font-semibold";
+                statusText.textContent = "METEOROLOGICAL STATUS: SAFE — Basin synoptic parameters within safe thresholds. Low pressure dissipation.";
+                headerTag.className = "font-bold text-emerald-400";
+                headerTag.textContent = "● SAFE WATCH DEPRESSION BOB-01 (1)";
+                showToast("⚡ Synoptic Alert Level Calibrated: Safe / Normal Watch", "success");
+            } else if (cond === 'intermediate') {
+                btnInter.className = "px-3 py-1 rounded-lg font-bold bg-amber-400 text-black shadow-md shadow-amber-500/30 transition-all cursor-pointer";
+                lampBulb.className = "w-8 h-8 rounded-full bg-amber-400 shadow-[0_0_20px_#ff9500] animate-pulse flex items-center justify-center text-black font-extrabold text-[10px]";
+                lampBulb.textContent = "ALERT";
+                tag.className = "px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold";
+                tag.textContent = "Intermediate Cyclonic Advisory";
+                stormTag.textContent = "[CYCLONE REMAL - CAT 1]";
+                statusStrip.className = "p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/30 text-amber-300 flex items-center gap-2.5 text-xs font-semibold";
+                statusText.textContent = "METEOROLOGICAL STATUS: INTERMEDIATE — Category 1 cyclonic system detected. Coastal gale warnings with squally winds up to 120 km/h.";
+                headerTag.className = "font-bold text-amber-400";
+                headerTag.textContent = "● ADVISORY CYCLONE REMAL (CAT 1)";
+                showToast("🚨 Synoptic Alert Level Calibrated: Intermediate Advisory", "warning");
+            } else if (cond === 'severe') {
+                btnSevere.className = "px-3 py-1 rounded-lg font-bold bg-rose-500 text-black shadow-md shadow-rose-500/30 transition-all cursor-pointer";
+                lampBulb.className = "w-8 h-8 rounded-full bg-rose-500 shadow-[0_0_25px_#ff1744] animate-ping flex items-center justify-center text-black font-extrabold text-[10px]";
+                lampBulb.textContent = "DANGER";
+                tag.className = "px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold";
+                tag.textContent = "Severe Tropical Cyclone Emergency";
+                stormTag.textContent = "[CYCLONE DANA - CAT 3 VSCS]";
+                statusStrip.className = "p-3.5 rounded-xl bg-rose-950/40 border border-rose-500/50 text-rose-300 flex items-center gap-2.5 text-xs font-semibold animate-pulse";
+                statusText.textContent = "METEOROLOGICAL STATUS: SEVERE — Category 3 Very Severe Cyclone. Imminent coastal landfall with hurricane-force winds (185 km/h).";
+                headerTag.className = "font-bold text-rose-400 animate-pulse";
+                headerTag.textContent = "● CRITICAL WARNING CYCLONE DANA (CAT 3)";
+                showToast("🚨 Synoptic Alert Level Calibrated: SEVERE EMERGENCY THREAT!", "warning");
+            }
+            lucide.createIcons();
+        }
+
+        // Preset Button Helper Function
+        function setPreset(lat, lon) {
+            const latInput = document.getElementById('id_target_lat');
+            const lonInput = document.getElementById('id_target_lon');
+            if (latInput && lonInput) {
+                latInput.value = lat;
+                lonInput.value = lon;
+                latInput.classList.add('border-[#00d4ff]', 'shadow-cyan-500/20');
+                lonInput.classList.add('border-[#00d4ff]', 'shadow-cyan-500/20');
+                setTimeout(() => {
+                    latInput.classList.remove('border-[#00d4ff]', 'shadow-cyan-500/20');
+                    lonInput.classList.remove('border-[#00d4ff]', 'shadow-cyan-500/20');
+                }, 1200);
+                showToast(`Coordinates set to ${lat}°N, ${lon}°E`, 'info');
+            }
+        }
+
+        // Citizen SOS Dispatch Handler
+        function handleCitizenSOS(e) {
+            e.preventDefault();
+            showToast('🚨 EMERGENCY SOS DISPATCHED TO NDRF & COASTAL RESCUE TEAMS! Tracking Code: SOS-892144', 'success');
+        }
+
+        // Auth Modal Controls
+        function openAuthModal(mode) {
+            const modal = document.getElementById('auth-modal');
+            const content = document.getElementById('auth-modal-content');
+            modal.classList.remove('hidden');
+
+            if (mode === 'login') {
+                content.innerHTML = `
+                    <h3 class="text-xl font-bold text-white mb-1">Sign In to METEORA</h3>
+                    <p class="text-xs text-[#8892a4] mb-4">Select your role to access Command Center or Citizen Portal.</p>
+                    <form onsubmit="event.preventDefault(); closeAuthModal(); switchPortal('command'); switchTab('dashboard'); showToast('Logged in as Dr. M. Kumar (Senior Meteorologist)', 'success');" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block text-gray-300 mb-1">Email / Credentials</label>
+                            <input type="email" value="dr.kumar@imd.gov.in" class="form-input text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 mb-1">Password</label>
+                            <input type="password" value="••••••••" class="form-input text-xs">
+                        </div>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-[#00d4ff] text-black font-bold text-xs cursor-pointer shadow-lg shadow-cyan-500/20">Sign In to Command Center</button>
+                    </form>
+                `;
+            } else if (mode === 'citizen_signup') {
+                content.innerHTML = `
+                    <h3 class="text-xl font-bold text-white mb-1">Register Citizen Account</h3>
+                    <p class="text-xs text-[#8892a4] mb-4">Receive SMS emergency warnings & evacuation shelter updates.</p>
+                    <form onsubmit="event.preventDefault(); closeAuthModal(); switchPortal('citizen'); showToast('Registered as Coastal Resident! Citizen Safety Portal unlocked.', 'success');" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block text-gray-300 mb-1">Full Name</label>
+                            <input type="text" placeholder="e.g. Rajesh Mohapatra" required class="form-input text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 mb-1">Mobile Phone Number</label>
+                            <input type="tel" placeholder="+91 98765 43210" required class="form-input text-xs">
+                        </div>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-emerald-500 text-black font-bold text-xs cursor-pointer shadow-lg shadow-emerald-500/20">Create Citizen Safety Account</button>
+                    </form>
+                `;
+            } else {
+                content.innerHTML = `
+                    <h3 class="text-xl font-bold text-white mb-1">Register Forecaster ID</h3>
+                    <p class="text-xs text-[#8892a4] mb-4">Official accreditation for IMD / MoES meteorologists.</p>
+                    <form onsubmit="event.preventDefault(); closeAuthModal(); switchPortal('command'); switchTab('dashboard'); showToast('Forecaster credentials accredited! Command Center unlocked.', 'success');" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block text-gray-300 mb-1">Official Email (@imd.gov.in / @moes.gov.in)</label>
+                            <input type="email" placeholder="officer@imd.gov.in" required class="form-input text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 mb-1">Station ID / Department</label>
+                            <input type="text" placeholder="New Delhi HQ / Regional Cyclone Centre" required class="form-input text-xs">
+                        </div>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-[#00d4ff] text-black font-bold text-xs cursor-pointer shadow-lg shadow-cyan-500/20">Request Forecaster Access</button>
+                    </form>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        function changeCoastalState(code) {
+            const stateCoords = {
+                OD: { name: "Odisha Coast", lat: 19.8, lon: 85.8 },
+                WB: { name: "West Bengal & Sundarbans", lat: 21.5, lon: 88.3 },
+                AP: { name: "Andhra Pradesh Coast", lat: 15.9, lon: 80.6 },
+                TN: { name: "Tamil Nadu & Puducherry", lat: 13.0, lon: 80.2 },
+                GJ: { name: "Gujarat Coast", lat: 21.5, lon: 69.6 },
+                MH: { name: "Maharashtra & Konkan", lat: 18.9, lon: 72.8 },
+                KL: { name: "Kerala & Lakshadweep", lat: 9.9, lon: 76.2 }
+            };
+            const sel = stateCoords[code] || stateCoords.OD;
+            if (window.map) {
+                window.map.flyTo([sel.lat, sel.lon], 7);
+            }
+            showToast(`Monitoring Region updated: ${sel.name} (Lat ${sel.lat}°N, Lon ${sel.lon}°E)`, 'info');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+
+        // ==========================================================================
+        // 5. HISTORICAL CYCLONE TRACK MAPPING & SYNOPTIC PLAYBACK ENGINE
+        // ==========================================================================
+        let histMap = null;
+        let histBaseTiles = {};
+        let histPolylineLayer = null;
+        let histMarkersLayer = null;
+        let histEyeMarker = null;
+        let histTrackData = null;
+        let histCurrentStep = 0;
+        let histIsPlaying = false;
+        let histPlayInterval = null;
+        let histSpeedMs = 600;
+
+        function initHistoricalMap() {
+            const mapEl = document.getElementById('historical-gis-map');
+            if (!mapEl || histMap) {
+                if (histMap) {
+                    setTimeout(() => histMap.invalidateSize(), 150);
+                }
+                return;
+            }
+
+            histMap = L.map('historical-gis-map', {
+                center: [18.0, 68.0],
+                zoom: 5,
+                minZoom: 4,
+                maxZoom: 12,
+                zoomControl: true,
+                attributionControl: false
+            });
+
+            histBaseTiles.dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(histMap);
+
+            histBaseTiles.satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 18
+            });
+
+            histPolylineLayer = L.layerGroup().addTo(histMap);
+            histMarkersLayer = L.layerGroup().addTo(histMap);
+
+            setTimeout(() => histMap.invalidateSize(), 200);
+        }
+
+        function setHistBaseMap(type) {
+            if (!histMap) return;
+            if (type === 'dark') {
+                if (histMap.hasLayer(histBaseTiles.satellite)) histMap.removeLayer(histBaseTiles.satellite);
+                histBaseTiles.dark.addTo(histMap);
+                document.getElementById('hist-basemap-dark').className = "px-2.5 py-0.5 rounded-lg bg-[#00d4ff] text-black font-bold";
+                document.getElementById('hist-basemap-satellite').className = "px-2.5 py-0.5 rounded-lg text-[#8892a4] hover:text-white font-medium";
+            } else {
+                if (histMap.hasLayer(histBaseTiles.dark)) histMap.removeLayer(histBaseTiles.dark);
+                histBaseTiles.satellite.addTo(histMap);
+                document.getElementById('hist-basemap-satellite').className = "px-2.5 py-0.5 rounded-lg bg-[#00d4ff] text-black font-bold";
+                document.getElementById('hist-basemap-dark').className = "px-2.5 py-0.5 rounded-lg text-[#8892a4] hover:text-white font-medium";
+            }
+        }
+
+        async function fetchHistoricalTrack(cycloneName = 'Biparjoy') {
+            initHistoricalMap();
+            pauseHistoricalAnimation();
+
+            const hudStep = document.getElementById('hist-hud-step');
+            if (hudStep) hudStep.textContent = "Loading Track...";
+
+            let url = `/api/historical-tracks/?cyclone=${encodeURIComponent(cycloneName)}`;
+
+            try {
+                let res = await fetch(url);
+                if (!res.ok) {
+                    // Try Flask backend port 5000 fallback
+                    res = await fetch(`http://127.0.0.1:5000/api/historical-tracks?cyclone=${encodeURIComponent(cycloneName)}`);
+                }
+                const data = await res.json();
+                if (data.success && data.points && data.points.length > 0) {
+                    histTrackData = data;
+                    renderHistoricalTrack(data);
+                    showToast(`Loaded ${data.total_points} historical track waypoints for ${data.cyclone_name}`, 'success');
+                } else {
+                    showToast(`Could not load track data for ${cycloneName}`, 'warning');
+                }
+            } catch (err) {
+                console.error("Historical track fetch error:", err);
+                showToast(`Error connecting to historical track API: ${err.message}`, 'warning');
+            }
+        }
+
+        function renderHistoricalTrack(data) {
+            if (!histMap) return;
+
+            // 1. Update KPI Cards & Title
+            const titleEl = document.getElementById('hist-map-title');
+            if (titleEl) titleEl.textContent = `${data.cyclone_name.toUpperCase()} (${data.year || 2023}) — FULL SYNOPTIC BEST-TRACK RECONSTRUCTION`;
+
+            const kpiWind = document.getElementById('hist-kpi-wind');
+            if (kpiWind) kpiWind.textContent = `${data.peak_wind_kts || 0} kts`;
+
+            const kpiWindKmh = document.getElementById('hist-kpi-wind-kmh');
+            if (kpiWindKmh) kpiWindKmh.innerHTML = `${data.peak_wind_kmh || 0} km/h &bull; <span class="text-rose-300 font-bold">${data.max_category || ''}</span>`;
+
+            const kpiPress = document.getElementById('hist-kpi-pressure');
+            if (kpiPress) kpiPress.textContent = `${data.min_pressure_hpa || 1000} hPa`;
+
+            const kpiPts = document.getElementById('hist-kpi-waypoints');
+            if (kpiPts) kpiPts.textContent = `${data.total_points} Points`;
+
+            const kpiDates = document.getElementById('hist-kpi-dates');
+            if (kpiDates) kpiDates.textContent = data.dates_active || '';
+
+            const kpiBasin = document.getElementById('hist-kpi-basin');
+            if (kpiBasin) kpiBasin.textContent = data.basin || 'North Indian Ocean';
+
+            const kpiLandfall = document.getElementById('hist-kpi-landfall');
+            if (kpiLandfall) kpiLandfall.textContent = data.landfall_target || '';
+
+            const tableCount = document.getElementById('hist-table-count');
+            if (tableCount) tableCount.textContent = `${data.total_points} Synoptic Observations`;
+
+            // 2. Clear Previous Layers
+            histPolylineLayer.clearLayers();
+            histMarkersLayer.clearLayers();
+            if (histEyeMarker) {
+                histMap.removeLayer(histEyeMarker);
+                histEyeMarker = null;
+            }
+
+            const points = data.points;
+            const latLngs = points.map(p => [p.lat, p.lon]);
+
+            // 3. Draw High-Density Connected Glow Trajectory Polyline
+            // Draw background glow
+            L.polyline(latLngs, {
+                color: '#00d4ff',
+                weight: 6,
+                opacity: 0.25,
+                lineJoin: 'round'
+            }).addTo(histPolylineLayer);
+
+            // Draw segmented multi-colored polyline based on storm intensity
+            for (let i = 0; i < points.length - 1; i++) {
+                const seg = [
+                    [points[i].lat, points[i].lon],
+                    [points[i+1].lat, points[i+1].lon]
+                ];
+                const color = points[i+1].color || '#00d4ff';
+                L.polyline(seg, {
+                    color: color,
+                    weight: 3.5,
+                    opacity: 0.9,
+                    lineJoin: 'round'
+                }).addTo(histPolylineLayer);
+            }
+
+            // 4. Add Interactive Waypoint Circle Markers
+            points.forEach((pt, idx) => {
+                const marker = L.circleMarker([pt.lat, pt.lon], {
+                    radius: 4.5,
+                    fillColor: pt.color || '#00d4ff',
+                    color: '#ffffff',
+                    weight: 1.5,
+                    fillOpacity: 0.95
+                }).addTo(histMarkersLayer);
+
+                const popupHtml = `
+                    <div class="p-2 space-y-1 font-sans text-xs min-w-[200px]">
+                        <div class="flex items-center justify-between border-b border-cyan-500/40 pb-1">
+                            <strong class="text-white">${data.cyclone_name}</strong>
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-cyan-300">Step ${pt.step}</span>
+                        </div>
+                        <div class="font-mono text-amber-300 text-[11px]">${pt.timestamp}</div>
+                        <div class="text-[11px] text-gray-200">Category: <strong style="color: ${pt.color}">${pt.category || pt.status}</strong></div>
+                        <div class="grid grid-cols-2 gap-2 text-[11px] font-mono pt-1 text-gray-300 border-t border-white/10">
+                            <div>Wind: <strong class="text-rose-400">${pt.wind_speed_kts} kts</strong></div>
+                            <div>Press: <strong class="text-cyan-300">${pt.pressure_hpa} hPa</strong></div>
+                        </div>
+                        <div class="text-[10px] font-mono text-cyan-400 pt-0.5">Location: ${pt.lat.toFixed(2)}°N, ${pt.lon.toFixed(2)}°E</div>
+                    </div>
+                `;
+                marker.bindPopup(popupHtml);
+
+                marker.on('click', () => {
+                    seekHistoricalStep(idx);
+                });
+            });
+
+            // 5. Create Pulsing Dynamic Cyclone Vortex Eye Marker
+            const eyeIcon = L.divIcon({
+                className: 'storm-pulse-container',
+                html: `
+                    <div class="storm-pulse-ring" style="border-color: #ff3b3b;"></div>
+                    <div class="storm-pulse-core" style="background: #ff3b3b; box-shadow: 0 0 18px #ff3b3b;"></div>
+                `,
+                iconSize: [42, 42],
+                iconAnchor: [21, 21]
+            });
+
+            histEyeMarker = L.marker([points[0].lat, points[0].lon], {
+                icon: eyeIcon,
+                zIndexOffset: 1000
+            }).addTo(histMap);
+
+            // 6. Adjust Bounds
+            const bounds = L.latLngBounds(latLngs);
+            histMap.fitBounds(bounds, { padding: [40, 40] });
+
+            // 7. Configure Scrubber Slider
+            const slider = document.getElementById('hist-time-slider');
+            if (slider) {
+                slider.min = 0;
+                slider.max = points.length - 1;
+                slider.value = 0;
+            }
+
+            // 8. Populate Waypoints Table
+            renderWaypointsTable(points);
+
+            // 9. Seek to First Waypoint
+            seekHistoricalStep(0);
+        }
+
+        function renderWaypointsTable(points) {
+            const tbody = document.getElementById('hist-waypoints-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            points.forEach((pt, idx) => {
+                const tr = document.createElement('tr');
+                tr.id = `hist-row-${idx}`;
+                tr.className = "hover:bg-cyan-500/10 transition-colors cursor-pointer";
+                tr.onclick = () => seekHistoricalStep(idx);
+
+                tr.innerHTML = `
+                    <td class="p-2.5 text-cyan-400 font-bold">${pt.step}</td>
+                    <td class="p-2.5 text-gray-200">${pt.timestamp}</td>
+                    <td class="p-2.5 text-[#00d4ff]">${pt.lat.toFixed(2)}°N, ${pt.lon.toFixed(2)}°E</td>
+                    <td class="p-2.5 text-rose-400 font-bold">${pt.wind_speed_kts} kts (${pt.wind_speed_kmh || (pt.wind_speed_kts * 1.852).toFixed(1)} km/h)</td>
+                    <td class="p-2.5 text-cyan-300">${pt.pressure_hpa} hPa</td>
+                    <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold" style="background: ${pt.color}25; color: ${pt.color}; border: 1px solid ${pt.color}50;">${pt.category || pt.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function seekHistoricalStep(stepIndex) {
+            if (!histTrackData || !histTrackData.points || histTrackData.points.length === 0) return;
+            const points = histTrackData.points;
+            stepIndex = Math.max(0, Math.min(stepIndex, points.length - 1));
+            histCurrentStep = stepIndex;
+
+            const pt = points[stepIndex];
+
+            // Update Animated Eye Marker Position
+            if (histEyeMarker) {
+                histEyeMarker.setLatLng([pt.lat, pt.lon]);
+            }
+
+            // Update Telemetry HUD
+            const hudStep = document.getElementById('hist-hud-step');
+            if (hudStep) hudStep.textContent = `Step ${pt.step} / ${points.length}`;
+
+            const hudTime = document.getElementById('hist-hud-time');
+            if (hudTime) hudTime.textContent = pt.timestamp;
+
+            const hudCoords = document.getElementById('hist-hud-coords');
+            if (hudCoords) hudCoords.textContent = `${pt.lat.toFixed(2)}°N, ${pt.lon.toFixed(2)}°E`;
+
+            const activeWind = document.getElementById('hist-active-wind');
+            if (activeWind) activeWind.textContent = `${pt.wind_speed_kts} kts`;
+
+            const activeWindKmh = document.getElementById('hist-active-wind-kmh');
+            if (activeWindKmh) activeWindKmh.textContent = `${pt.wind_speed_kmh || (pt.wind_speed_kts * 1.852).toFixed(1)} km/h`;
+
+            const activePress = document.getElementById('hist-active-press');
+            if (activePress) activePress.textContent = `${pt.pressure_hpa} hPa`;
+
+            const activeBadge = document.getElementById('hist-active-badge');
+            if (activeBadge) {
+                activeBadge.textContent = pt.category || pt.status;
+                activeBadge.style.color = pt.color;
+                activeBadge.style.borderColor = pt.color + "60";
+                activeBadge.style.backgroundColor = pt.color + "20";
+            }
+
+            // Update Scrubber Slider
+            const slider = document.getElementById('hist-time-slider');
+            if (slider) slider.value = stepIndex;
+
+            const scrubberLabel = document.getElementById('hist-scrubber-label');
+            if (scrubberLabel) scrubberLabel.textContent = `Step ${pt.step} of ${points.length} (${pt.category || pt.status})`;
+
+            const sliderTime = document.getElementById('hist-slider-time');
+            if (sliderTime) sliderTime.textContent = pt.timestamp;
+
+            // Highlight Active Row in Table
+            document.querySelectorAll('#hist-waypoints-table-body tr').forEach(r => r.classList.remove('bg-cyan-500/20', 'border-l-4', 'border-l-[#00d4ff]'));
+            const activeRow = document.getElementById(`hist-row-${stepIndex}`);
+            if (activeRow) {
+                activeRow.classList.add('bg-cyan-500/20', 'border-l-4', 'border-l-[#00d4ff]');
+                activeRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function toggleHistoricalPlay() {
+            if (histIsPlaying) {
+                pauseHistoricalAnimation();
+            } else {
+                playHistoricalAnimation();
+            }
+        }
+
+        function playHistoricalAnimation() {
+            if (!histTrackData || !histTrackData.points) return;
+            histIsPlaying = true;
+
+            const btn = document.getElementById('hist-play-btn');
+            if (btn) {
+                btn.className = "px-4 py-2 rounded-xl bg-amber-400 text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 hover:bg-amber-300 transition-all cursor-pointer";
+                const txt = document.getElementById('hist-play-text');
+                if (txt) txt.textContent = "PAUSE ANIMATION";
+                const icon = document.getElementById('hist-play-icon');
+                if (icon) icon.setAttribute('data-lucide', 'pause');
+            }
+            lucide.createIcons();
+
+            if (histCurrentStep >= histTrackData.points.length - 1) {
+                seekHistoricalStep(0);
+            }
+
+            clearInterval(histPlayInterval);
+            histPlayInterval = setInterval(() => {
+                if (histCurrentStep < histTrackData.points.length - 1) {
+                    seekHistoricalStep(histCurrentStep + 1);
+                } else {
+                    pauseHistoricalAnimation();
+                    showToast("Historical trajectory animation playback complete!", "info");
+                }
+            }, histSpeedMs);
+        }
+
+        function pauseHistoricalAnimation() {
+            histIsPlaying = false;
+            clearInterval(histPlayInterval);
+
+            const btn = document.getElementById('hist-play-btn');
+            if (btn) {
+                btn.className = "px-4 py-2 rounded-xl bg-[#00d4ff] text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-cyan-500/20 hover:bg-cyan-400 transition-all cursor-pointer";
+                const txt = document.getElementById('hist-play-text');
+                if (txt) txt.textContent = "PLAY ANIMATION";
+                const icon = document.getElementById('hist-play-icon');
+                if (icon) icon.setAttribute('data-lucide', 'play');
+            }
+            lucide.createIcons();
+        }
+
+        function stepHistoricalAnimation(dir) {
+            pauseHistoricalAnimation();
+            if (!histTrackData || !histTrackData.points) return;
+            const target = histCurrentStep + dir;
+            seekHistoricalStep(target);
+        }
+
+        function resetHistoricalAnimation() {
+            pauseHistoricalAnimation();
+            seekHistoricalStep(0);
+        }
+
+        function setHistoricalSpeed(ms) {
+            histSpeedMs = parseInt(ms) || 600;
+            if (histIsPlaying) {
+                clearInterval(histPlayInterval);
+                histPlayInterval = setInterval(() => {
+                    if (histCurrentStep < histTrackData.points.length - 1) {
+                        seekHistoricalStep(histCurrentStep + 1);
+                    } else {
+                        pauseHistoricalAnimation();
+                    }
+                }, histSpeedMs);
+            }
+        }
+
+        // Hook into switchTab
+        const origSwitchTab = switchTab;
+        switchTab = function(tabId) {
+            origSwitchTab(tabId);
+            if (tabId === 'historical') {
+                setTimeout(() => {
+                    initHistoricalMap();
+                    if (!histTrackData) {
+                        const sel = document.getElementById('historical-cyclone-select');
+                        fetchHistoricalTrack(sel ? sel.value : 'Biparjoy');
+                    }
+                }, 150);
+            }
+        };
+    </script>
+
+</body>
+</html>
+

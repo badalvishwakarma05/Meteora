@@ -1,0 +1,116 @@
+import { NavLink, useNavigate } from 'react-router-dom';
+import {
+  LayoutDashboard, Satellite, ScanLine, Tags, Route,
+  Database, FileText, Settings, ChevronLeft, ChevronRight,
+  Zap, LogOut
+} from 'lucide-react';
+import { useState } from 'react';
+import { clsx } from 'clsx';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+
+const navItems = [
+  { to: '/dashboard',     icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/satellite',     icon: Satellite,       label: 'Satellite Feed' },
+  { to: '/detection',     icon: ScanLine,        label: 'Detection' },
+  { to: '/classification',icon: Tags,            label: 'Classification' },
+  { to: '/forecast',      icon: Route,           label: 'Track & Forecast' },
+  { to: '/historical',    icon: Database,        label: 'Historical Data' },
+  { to: '/reports',       icon: FileText,        label: 'Reports' },
+  { to: '/settings',      icon: Settings,        label: 'Settings' },
+];
+
+export default function SideNav() {
+  const [collapsed, setCollapsed] = useState(false);
+  const { logout } = useAuth();
+  const { showToast } = useToast();
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    logout();
+    showToast('Signed out of METEORA.', 'info');
+    navigate('/');
+  };
+
+  return (
+    <aside
+      className={clsx(
+        'flex flex-col h-full border-r border-[#1a3a6b] bg-[#0d1f3c] transition-all duration-300 relative z-20 select-none',
+        collapsed ? 'w-18' : 'w-60'
+      )}
+    >
+      {/* Brand area */}
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-[#1a3a6b]">
+        <div
+          onClick={() => navigate('/dashboard')}
+          className="cursor-pointer flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-transform hover:scale-105 shadow-lg shadow-cyan-500/20 border border-[#00d4ff]/40"
+          style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #0066cc 100%)' }}
+        >
+          <Zap size={16} className="text-black" />
+        </div>
+        {!collapsed && (
+          <div className="flex-1 min-w-0">
+            <span className="font-black text-sm tracking-wider block truncate bg-gradient-to-r from-white via-cyan-100 to-[#00d4ff] bg-clip-text text-transparent">
+              METEORA
+            </span>
+            <span className="text-[10px] text-[#8892a4] font-medium block truncate" title="Predict. Prepare. Protect.">
+              Predict. Prepare. Protect.
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Nav items */}
+      <nav className="flex-1 py-4 px-3 overflow-y-auto space-y-1">
+        {navItems.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              clsx(
+                'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 border',
+                isActive
+                  ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 text-[#00d4ff] border-cyan-500/40 shadow-md shadow-cyan-500/10'
+                  : 'text-[#8892a4] border-transparent hover:bg-white/[0.04] hover:text-white hover:border-white/[0.06]'
+              )
+            }
+            title={collapsed ? label : undefined}
+          >
+            <Icon size={17} className="flex-shrink-0" />
+            {!collapsed && <span className="truncate">{label}</span>}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* Collapse toggle */}
+      <button
+        className="absolute -right-3 top-20 w-6 h-6 rounded-full border border-[#1a3a6b] bg-[#0d1f3c] flex items-center justify-center z-30 transition-all hover:border-[#00d4ff] hover:text-[#00d4ff] text-[#8892a4] shadow-md cursor-pointer"
+        onClick={() => setCollapsed(!collapsed)}
+        title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+      >
+        {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
+      </button>
+
+      {/* Bottom Sign Out Option */}
+      <div className="p-3 border-t border-[#1a3a6b]">
+        <button
+          onClick={handleSignOut}
+          className={clsx(
+            'w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#8892a4] hover:text-red-400 hover:bg-red-950/30 border border-transparent hover:border-red-500/20 transition-all cursor-pointer',
+            collapsed && 'justify-center px-0'
+          )}
+          title="Sign Out"
+        >
+          <LogOut size={16} className="flex-shrink-0" />
+          {!collapsed && <span className="truncate">Sign Out</span>}
+        </button>
+
+        {!collapsed && (
+          <div className="mt-2 text-[10px] text-[#8892a4]/60 text-center font-mono">
+            IMD · RSMC v2.4
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+}

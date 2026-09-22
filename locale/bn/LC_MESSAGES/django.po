@@ -1,0 +1,113 @@
+# Translation catalog for Bengali (bn)
+# METEORA Cyclone Intelligence Platform
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: METEORA 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-17 14:15+0530\n"
+"PO-Revision-Date: 2026-09-17 14:15+0530\n"
+"Language: bn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Dashboard"
+msgstr "ড্যাশবোর্ড"
+
+msgid "Satellite Feed (TIR1)"
+msgstr "স্যাটেলাইট ফিড (TIR1)"
+
+msgid "Detection"
+msgstr "শনাক্তকরণ"
+
+msgid "Classification"
+msgstr "শ্রেণীবিভাগ"
+
+msgid "Track & Forecast"
+msgstr "গতিপথ ও পূর্বাভাস"
+
+msgid "Historical Data"
+msgstr "ঐতিহাসিক তথ্য"
+
+msgid "Reports"
+msgstr "প্রতিবেদন"
+
+msgid "Settings"
+msgstr "সেটিংস"
+
+msgid "Sign Out"
+msgstr "সাইন আউট"
+
+msgid "DOWNLINK LIVE"
+msgstr "ডাউনলিঙ্ক লাইভ"
+
+msgid "State / Zone:"
+msgstr "রাজ্য / অঞ্চল:"
+
+msgid "Public Safety & Disaster Relief Services"
+msgstr "জননিরাপত্তা ও দুর্যোগ ত্রাণ পরিষেবা"
+
+msgid "Citizen Safety & Emergency Evacuation Portal"
+msgstr "নাগরিক সুরক্ষা ও জরুরি স্থানান্তর পোর্টাল"
+
+msgid "Disaster Helpline: 1077 / 112"
+msgstr "দুর্যোগ হেল্পলাইন: 1077 / 112"
+
+msgid "CRITICAL STORM WARNING · CYCLONE DANA"
+msgstr "গুরুতর ঘূর্ণিঝড় সতর্কতা · ঘূর্ণিঝড় দানা"
+
+msgid "Landfall Target: Odisha Coast (Near Puri Sector)"
+msgstr "ল্যান্ডফলের লক্ষ্য: ওড়িশা উপকূল (পুরী সেক্টর)"
+
+msgid "Landfall Imminent"
+msgstr "ল্যান্ডফল আসন্ন"
+
+msgid "Sustained Surface Wind:"
+msgstr "পৃষ্ঠীয় বাতাসের গতিবেগ:"
+
+msgid "Storm Surge Height:"
+msgstr "জলোচ্ছ্বাসের উচ্চতা:"
+
+msgid "1-Click Emergency SOS Rescue Dispatch"
+msgstr "১-ক্লিক জরুরি এসওএস উদ্ধার সহায়তা"
+
+msgid "DISPATCH EMERGENCY SOS RESCUE BEACON"
+msgstr "জরুরি এসওএস সংকেত প্রেরণ করুন"
+
+msgid "Verified Multi-Purpose Cyclone Shelters"
+msgstr "যাচাইকৃত বহুমুখী ঘূর্ণিঝড় আশ্রয়কেন্দ্র"
+
+msgid "View Trajectory & Ensemble"
+msgstr "গতিপথ ও এনসেম্বল দেখুন"
+
+msgid "Wind"
+msgstr "বায়ুর গতিবেগ"
+
+msgid "Pressure"
+msgstr "বায়ুমণ্ডলীয় চাপ"
+
+msgid "Temperature"
+msgstr "তাপমাত্রা"
+
+msgid "Relative Humidity"
+msgstr "আপেক্ষিক আর্দ্রতা"
+
+msgid "Safe / Normal Watch"
+msgstr "নিরাপদ / সাধারণ নজরদারি"
+
+msgid "Intermediate"
+msgstr "মধ্যবর্তী সতর্কতা"
+
+msgid "Severe"
+msgstr "মারাত্মক ঘূর্ণিঝড়"
+
+msgid "HIGH RISK"
+msgstr "উচ্চ ঝুঁকি"
+
+msgid "MANDATORY EVACUATION DISPATCH"
+msgstr "বাধ্যতামূলক স্থানান্তর নির্দেশ"
+
+msgid "Language"
+msgstr "ভাষা"

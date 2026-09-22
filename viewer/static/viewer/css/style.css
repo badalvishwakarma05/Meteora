@@ -1,0 +1,177 @@
+/* ==========================================================================
+   METEORA - AI-Powered Cyclone Forecasting & Satellite Analytics System
+   Dark Mode Design Tokens, Glassmorphism, Neon Accents & Gauge Styling
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* Webkit Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #040914;
+}
+::-webkit-scrollbar-thumb {
+    background: #11223e;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 212, 255, 0.4);
+}
+
+/* Glassmorphism & Card Utilities */
+.glass-panel {
+    background: rgba(10, 22, 40, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-panel-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-panel-hover:hover {
+    border-color: rgba(0, 212, 255, 0.3);
+    box-shadow: 0 12px 40px 0 rgba(0, 212, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+/* Glow Utilities */
+.glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
+}
+.glow-emerald {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+}
+.glow-rose {
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.25);
+}
+
+/* Animated Downlink Progress Bar */
+@keyframes progressPulse {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.progress-animated-stream {
+    background: linear-gradient(90deg, #00d4ff, #0077ff, #00ff88, #00d4ff);
+    background-size: 300% 300%;
+    animation: progressPulse 3s ease infinite;
+}
+
+/* Scanline Overlay for Thermal Satellite Canvas */
+@keyframes scanlineMove {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(1000%); }
+}
+
+.scanline-effect {
+    position: relative;
+    overflow: hidden;
+}
+.scanline-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+    box-shadow: 0 0 12px #00d4ff;
+    animation: scanlineMove 4s linear infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Custom Form Inputs & Dropdown Styling */
+.form-input, .form-select {
+    width: 100%;
+    background-color: #081220 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    border-radius: 0.75rem !important; /* 12px */
+    padding: 0.65rem 0.85rem !important;
+    font-size: 0.85rem !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    outline: none !important;
+    transition: all 0.2s ease-in-out !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+.form-input::placeholder {
+    color: #526077 !important;
+}
+
+.form-input:focus, .form-select:focus {
+    border-color: #00d4ff !important;
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.form-select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2300d4ff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 1rem !important;
+    padding-right: 2.25rem !important;
+}
+
+.form-select option {
+    background-color: #081220;
+    color: #ffffff;
+    padding: 8px;
+}
+
+/* Preset Coordinate Chips */
+.preset-chip {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+.preset-chip::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+.preset-chip:hover::after {
+    left: 100%;
+}
+
+/* Dvorak T-Number Gauge Scale */
+.t-number-gauge-track {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #3b82f6 0%, #10b981 30%, #eab308 55%, #f97316 75%, #ef4444 100%);
+    position: relative;
+}
+
+.t-number-indicator {
+    position: absolute;
+    top: -4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid #00d4ff;
+    box-shadow: 0 0 12px #00d4ff;
+    transform: translateX(-50%);
+    transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Sidebar Nav active item indicator */
+.nav-item-active {
+    background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.03));
+    border-left: 3px solid #00d4ff;
+    color: #00d4ff !important;
+}
+

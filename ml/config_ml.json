@@ -1,0 +1,24 @@
+{
+    "dataset_settings": {
+        "data_dir": "./data",
+        "patch_size": 128,
+        "channels": ["IMG_TIR1"],
+        "train_split": 0.8,
+        "val_split": 0.2
+    },
+    "dvorak_model": {
+        "architecture": "ResNet34_Dvorak",
+        "input_channels": 1,
+        "num_classes": 1,
+        "learning_rate": 0.0003,
+        "batch_size": 8,
+        "epochs": 20,
+        "checkpoint_dir": "./ml/checkpoints"
+    },
+    "yolo_model": {
+        "architecture": "YOLOv8_WeatherCustom",
+        "confidence_threshold": 0.75,
+        "iou_threshold": 0.45,
+        "classes": ["Cyclone Eye", "Eyewall Convection", "Spiral Rainband", "Central Dense Overcast"]
+    }
+}

@@ -1,0 +1,113 @@
+# Translation catalog for Odia (or)
+# METEORA Cyclone Intelligence Platform
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: METEORA 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-17 14:15+0530\n"
+"PO-Revision-Date: 2026-09-17 14:15+0530\n"
+"Language: or\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Dashboard"
+msgstr "ଡ୍ୟାସବୋର୍ଡ"
+
+msgid "Satellite Feed (TIR1)"
+msgstr "ସାଟେଲାଇଟ୍ ଫିଡ୍ (TIR1)"
+
+msgid "Detection"
+msgstr "ଚିହ୍ନଟ (ଡିଟେକ୍ସନ)"
+
+msgid "Classification"
+msgstr "ବର୍ଗୀକରଣ"
+
+msgid "Track & Forecast"
+msgstr "ଗତିପଥ ଏବଂ ପୂର୍ବାନୁମାନ"
+
+msgid "Historical Data"
+msgstr "ଐତିହାସିକ ତଥ୍ୟ"
+
+msgid "Reports"
+msgstr "ରିପୋର୍ଟ"
+
+msgid "Settings"
+msgstr "ସେଟିଂସ"
+
+msgid "Sign Out"
+msgstr "ସାଇନ୍ ଆଉଟ୍"
+
+msgid "DOWNLINK LIVE"
+msgstr "ଡାଉନଲିଙ୍କ ଲାଇଭ୍"
+
+msgid "State / Zone:"
+msgstr "ରାଜ୍ୟ / ଅଞ୍ଚଳ:"
+
+msgid "Public Safety & Disaster Relief Services"
+msgstr "ଜନସୁରକ୍ଷା ଓ ବିପର୍ଯ୍ୟୟ ପରିଚାଳନା ସେବା"
+
+msgid "Citizen Safety & Emergency Evacuation Portal"
+msgstr "ନାଗରିକ ସୁରକ୍ଷା ଓ ଜରୁରୀକାଳୀନ ସ୍ଥାନାନ୍ତର ପୋର୍ଟାଲ"
+
+msgid "Disaster Helpline: 1077 / 112"
+msgstr "ବିପର୍ଯ୍ୟୟ ହେଲ୍ପଲାଇନ: 1077 / 112"
+
+msgid "CRITICAL STORM WARNING · CYCLONE DANA"
+msgstr "ଗୁରୁତର ବାତ୍ୟା ସତର୍କତା · ବାତ୍ୟା ଦାନା"
+
+msgid "Landfall Target: Odisha Coast (Near Puri Sector)"
+msgstr "ସ୍ଥଳଭାଗ ଛୁଇଁବା ଲକ୍ଷ୍ୟ: ଓଡ଼ିଶା ଉପକୂଳ (ପୁରୀ ନିକଟରେ)"
+
+msgid "Landfall Imminent"
+msgstr "ସ୍ଥଳଭାଗ ଛୁଇଁବା ଆସନ୍ନ"
+
+msgid "Sustained Surface Wind:"
+msgstr "ସ୍ଥିର ପବନର ବେଗ:"
+
+msgid "Storm Surge Height:"
+msgstr "ଜୁଆର ତରଙ୍ଗର ଉଚ୍ଚତା:"
+
+msgid "1-Click Emergency SOS Rescue Dispatch"
+msgstr "୧-କ୍ଲିକ ଜରୁରୀକାଳୀନ SOS ଉଦ୍ଧାର ସହାୟତା"
+
+msgid "DISPATCH EMERGENCY SOS RESCUE BEACON"
+msgstr "ଜରୁରୀକାଳୀନ SOS ସଙ୍କେତ ପ୍ରେରଣ କରନ୍ତୁ"
+
+msgid "Verified Multi-Purpose Cyclone Shelters"
+msgstr "ଯାଞ୍ଚ ହୋଇଥିବା ବହୁମୁଖୀ ବାତ୍ୟା ଆଶ୍ରୟସ୍ଥଳୀ"
+
+msgid "View Trajectory & Ensemble"
+msgstr "ଗତିପଥ ଓ ଏନସେମ୍ବଲ ଦେଖନ୍ତୁ"
+
+msgid "Wind"
+msgstr "ପବନର ବେଗ"
+
+msgid "Pressure"
+msgstr "ବାୟୁମଣ୍ଡଳୀୟ ଚାପ"
+
+msgid "Temperature"
+msgstr "ତାପମାତ୍ରା"
+
+msgid "Relative Humidity"
+msgstr "ଆପେକ୍ଷିକ ଆର୍ଦ୍ରତା"
+
+msgid "Safe / Normal Watch"
+msgstr "ସୁରକ୍ଷିତ / ସାଧାରଣ ନଜର"
+
+msgid "Intermediate"
+msgstr "ମଧ୍ୟମ ସତର୍କତା"
+
+msgid "Severe"
+msgstr "ଅତି ଭୀଷଣ ବାତ୍ୟା"
+
+msgid "HIGH RISK"
+msgstr "ଅତ୍ୟଧିକ ବିପଦ"
+
+msgid "MANDATORY EVACUATION DISPATCH"
+msgstr "ବାଧ୍ୟତାମୂଳକ ସ୍ଥାନାନ୍ତର ନିର୍ଦ୍ଦେଶ"
+
+msgid "Language"
+msgstr "ଭାଷା"

@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-bg-base: #0a1628;
+  --color-bg-card: #0d1f3c;
+  --color-border: #1a3a6b;
+  --color-accent: #00d4ff;
+  --color-danger: #ff3b3b;
+  --color-warning: #ff9500;
+  --color-success: #00c851;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #8892a4;
+  --color-surface: #0f2444;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0a1628;
+  color: #ffffff;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a1628;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a3a6b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00d4ff;
+}
+
+/* Pulsing dot for live indicators */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-ring 1.5s ease-out infinite;
+}
+
+/* Cyclone spin animation */
+@keyframes cyclone-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+.cyclone-spin {
+  animation: cyclone-spin 8s linear infinite;
+}
+
+/* Status Light Fixture Animations */
+@keyframes lamp-breathe {
+  0%, 100% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 5px var(--lamp-color, #00d4ff));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px var(--lamp-color, #00d4ff));
+  }
+}
+
+@keyframes lamp-flare {
+  0% {
+    transform: scale(0.95);
+    filter: brightness(1.6) drop-shadow(0 0 16px var(--lamp-color, #00d4ff));
+  }
+  40% {
+    transform: scale(1.18);
+    filter: brightness(2.4) drop-shadow(0 0 28px var(--lamp-color, #00d4ff));
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1) drop-shadow(0 0 8px var(--lamp-color, #00d4ff));
+  }
+}
+
+@keyframes lamp-ripple {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.lamp-active {
+  animation: lamp-breathe 2.8s ease-in-out infinite;
+}
+
+.lamp-flare-trigger {
+  animation: lamp-flare 1.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.lamp-ripple-trigger {
+  animation: lamp-ripple 1.4s ease-out 2;
+}

@@ -1,0 +1,58 @@
+# ==============================================================================
+# METEORA Project - Root .gitignore
+# ==============================================================================
+
+# Heavy Model Weights & Trained Checkpoints
+*.pth
+*.pt
+*.onnx
+*.bin
+models/
+ml/checkpoints/
+
+# Large Satellite Data & Downloads
+*.h5
+*.h5.part
+*.hdf5
+*.nc
+data/*.h5
+data/*.part
+data/mosdac/**/*.h5
+data/mosdac/**/*.part
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# Python Bytecode & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js & Frontend build artifacts
+node_modules/
+frontend_source/node_modules/
+frontend_source/dist/
+dist/
+build/
+.npm
+
+# Databases & Local Logs
+*.sqlite3
+db.sqlite3
+*.log
+error_logs/
+logs/
+
+# Operating System & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
