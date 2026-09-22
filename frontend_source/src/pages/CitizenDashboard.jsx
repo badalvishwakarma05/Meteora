@@ -310,12 +310,12 @@ export default function CitizenDashboard() {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row flex-1 w-full h-full overflow-hidden bg-[#0a1628] text-white">
+    <div className="flex flex-col md:flex-row flex-1 w-full h-full overflow-x-hidden md:overflow-hidden bg-[#0a1628] text-white">
       {/* SIDEBAR NAVIGATION PANEL */}
-      <aside className="w-full md:w-64 lg:w-72 h-auto md:h-full flex-shrink-0 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#1a3a6b] bg-[#0d1f3c] z-20 select-none overflow-y-auto p-4 gap-3">
+      <aside className="w-full md:w-64 lg:w-72 h-auto md:h-full flex-shrink-0 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#1a3a6b] bg-[#0d1f3c] z-20 select-none overflow-x-auto md:overflow-y-auto p-3 sm:p-4 gap-3">
         <div className="flex flex-col gap-3">
           {/* Sidebar Header */}
-          <div className="p-3.5 rounded-2xl bg-[#0a1628] border border-[#1a3a6b] shadow-lg">
+          <div className="p-3 sm:p-3.5 rounded-2xl bg-[#0a1628] border border-[#1a3a6b] shadow-lg">
             <div className="text-[10px] font-mono tracking-widest text-[#7090b0] uppercase font-bold mb-2">
               PUBLIC SAFETY NAVIGATION
             </div>
@@ -340,7 +340,7 @@ export default function CitizenDashboard() {
           </div>
 
           {/* Sidebar Buttons */}
-          <nav className="flex flex-col gap-1.5 p-1.5 rounded-2xl bg-[#0a1628] border border-[#1a3a6b] shadow-lg font-mono">
+          <nav className="flex flex-row md:flex-col gap-1.5 p-1.5 rounded-2xl bg-[#0a1628] border border-[#1a3a6b] shadow-lg font-mono overflow-x-auto md:overflow-x-visible">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -351,13 +351,13 @@ export default function CitizenDashboard() {
                     setActiveTab(item.id);
                     window.location.hash = item.id;
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                  className={`w-auto md:w-full flex items-center justify-between px-3 md:px-3.5 py-2.5 md:py-3 rounded-xl text-xs font-bold transition-all text-left cursor-pointer shrink-0 whitespace-nowrap ${
                     isActive
                       ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-[#00d4ff] border border-cyan-500/40 shadow-lg shadow-cyan-950/40'
                       : 'text-slate-300 hover:bg-[#102a4c] hover:text-white border border-transparent'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex items-center gap-2 md:gap-2.5 min-w-0">
                     <Icon
                       size={16}
                       className={`flex-shrink-0 ${
@@ -368,7 +368,7 @@ export default function CitizenDashboard() {
                   </div>
                   {item.badge && (
                     <span
-                      className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border flex-shrink-0 ml-2 ${
+                      className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border flex-shrink-0 ml-2 hidden sm:inline-block ${
                         isActive ? 'bg-cyan-500/20 text-[#00d4ff] border-cyan-500/40' : item.badgeColor
                       }`}
                     >
@@ -416,7 +416,7 @@ export default function CitizenDashboard() {
       </aside>
 
       {/* EXPANSIVE MAIN WORKSPACE */}
-      <main className="flex-1 h-full overflow-y-auto p-5 sm:p-7 lg:p-8 space-y-6 bg-[#0a1628] w-full min-w-0">
+      <main className="flex-1 h-full overflow-x-hidden overflow-y-auto p-4 sm:p-7 lg:p-8 space-y-6 bg-[#0a1628] w-full min-w-0">
         {/* TAB 1: CURRENT SITUATION */}
         {activeTab === 'situation' && (
           <div className="space-y-6 w-full">

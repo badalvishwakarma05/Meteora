@@ -122,16 +122,16 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
   };
 
   return (
-    <div className="relative h-full rounded-2xl overflow-hidden border border-[#1a3a6b]/60 shadow-2xl bg-[#0a1628]">
+    <div className="relative h-[350px] md:h-full min-h-[350px] w-full rounded-2xl overflow-hidden border border-[#1a3a6b]/60 shadow-2xl bg-[#0a1628] touch-pan-x touch-pan-y">
       {/* Clean Layer Switcher (Top Right) */}
-      <div className="absolute top-3.5 right-3.5 z-[999] flex gap-1 p-1 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] shadow-lg">
+      <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[999] flex flex-wrap gap-1 p-1 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] shadow-lg max-w-[calc(100%-20px)]">
         {Object.keys(TILE_LAYERS).map(layer => {
           const isActive = activeLayer === layer;
           return (
             <button
               key={layer}
               onClick={() => handleLayerChange(layer)}
-              className="text-[11px] px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer border"
+              className="text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg font-semibold transition-all cursor-pointer border"
               style={{
                 background: isActive ? '#00d4ff' : 'transparent',
                 color: isActive ? '#050d1a' : '#88a0c0',
@@ -145,7 +145,7 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
       </div>
 
       {/* Floating Modern Legend (Bottom Left) */}
-      <div className="absolute bottom-4 left-4 z-[999] rounded-xl p-3 text-xs space-y-1.5 backdrop-blur-xl bg-[#0a1628]/90 border border-[#1a3a6b] shadow-xl">
+      <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 z-[999] rounded-xl p-2.5 sm:p-3 text-[10px] sm:text-xs space-y-1 sm:space-y-1.5 backdrop-blur-xl bg-[#0a1628]/90 border border-[#1a3a6b] shadow-xl max-w-[180px] sm:max-w-none">
         <div className="font-bold tracking-widest text-cyan-400 text-[9px] uppercase mb-1">
           GIS MAP LEGEND
         </div>
@@ -182,9 +182,10 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
       <MapContainer
         center={[15.5, 82.5]}
         zoom={4}
-        style={{ height: '100%', width: '100%', background: '#0a1628' }}
+        style={{ height: '100%', width: '100%', minHeight: '350px', background: '#0a1628' }}
         zoomControl={true}
         attributionControl={false}
+        className="touch-pan-x touch-pan-y w-full h-full min-h-[350px]"
       >
         <TileLayer
           key={activeLayer}

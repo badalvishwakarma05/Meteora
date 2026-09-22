@@ -35,12 +35,12 @@ export default function SideNav() {
   return (
     <aside
       className={clsx(
-        'flex flex-col h-full border-r border-[#1a3a6b] bg-[#0d1f3c] transition-all duration-300 relative z-20 select-none',
-        collapsed ? 'w-18' : 'w-60'
+        'flex flex-row md:flex-col w-full md:w-60 border-b md:border-b-0 md:border-r border-[#1a3a6b] bg-[#0d1f3c] transition-all duration-300 relative z-20 select-none shrink-0 overflow-x-auto md:overflow-x-visible',
+        collapsed ? 'md:w-18' : 'md:w-60'
       )}
     >
-      {/* Brand area */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-[#1a3a6b]">
+      {/* Brand area (desktop) */}
+      <div className="hidden md:flex items-center gap-3 px-5 py-4 border-b border-[#1a3a6b]">
         <div
           onClick={() => navigate('/dashboard')}
           className="cursor-pointer flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-transform hover:scale-105 shadow-lg shadow-cyan-500/20 border border-[#00d4ff]/40"
@@ -61,14 +61,14 @@ export default function SideNav() {
       </div>
 
       {/* Nav items */}
-      <nav className="flex-1 py-4 px-3 overflow-y-auto space-y-1">
+      <nav className="flex flex-row md:flex-col flex-1 py-2 md:py-4 px-2 md:px-3 overflow-x-auto md:overflow-y-auto space-x-1.5 md:space-x-0 md:space-y-1">
         {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
               clsx(
-                'flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 border',
+                'flex items-center gap-2 md:gap-3 px-3 md:px-3.5 py-2 md:py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 border shrink-0 whitespace-nowrap',
                 isActive
                   ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 text-[#00d4ff] border-cyan-500/40 shadow-md shadow-cyan-500/10'
                   : 'text-[#8892a4] border-transparent hover:bg-white/[0.04] hover:text-white hover:border-white/[0.06]'
@@ -76,23 +76,23 @@ export default function SideNav() {
             }
             title={collapsed ? label : undefined}
           >
-            <Icon size={17} className="flex-shrink-0" />
-            {!collapsed && <span className="truncate">{label}</span>}
+            <Icon size={16} className="flex-shrink-0" />
+            <span className={clsx('truncate', collapsed && 'md:hidden')}>{label}</span>
           </NavLink>
         ))}
       </nav>
 
-      {/* Collapse toggle */}
+      {/* Collapse toggle (desktop only) */}
       <button
-        className="absolute -right-3 top-20 w-6 h-6 rounded-full border border-[#1a3a6b] bg-[#0d1f3c] flex items-center justify-center z-30 transition-all hover:border-[#00d4ff] hover:text-[#00d4ff] text-[#8892a4] shadow-md cursor-pointer"
+        className="hidden md:flex absolute -right-3 top-20 w-6 h-6 rounded-full border border-[#1a3a6b] bg-[#0d1f3c] items-center justify-center z-30 transition-all hover:border-[#00d4ff] hover:text-[#00d4ff] text-[#8892a4] shadow-md cursor-pointer"
         onClick={() => setCollapsed(!collapsed)}
         title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
       >
         {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
       </button>
 
-      {/* Bottom Sign Out Option */}
-      <div className="p-3 border-t border-[#1a3a6b]">
+      {/* Bottom Sign Out Option (desktop) */}
+      <div className="hidden md:block p-3 border-t border-[#1a3a6b]">
         <button
           onClick={handleSignOut}
           className={clsx(

@@ -429,18 +429,18 @@ export default function HistoricalData() {
         
         {/* LEFT COLUMN: INTERACTIVE LEAFLET MAP (7 COLS) */}
         <div className="lg:col-span-7 flex flex-col gap-3">
-          <div className="relative h-[520px] rounded-2xl overflow-hidden border border-[#1a3a6b] bg-[#0a1628] shadow-2xl">
+          <div className="relative h-[350px] sm:h-[450px] md:h-[520px] min-h-[350px] rounded-2xl overflow-hidden border border-[#1a3a6b] bg-[#0a1628] shadow-2xl touch-pan-x touch-pan-y">
             
             {/* Top Map Layer Switcher & Feature Toggles */}
-            <div className="absolute top-3.5 right-3.5 z-[999] flex flex-col gap-2 items-end">
-              <div className="flex gap-1 p-1 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] shadow-lg">
+            <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[999] flex flex-wrap gap-1.5 sm:gap-2 items-end max-w-[calc(100%-20px)] justify-end">
+              <div className="flex flex-wrap gap-1 p-1 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] shadow-lg">
                 {Object.keys(TILE_LAYERS).map(layer => {
                   const isActive = activeLayer === layer;
                   return (
                     <button
                       key={layer}
                       onClick={() => setActiveLayer(layer)}
-                      className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                      className={`text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg font-semibold transition-all cursor-pointer ${
                         isActive ? 'bg-[#00d4ff] text-[#050d1a] font-bold' : 'text-[#88a0c0] hover:text-white'
                       }`}
                     >
@@ -451,7 +451,7 @@ export default function HistoricalData() {
               </div>
 
               {/* Layer Toggles */}
-              <div className="flex gap-2 p-1.5 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] shadow-lg text-[10px] font-semibold text-slate-300">
+              <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] shadow-lg text-[10px] font-semibold text-slate-300">
                 <button
                   onClick={() => setShowCities(!showCities)}
                   className={`px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all ${
@@ -474,13 +474,13 @@ export default function HistoricalData() {
             </div>
 
             {/* Map Status Badge */}
-            <div className="absolute top-3.5 left-3.5 z-[999] flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] text-xs font-mono text-[#00d4ff] shadow-lg">
+            <div className="absolute top-2.5 sm:top-3.5 left-2.5 sm:left-3.5 z-[999] flex items-center gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] text-[10px] sm:text-xs font-mono text-[#00d4ff] shadow-lg max-w-[calc(100%-20px)]">
               <span className="w-2 h-2 rounded-full bg-[#00d4ff] animate-pulse inline-block"></span>
               <span>GIS CLIMATE MAP · LABELED BOUNDARIES</span>
             </div>
 
             {/* GIS Legend */}
-            <div className="absolute bottom-4 left-4 z-[999] rounded-xl p-3 text-xs space-y-1 backdrop-blur-xl bg-[#0a1628]/90 border border-[#1a3a6b] shadow-xl text-slate-300 max-w-[220px]">
+            <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 z-[999] rounded-xl p-2.5 sm:p-3 text-xs space-y-1 backdrop-blur-xl bg-[#0a1628]/90 border border-[#1a3a6b] shadow-xl text-slate-300 max-w-[170px] sm:max-w-[220px]">
               <div className="font-bold tracking-widest text-[#00d4ff] text-[9px] uppercase mb-1 flex items-center justify-between font-mono">
                 <span>STORM SEVERITY</span>
                 <span className="text-white">IMD SCALE</span>
@@ -496,9 +496,10 @@ export default function HistoricalData() {
             <MapContainer
               center={[selectedStorm?.lat || 18.0, selectedStorm?.lon || 84.0]}
               zoom={5}
-              style={{ height: '100%', width: '100%', background: '#0a1628' }}
+              style={{ height: '100%', width: '100%', minHeight: '350px', background: '#0a1628' }}
               zoomControl={true}
               attributionControl={false}
+              className="touch-pan-x touch-pan-y w-full h-full min-h-[350px]"
             >
               {/* Base Tile Layer */}
               <TileLayer url={TILE_LAYERS[activeLayer]} />

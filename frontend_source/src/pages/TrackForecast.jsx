@@ -164,7 +164,7 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
         {/* Left Column: Map + Track Table */}
         <div className="flex flex-col gap-4 flex-1 min-w-0">
           {/* Map */}
-          <div className="h-80 sm:h-96 rounded-xl overflow-hidden border border-[#1a3a6b]">
+          <div className="h-[350px] sm:h-96 md:h-[420px] min-h-[350px] rounded-xl overflow-hidden border border-[#1a3a6b]">
             <CycloneMap onSelectCyclone={(c) => handleSelectCyclone(c.id)} />
           </div>
 

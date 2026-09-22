@@ -73,16 +73,16 @@ export default function CitizenLayout() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#0a1628] text-white selection:bg-[#00d4ff] selection:text-[#050d1a]">
+    <div className="flex flex-col min-h-screen md:h-screen overflow-x-hidden md:overflow-hidden bg-[#0a1628] text-white selection:bg-[#00d4ff] selection:text-[#050d1a] w-full">
       {/* 1. TOP NATIONAL DISASTER BANNER */}
-      <div className="w-full bg-[#050d1a] border-b border-[#1a3a6b]/80 px-4 sm:px-6 py-1.5 text-xs text-[#88a0c0] shrink-0 font-mono">
+      <div className="w-full bg-[#050d1a] border-b border-[#1a3a6b]/80 px-3 sm:px-6 py-1.5 text-xs text-[#88a0c0] shrink-0 font-mono">
         <div className="w-full flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span className="text-white font-medium">{t.governmentBanner}</span>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px]">
+          <div className="flex items-center gap-3 sm:gap-4 text-[11px] flex-wrap">
             <div className="flex items-center gap-1.5 text-amber-300 font-bold">
               <PhoneCall size={12} className="animate-pulse text-amber-400" />
               <span>{t.helplineText}</span>
@@ -110,12 +110,12 @@ export default function CitizenLayout() {
       </div>
 
       {/* 2. MAIN CITIZEN PUBLIC SAFETY HEADER */}
-      <header className="w-full bg-[#0d1f3c]/95 backdrop-blur-xl border-b border-[#1a3a6b] shadow-xl px-4 sm:px-6 h-16 flex items-center justify-between gap-3 shrink-0 z-40">
+      <header className="w-full bg-[#0d1f3c]/95 backdrop-blur-xl border-b border-[#1a3a6b] shadow-xl px-3 sm:px-6 min-h-16 py-2 sm:py-0 flex flex-wrap items-center justify-between gap-3 shrink-0 z-40">
         {/* Brand & Citizen Indicator */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <Link to="/citizen/dashboard" className="flex items-center gap-2.5 group">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm bg-gradient-to-br from-cyan-400 to-blue-600 text-[#050d1a] shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform"
+              className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm bg-gradient-to-br from-cyan-400 to-blue-600 text-[#050d1a] shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform shrink-0"
             >
               <Zap size={22} />
             </div>
@@ -175,7 +175,7 @@ export default function CitizenLayout() {
         </div>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-2 sm:gap-3 font-mono">
+        <div className="flex items-center gap-2 sm:gap-3 font-mono flex-wrap shrink-0 ml-auto sm:ml-0">
           {/* Quick SOS Trigger Button */}
           <button
             onClick={() => {
@@ -189,10 +189,10 @@ export default function CitizenLayout() {
           </button>
 
           {/* Authenticated Citizen Profile Pill */}
-          <div className="flex items-center gap-2 pl-2 border-l border-[#1a3a6b]">
+          <div className="flex items-center gap-1.5 sm:gap-2 pl-2 border-l border-[#1a3a6b]">
             <button
               onClick={() => setProfileModalOpen(true)}
-              className="flex items-center gap-2.5 px-2.5 py-1 rounded-xl border border-[#1a3a6b] hover:border-emerald-400 bg-[#0a1628] hover:bg-[#102a4c] transition-all cursor-pointer group shadow-sm"
+              className="flex items-center gap-2 sm:gap-2.5 px-2 sm:px-2.5 py-1 rounded-xl border border-[#1a3a6b] hover:border-emerald-400 bg-[#0a1628] hover:bg-[#102a4c] transition-all cursor-pointer group shadow-sm"
               title="Click to view and edit Citizen Profile"
             >
               <div className="flex flex-col text-right hidden sm:flex">
@@ -203,7 +203,7 @@ export default function CitizenLayout() {
                   {currentUser?.district || 'Coastal'} Sector
                 </span>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-xs font-bold text-slate-950 group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-xs font-bold text-slate-950 group-hover:scale-105 transition-transform shrink-0">
                 {currentUser?.avatarInitials || 'CZ'}
               </div>
             </button>
@@ -226,7 +226,7 @@ export default function CitizenLayout() {
       />
 
       {/* 3. MAIN WORKSPACE VIEWPORT */}
-      <div className="flex flex-1 overflow-hidden w-full bg-[#0a1628]">
+      <div className="flex flex-1 overflow-x-hidden md:overflow-hidden w-full bg-[#0a1628]">
         <Outlet />
       </div>
     </div>

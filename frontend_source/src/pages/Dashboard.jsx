@@ -384,10 +384,10 @@ export default function Dashboard() {
       </div>
 
       {/* MAIN CONTENT: MAP + ACTIVE CYCLONES STACK */}
-      <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0" style={{ minHeight: 400 }}>
+      <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0 min-h-[350px]">
         {/* Real-time Map Viewport */}
         <div className="flex-1 min-w-0 flex flex-col gap-2">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-1">
             <h2 className="text-xs font-bold tracking-widest uppercase text-[#88a0c0] flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff] animate-pulse"></span>
               <span>REAL-TIME SYNOPTIC SURFACE TRACKING — NORTH INDIAN OCEAN</span>
@@ -397,7 +397,7 @@ export default function Dashboard() {
             </span>
           </div>
 
-          <div className="flex-1 rounded-2xl overflow-hidden min-h-[320px]">
+          <div className="flex-1 rounded-2xl overflow-hidden h-[350px] sm:h-[400px] lg:h-full min-h-[350px]">
             <CycloneMap
               threatLevel={condition}
               onSelectCyclone={handleSelectCyclone}

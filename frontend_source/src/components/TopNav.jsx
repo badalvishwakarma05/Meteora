@@ -83,9 +83,9 @@ export default function TopNav() {
 
   return (
     <>
-      <header className="flex items-center justify-between px-6 h-14 border-b border-[#1a3a6b] bg-[#0d1f3c]/95 backdrop-blur-xl z-30 relative select-none">
+      <header className="flex flex-wrap items-center justify-between px-3 sm:px-6 min-h-14 py-2 sm:py-0 border-b border-[#1a3a6b] bg-[#0d1f3c]/95 backdrop-blur-xl z-30 relative select-none gap-2 sm:gap-3">
         {/* Left: Meteorological Authority & Live Sync (METEORA) */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap shrink-0">
           <div className="flex items-center gap-2 text-xs">
             <span className="px-2 py-0.5 rounded-md font-bold text-[10px] bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-[#00d4ff] border border-[#00d4ff]/30">
               MoES · IMD
@@ -106,7 +106,7 @@ export default function TopNav() {
         </div>
 
         {/* Center: Live Clock, Broadcast Status & State Selector */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           {/* Prominent Coastal State / Monitoring Zone Selector */}
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#0a1628] border border-cyan-500/30 text-xs text-white shadow-inner">
             <MapPin size={14} className="text-[#00d4ff]" />
@@ -160,7 +160,7 @@ export default function TopNav() {
         </div>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap shrink-0 ml-auto">
           {/* Diagnostics quick status */}
           <button
             onClick={() => setDiagnosticsOpen(true)}
@@ -174,7 +174,7 @@ export default function TopNav() {
           <div className="relative">
             <button
               onClick={() => { setAlertsOpen(!alertsOpen); setProfileOpen(false); }}
-              className="relative p-2.5 rounded-xl border border-[#1a3a6b] hover:border-[#00d4ff] bg-[#0a1628] hover:bg-[#0d1f3c] text-gray-300 hover:text-white transition-all cursor-pointer"
+              className="relative p-2 sm:p-2.5 rounded-xl border border-[#1a3a6b] hover:border-[#00d4ff] bg-[#0a1628] hover:bg-[#0d1f3c] text-gray-300 hover:text-white transition-all cursor-pointer"
               title="Weather Alerts"
             >
               <Bell size={16} />
@@ -187,7 +187,7 @@ export default function TopNav() {
 
             {/* Alerts Drawer */}
             {alertsOpen && (
-              <div className="absolute right-0 top-12 w-80 sm:w-96 rounded-2xl border border-[#1a3a6b] bg-[#0d1f3c] shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
+              <div className="absolute right-0 top-12 w-[calc(100vw-24px)] max-w-sm sm:w-96 rounded-2xl border border-[#1a3a6b] bg-[#0d1f3c] shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
                 <div className="flex items-center justify-between p-4 border-b border-[#1a3a6b] bg-[#0a1628]">
                   <div className="flex items-center gap-2">
                     <AlertTriangle size={16} className="text-amber-400" />
@@ -259,9 +259,9 @@ export default function TopNav() {
           <div className="relative">
             <button
               onClick={() => { setProfileOpen(!profileOpen); setAlertsOpen(false); }}
-              className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl border border-[#1a3a6b] hover:border-[#00d4ff] bg-[#0a1628] hover:bg-[#0d1f3c] transition-all cursor-pointer"
+              className="flex items-center gap-2 sm:gap-2.5 p-1 sm:p-1.5 sm:pr-3 rounded-xl border border-[#1a3a6b] hover:border-[#00d4ff] bg-[#0a1628] hover:bg-[#0d1f3c] transition-all cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black text-black bg-gradient-to-tr from-[#00d4ff] to-[#4facfe] shadow-md">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black text-black bg-gradient-to-tr from-[#00d4ff] to-[#4facfe] shadow-md shrink-0">
                 {currentUser?.avatarInitials || 'MK'}
               </div>
               <div className="text-left hidden sm:block">
@@ -276,7 +276,7 @@ export default function TopNav() {
 
             {/* Profile Dropdown */}
             {profileOpen && (
-              <div className="absolute right-0 top-14 w-60 rounded-2xl border border-[#1a3a6b] bg-[#0d1f3c] shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
+              <div className="absolute right-0 top-14 w-60 max-w-[calc(100vw-24px)] rounded-2xl border border-[#1a3a6b] bg-[#0d1f3c] shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
                 <div className="p-3.5 border-b border-[#1a3a6b] bg-[#0a1628]">
                   <div className="font-bold text-white text-xs">{currentUser?.name || 'Dr. M. Kumar'}</div>
                   <div className="text-[11px] text-[#8892a4]">{currentUser?.email || 'dr.kumar@imd.gov.in'}</div>
