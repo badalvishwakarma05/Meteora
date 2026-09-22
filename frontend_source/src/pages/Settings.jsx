@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Save, Database, Brain, Bell, Users, Key, Wifi, X, CheckCircle, RefreshCw } from 'lucide-react';
+import { Save, Database, Brain, Bell, Users, Key, Wifi, X, CheckCircle, RefreshCw, Sun, Moon, Palette } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { useTheme } from '../context/ThemeContext';
 
 function SettingsSection({ icon: Icon, title, children }) {
   return (
@@ -40,6 +41,7 @@ function Toggle({ label, sub, checked, onChange }) {
 
 export default function Settings() {
   const { showToast } = useToast();
+  const { theme, setTheme, toggleTheme, isDark } = useTheme();
 
   // Settings State
   const [dataSources, setDataSources] = useState({
@@ -139,6 +141,64 @@ export default function Settings() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Display & Appearance (Theme Switcher) */}
+        <SettingsSection icon={Palette} title="Display, Appearance & Theme Mode">
+          <div className="space-y-3">
+            <div className="text-xs text-[#88a0c0] font-mono">
+              Choose your preferred visual theme for the command center and maps.
+            </div>
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setTheme('dark');
+                  showToast('Dark Theme activated.', 'info');
+                }}
+                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-2 ${
+                  isDark
+                    ? 'border-[#00d4ff] bg-[#0a1628] shadow-lg shadow-cyan-950/40'
+                    : 'border-[#1a3a6b] bg-[#0a1628]/40 hover:border-slate-400'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Moon size={16} className="text-[#00d4ff]" />
+                    <span className="font-bold text-white text-xs">Dark Theme</span>
+                  </div>
+                  {isDark && <CheckCircle size={14} className="text-[#00d4ff]" />}
+                </div>
+                <p className="text-[11px] text-[#88a0c0] leading-snug">
+                  High contrast dark palette optimized for meteorological analysis & night operations.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setTheme('light');
+                  showToast('Light Theme activated.', 'info');
+                }}
+                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-2 ${
+                  !isDark
+                    ? 'border-[#00d4ff] bg-[#f8fafc] shadow-lg shadow-cyan-950/20 text-[#0f172a]'
+                    : 'border-[#1a3a6b] bg-[#0a1628]/40 hover:border-slate-400'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sun size={16} className="text-amber-500" />
+                    <span className="font-bold text-white text-xs">Light Theme</span>
+                  </div>
+                  {!isDark && <CheckCircle size={14} className="text-[#00d4ff]" />}
+                </div>
+                <p className="text-[11px] text-[#88a0c0] leading-snug">
+                  Clean crisp daylight palette suited for bright field environments and briefing displays.
+                </p>
+              </button>
+            </div>
+          </div>
+        </SettingsSection>
+
         {/* Data Sources */}
         <SettingsSection icon={Database} title="Satellite Sensor Feeds">
           <Toggle

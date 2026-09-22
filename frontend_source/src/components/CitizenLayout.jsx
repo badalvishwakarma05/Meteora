@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate, Link } from 'react-router-dom';
 import {
   ShieldAlert, PhoneCall, AlertTriangle, CheckCircle2,
-  LifeBuoy, MapPin, User, LogOut, ExternalLink, Globe, Bell, Zap, Radio
+  LifeBuoy, MapPin, User, LogOut, ExternalLink, Globe, Bell, Zap, Radio,
+  Sun, Moon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useDisasterAlert } from '../context/DisasterAlertContext';
 import { useToast } from '../context/ToastContext';
+import { useTheme } from '../context/ThemeContext';
 import { CITIZEN_TRANSLATIONS } from '../data/citizenTranslations';
 import UserProfileModal from './UserProfileModal';
 
@@ -14,6 +16,7 @@ export default function CitizenLayout() {
   const { currentUser, logout } = useAuth();
   const { condition, activeCyclone, language, setLanguage } = useDisasterAlert();
   const { showToast } = useToast();
+  const { theme, toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
 
   const t = CITIZEN_TRANSLATIONS[language] || CITIZEN_TRANSLATIONS.English;
@@ -105,6 +108,27 @@ export default function CitizenLayout() {
                 <option value="Bengali" className="bg-[#0a1628] text-white">বাংলা (Bengali)</option>
               </select>
             </div>
+            {/* Theme Toggle in Top Banner */}
+            <button
+              onClick={() => {
+                toggleTheme();
+                showToast(`Switched to ${theme === 'dark' ? 'Light' : 'Dark'} Theme`, 'info');
+              }}
+              className="flex items-center gap-1.5 bg-[#0a1628] px-2.5 py-1 rounded-lg border border-[#1a3a6b] text-white shadow-sm hover:border-[#00d4ff] cursor-pointer transition-colors"
+              title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            >
+              {isDark ? (
+                <>
+                  <Sun size={12} className="text-amber-400" />
+                  <span className="text-[10px] text-amber-300 font-bold">Light</span>
+                </>
+              ) : (
+                <>
+                  <Moon size={12} className="text-blue-500" />
+                  <span className="text-[10px] text-blue-600 font-bold">Dark</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -186,6 +210,22 @@ export default function CitizenLayout() {
           >
             <LifeBuoy size={14} />
             <span>{t.navSOS.toUpperCase()}</span>
+          </button>
+
+          {/* Theme Toggle Button in Header */}
+          <button
+            onClick={() => {
+              toggleTheme();
+              showToast(`Switched to ${theme === 'dark' ? 'Light' : 'Dark'} Theme`, 'info');
+            }}
+            className="flex items-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-xl border border-[#1a3a6b] hover:border-[#00d4ff] bg-[#0a1628] hover:bg-[#102a4c] text-gray-300 hover:text-[#00d4ff] transition-all cursor-pointer shadow-sm text-xs font-mono font-medium"
+            title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+          >
+            {isDark ? (
+              <Sun size={15} className="text-amber-400" />
+            ) : (
+              <Moon size={15} className="text-blue-500" />
+            )}
           </button>
 
           {/* Authenticated Citizen Profile Pill */}

@@ -2,16 +2,18 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell, LogOut, CheckCircle, AlertTriangle,
-  X, Activity, Wifi, MapPin
+  X, Activity, Wifi, MapPin, Sun, Moon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useDisasterAlert } from '../context/DisasterAlertContext';
+import { useTheme } from '../context/ThemeContext';
 import UserProfileModal from './UserProfileModal';
 
 export default function TopNav() {
   const { currentUser, logout } = useAuth();
   const { showToast } = useToast();
+  const { theme, toggleTheme, isDark } = useTheme();
   const { condition, activeCyclone, selectedRegion, setSelectedRegion, COASTAL_REGIONS } = useDisasterAlert();
   const navigate = useNavigate();
 
@@ -161,6 +163,28 @@ export default function TopNav() {
 
         {/* Right Controls */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap shrink-0 ml-auto">
+          {/* Light / Dark Mode Toggle Button */}
+          <button
+            onClick={() => {
+              toggleTheme();
+              showToast(`Switched to ${theme === 'dark' ? 'Light' : 'Dark'} Theme`, 'info');
+            }}
+            className="flex items-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-xl border border-[#1a3a6b] hover:border-[#00d4ff] bg-[#0a1628] hover:bg-[#0d1f3c] text-gray-300 hover:text-[#00d4ff] transition-all cursor-pointer shadow-sm text-xs font-mono font-medium"
+            title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+          >
+            {isDark ? (
+              <>
+                <Sun size={15} className="text-amber-400 animate-spin-slow" />
+                <span className="hidden xl:inline text-[11px] text-amber-300">Light</span>
+              </>
+            ) : (
+              <>
+                <Moon size={15} className="text-blue-500" />
+                <span className="hidden xl:inline text-[11px] text-blue-600">Dark</span>
+              </>
+            )}
+          </button>
+
           {/* Diagnostics quick status */}
           <button
             onClick={() => setDiagnosticsOpen(true)}

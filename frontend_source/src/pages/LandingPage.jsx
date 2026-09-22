@@ -3,14 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import {
   Zap, Shield, Activity, Satellite, ScanLine,
   Tags, Route, FileText, ArrowRight, CheckCircle2, Lock, Mail, User, X,
-  Users, LifeBuoy, Phone, Radio
+  Users, LifeBuoy, Phone, Radio, Sun, Moon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useTheme } from '../context/ThemeContext';
 
 export default function LandingPage() {
   const { isAuthenticated, currentUser, login, signup, loginAsDemo, loginAsCitizen } = useAuth();
   const { showToast } = useToast();
+  const { theme, toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
 
   // If already logged in, navigate straight to role-appropriate dashboard
@@ -216,6 +218,30 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0a1628] text-white selection:bg-[#00d4ff] selection:text-[#050d1a] relative">
+      {/* Theme Toggle Button (Top Right) */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
+        <button
+          onClick={() => {
+            toggleTheme();
+            showToast(`Switched to ${theme === 'dark' ? 'Light' : 'Dark'} Theme`, 'info');
+          }}
+          className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#1a3a6b] bg-[#0d1f3c]/90 backdrop-blur-md hover:border-[#00d4ff] text-gray-300 hover:text-white transition-all cursor-pointer shadow-lg text-xs font-mono font-bold"
+          title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+        >
+          {isDark ? (
+            <>
+              <Sun size={15} className="text-amber-400 animate-spin-slow" />
+              <span className="text-amber-300 text-[11px]">Light Mode</span>
+            </>
+          ) : (
+            <>
+              <Moon size={15} className="text-blue-500" />
+              <span className="text-blue-600 text-[11px]">Dark Mode</span>
+            </>
+          )}
+        </button>
+      </div>
+
       {/* HERO SECTION: ICON, TITLE, AND THE TWO PORTAL OPTIONS */}
       <section className="relative pt-16 sm:pt-20 pb-14 px-4 sm:px-6 border-b border-[#1a3a6b]/60 overflow-hidden bg-gradient-to-b from-[#0a1628] via-[#0d1f3c] to-[#0a1628]">
         <div className="max-w-4xl mx-auto text-center relative z-10">
