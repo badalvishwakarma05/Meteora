@@ -391,12 +391,37 @@ html.light table tbody tr {
   color: #1e293b !important;
 }
 
-html.light table tbody tr:hover {
+html.light table tbody tr:hover,
+html.light .hover\:bg-\[\#102a4c\]:hover,
+html.light .hover\:bg-\[\#102a4c\]\/50:hover,
+html.light .hover\:bg-\[\#102a4c\]\/60:hover,
+html.light .hover\:bg-\[\#102a4c\]\/80:hover,
+html.light .hover\:bg-\[\#0f2444\]:hover,
+html.light .hover\:bg-\[\#163866\]:hover,
+html.light .hover\:bg-zinc-900\/80:hover,
+html.light .hover\:bg-zinc-950:hover,
+html.light .hover\:bg-zinc-900:hover,
+html.light .hover\:bg-slate-800:hover,
+html.light .hover\:bg-gray-900:hover,
+html.light .hover\:bg-gray-800:hover {
   background-color: #f1f5f9 !important;
 }
 
 html.light table tbody td {
   color: #1e293b !important;
+}
+
+/* Hover text contrasts for groups & rows */
+html.light .group:hover .group-hover\:text-white,
+html.light .hover\:text-white:hover {
+  color: #0f172a !important;
+}
+
+html.light .group:hover .group-hover\:text-\[\#00d4ff\],
+html.light .group:hover .group-hover\:text-cyan-300,
+html.light .hover\:text-\[\#00d4ff\]:hover,
+html.light .hover\:text-cyan-300:hover {
+  color: #0284c7 !important;
 }
 
 /* 9. Inputs, Selects, and Textareas */
