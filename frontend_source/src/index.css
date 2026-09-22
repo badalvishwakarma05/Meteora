@@ -108,8 +108,10 @@ html.light .text-slate-600 {
 
 /* 3. High-Contrast Accent & Status Colors (No washed-out text on white) */
 html.light .text-\[\#00d4ff\],
+html.light .text-cyan-200,
 html.light .text-cyan-300,
 html.light .text-cyan-400,
+html.light .text-sky-200,
 html.light .text-sky-300,
 html.light .text-sky-400 {
   color: #0284c7 !important;
@@ -121,19 +123,24 @@ html.light .text-sky-500 {
 }
 
 html.light .text-\[\#00c851\],
+html.light .text-emerald-200,
 html.light .text-emerald-300,
 html.light .text-emerald-400,
+html.light .text-green-200,
 html.light .text-green-300,
 html.light .text-green-400 {
   color: #047857 !important;
 }
 
 html.light .text-\[\#ff9500\],
+html.light .text-yellow-100,
 html.light .text-yellow-200,
 html.light .text-yellow-300,
 html.light .text-yellow-400,
+html.light .text-amber-200,
 html.light .text-amber-300,
 html.light .text-amber-400,
+html.light .text-orange-200,
 html.light .text-orange-300,
 html.light .text-orange-400 {
   color: #b45309 !important;
@@ -141,35 +148,41 @@ html.light .text-orange-400 {
 
 html.light .text-\[\#ff3b3b\],
 html.light .text-\[\#ff1744\],
+html.light .text-red-200,
 html.light .text-red-300,
 html.light .text-red-400,
+html.light .text-rose-200,
 html.light .text-rose-300,
 html.light .text-rose-400 {
   color: #dc2626 !important;
 }
 
 /* 4. Background & Gradient re-mappings for Cards, Drawers, Sidebars */
-html.light .bg-\[\#0a1628\] {
+html.light .bg-\[\#0a1628\],
+html.light .bg-\[\#0a1628\]\/95,
+html.light .bg-\[\#0a1628\]\/90,
+html.light .bg-\[\#0a1628\]\/80,
+html.light .bg-\[\#0a1628\]\/70,
+html.light .bg-\[\#0a1628\]\/60,
+html.light .bg-\[\#0a1628\]\/50 {
   background-color: #f8fafc !important;
 }
 
-html.light .bg-\[\#0d1f3c\] {
+html.light .bg-\[\#0d1f3c\],
+html.light .bg-\[\#0d1f3c\]\/95,
+html.light .bg-\[\#0d1f3c\]\/90,
+html.light .bg-\[\#0d1f3c\]\/85,
+html.light .bg-\[\#0d1f3c\]\/80,
+html.light .bg-\[\#0d1f3c\]\/75,
+html.light .bg-\[\#0d1f3c\]\/70,
+html.light .bg-\[\#0d1f3c\]\/60,
+html.light .bg-\[\#0d1f3c\]\/50 {
   background-color: #ffffff !important;
 }
 
-html.light .bg-\[\#0d1f3c\]\/95 {
-  background-color: rgba(255, 255, 255, 0.96) !important;
-}
-
-html.light .bg-\[\#0a1628\]\/95 {
-  background-color: rgba(248, 250, 252, 0.96) !important;
-}
-
-html.light .bg-\[\#0a1628\]\/90 {
-  background-color: rgba(248, 250, 252, 0.94) !important;
-}
-
-html.light .bg-\[\#0a1628\]\/40 {
+html.light .bg-\[\#0a1628\]\/40,
+html.light .bg-\[\#0a1628\]\/30,
+html.light .bg-\[\#0a1628\]\/20 {
   background-color: rgba(241, 245, 249, 0.8) !important;
 }
 
@@ -177,7 +190,9 @@ html.light .bg-\[\#050d1a\] {
   background-color: #f1f5f9 !important;
 }
 
-html.light .bg-\[\#102a4c\] {
+html.light .bg-\[\#102a4c\],
+html.light .bg-\[\#102a4c\]\/80,
+html.light .bg-\[\#102a4c\]\/60 {
   background-color: #f1f5f9 !important;
 }
 
@@ -199,7 +214,9 @@ html.light .bg-\[\#0b2847\] {
 
 html.light .bg-black,
 html.light .bg-black\/80,
-html.light .bg-black\/70 {
+html.light .bg-black\/70,
+html.light .bg-black\/60,
+html.light .bg-black\/50 {
   background-color: #ffffff !important;
 }
 
@@ -226,12 +243,17 @@ html.light .border-white {
   border-color: #cbd5e1 !important;
 }
 
+html.light .border-\[\#1a3a6b\]\/90,
 html.light .border-\[\#1a3a6b\]\/80,
+html.light .border-\[\#1a3a6b\]\/70,
 html.light .border-\[\#1a3a6b\]\/60,
+html.light .border-\[\#1a3a6b\]\/50,
 html.light .border-\[\#1a3a6b\]\/40,
+html.light .border-\[\#1a3a6b\]\/30,
+html.light .border-\[\#1a3a6b\]\/20,
 html.light .border-white\/20,
 html.light .border-white\/10 {
-  border-color: rgba(203, 213, 225, 0.8) !important;
+  border-color: rgba(203, 213, 225, 0.9) !important;
 }
 
 /* 6. Alert Banners, Pills & Badges in Light Mode */
@@ -274,13 +296,18 @@ html.light .bg-sky-500\/20 {
   border-color: #7dd3fc !important;
 }
 
-html.light .bg-emerald-950\/40 {
+html.light .bg-emerald-950\/40,
+html.light .bg-emerald-950\/30,
+html.light .bg-emerald-950\/20 {
   background-color: #ecfdf5 !important;
   color: #065f46 !important;
   border-color: #6ee7b7 !important;
 }
 
-html.light .bg-yellow-950\/40 {
+html.light .bg-yellow-950\/40,
+html.light .bg-yellow-950\/30,
+html.light .bg-yellow-950\/20,
+html.light .bg-amber-950\/40 {
   background-color: #fffbeb !important;
   color: #92400e !important;
   border-color: #fde68a !important;

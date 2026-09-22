@@ -173,12 +173,12 @@ export default function Dashboard() {
             onClick={() => handleManualAlertLevel('safe')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
               condition === 'safe'
-                ? 'bg-emerald-500 text-slate-950 font-black border-emerald-400 shadow-md shadow-emerald-500/20'
+                ? 'bg-emerald-600 text-white font-bold border-emerald-500 shadow-md shadow-emerald-500/20'
                 : 'bg-[#0a1628] text-[#88a0c0] border-[#1a3a6b] hover:text-white hover:border-emerald-500/50'
             }`}
             title="Calibrate Synoptic Stage to Safe"
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'safe' ? 'bg-slate-950' : 'bg-emerald-400'}`}></span>
+            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'safe' ? 'bg-white' : 'bg-emerald-400'}`}></span>
             <span>Safe</span>
           </button>
 
@@ -187,12 +187,12 @@ export default function Dashboard() {
             onClick={() => handleManualAlertLevel('intermediate')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
               condition === 'intermediate'
-                ? 'bg-yellow-500 text-slate-950 font-black border-yellow-400 shadow-md shadow-yellow-500/20'
+                ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-md shadow-amber-500/20'
                 : 'bg-[#0a1628] text-[#88a0c0] border-[#1a3a6b] hover:text-white hover:border-yellow-500/50'
             }`}
             title="Calibrate Synoptic Stage to Intermediate"
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'intermediate' ? 'bg-slate-950' : 'bg-yellow-400'}`}></span>
+            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'intermediate' ? 'bg-slate-950' : 'bg-amber-400'}`}></span>
             <span>Intermediate</span>
           </button>
 
@@ -201,12 +201,12 @@ export default function Dashboard() {
             onClick={() => handleManualAlertLevel('severe')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
               condition === 'severe'
-                ? 'bg-red-500 text-slate-950 font-black border-red-400 shadow-md shadow-red-500/20'
+                ? 'bg-red-600 text-white font-bold border-red-500 shadow-md shadow-red-500/20'
                 : 'bg-[#0a1628] text-[#88a0c0] border-[#1a3a6b] hover:text-white hover:border-red-500/50'
             }`}
             title="Calibrate Synoptic Stage to Severe"
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'severe' ? 'bg-slate-950' : 'bg-red-400'}`}></span>
+            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'severe' ? 'bg-white' : 'bg-red-400'}`}></span>
             <span>Severe</span>
           </button>
         </div>
