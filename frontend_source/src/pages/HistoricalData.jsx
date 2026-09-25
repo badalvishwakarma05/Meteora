@@ -595,31 +595,47 @@ export default function HistoricalData() {
               </div>
             </div>
 
-            {/* Map Top Status Badge */}
-            <div className="absolute top-3 left-3 z-[999] flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] text-xs font-mono text-[#00d4ff] shadow-lg">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00d4ff] animate-pulse"></span>
-              <span>NOAA IBTrACS GROUND-TRUTH (SOLID) + 72H CNN-LSTM FORECAST (DOTTED GLOW)</span>
+            {/* Map Top Status & Trajectory Legend Pill Bar */}
+            <div className="absolute top-3 left-3 z-[999] flex items-center flex-wrap gap-2 max-w-[calc(100%-240px)]">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] text-xs font-mono text-[#00d4ff] shadow-xl">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00d4ff] animate-pulse shrink-0"></span>
+                <span className="font-bold tracking-wide">NOAA IBTrACS & CNN-LSTM DUAL TRACK</span>
+              </div>
+
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-cyan-500/40 text-[11px] font-mono shadow-xl text-slate-200">
+                <span className="w-3.5 h-1 bg-[#00d4ff] rounded-full inline-block shrink-0 shadow-sm shadow-cyan-400"></span>
+                <span className="text-[#00d4ff] font-bold">Past Track</span>
+                <span className="text-slate-400">(Ground-Truth Solid)</span>
+              </div>
+
+              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-red-500/40 text-[11px] font-mono shadow-xl text-slate-200">
+                <span className="w-3.5 h-1 border-b-2 border-dotted border-red-400 inline-block shrink-0"></span>
+                <span className="text-red-400 font-bold">72h AI Forecast</span>
+                <span className="text-slate-400">(Animated Dotted Glow)</span>
+              </div>
             </div>
 
             {/* GIS Legend */}
-            <div className="absolute bottom-3 left-3 z-[999] rounded-xl p-3 text-xs space-y-1.5 backdrop-blur-xl bg-[#0a1628]/95 border border-[#1a3a6b] shadow-xl text-slate-300 max-w-[240px]">
-              <div className="font-bold tracking-widest text-[#00d4ff] text-[9px] uppercase font-mono flex items-center justify-between">
+            <div className="absolute bottom-3 left-3 z-[999] rounded-xl p-3 text-xs space-y-2 backdrop-blur-xl bg-[#0a1628]/95 border border-[#1a3a6b] shadow-xl text-slate-300 max-w-[260px]">
+              <div className="font-bold tracking-widest text-[#00d4ff] text-[9px] uppercase font-mono flex items-center justify-between pb-1 border-b border-[#1a3a6b]">
                 <span>TRAJECTORY LAYERS</span>
-                <span className="text-emerald-400">ONLINE</span>
+                <span className="text-emerald-400 font-semibold">● ACTIVE</span>
               </div>
-              <div className="flex items-center gap-2 text-[10px]">
-                <span className="w-4 h-1 bg-[#00d4ff] rounded inline-block"></span>
-                <span>NOAA Synoptic Ground-Truth (Solid)</span>
+              <div className="flex items-center gap-2.5 text-[11px] font-mono">
+                <span className="w-4 h-1 bg-[#00d4ff] rounded-full shrink-0"></span>
+                <span>NOAA Ground-Truth (Solid)</span>
               </div>
-              <div className="flex items-center gap-2 text-[10px]">
-                <span className="w-4 h-1 border-b-2 border-dotted border-red-400 inline-block"></span>
-                <span className="text-red-300 font-bold">CNN-LSTM 72h Forecast (Glowing)</span>
+              <div className="flex items-center gap-2.5 text-[11px] font-mono">
+                <span className="w-4 h-1 border-b-2 border-dotted border-red-400 shrink-0"></span>
+                <span className="text-red-300 font-semibold">CNN-LSTM 72h Forecast (Glowing)</span>
               </div>
-              <div className="flex items-center gap-2 text-[10px] pt-1 border-t border-[#1a3a6b]">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#ff3b3b]"></span> Cat 4–5 Super Cyclone (&gt;210 km/h)
+              <div className="flex items-center gap-2.5 text-[10px] pt-1.5 border-t border-[#1a3a6b] font-mono">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ff3b3b] shrink-0"></span>
+                <span>Cat 4–5 Super Cyclone (&gt;210 km/h)</span>
               </div>
-              <div className="flex items-center gap-2 text-[10px]">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#ff9500]"></span> Cat 2–3 Severe Storm (120–209 km/h)
+              <div className="flex items-center gap-2.5 text-[10px] font-mono">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ff9500] shrink-0"></span>
+                <span>Cat 2–3 Severe Storm (120–209 km/h)</span>
               </div>
             </div>
 
