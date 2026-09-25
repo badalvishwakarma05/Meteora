@@ -329,32 +329,32 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
         <div className="w-full lg:w-96 flex flex-col gap-4 flex-shrink-0">
           {/* Rapid Intensification Alert Banner */}
           <div
-            className="rounded-xl p-3.5 border border-amber-500/50 bg-amber-950/30 flex items-start gap-3"
+            className="rounded-xl p-3.5 border border-amber-300 dark:border-amber-500/50 bg-amber-50 dark:bg-amber-950/30 flex items-start gap-3 shadow-sm"
           >
-            <AlertTriangle size={18} className="text-amber-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle size={18} className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
             <div>
-              <div className="font-bold text-xs text-amber-400 tracking-wider font-mono">
+              <div className="font-bold text-xs text-amber-700 dark:text-amber-400 tracking-wider font-mono">
                 RAPID INTENSIFICATION WARNING
               </div>
-              <div className="text-[11px] text-amber-200 mt-0.5">
+              <div className="text-[11px] text-amber-900 dark:text-amber-200 mt-0.5">
                 Wind speed increased by +55 km/h in 24 hours. Central convective core stabilized.
               </div>
-              <div className="text-[10px] font-mono text-amber-400/80 mt-1 font-semibold">
+              <div className="text-[10px] font-mono text-amber-700 dark:text-amber-400/80 mt-1 font-semibold">
                 Neural Confidence: 87.4%
               </div>
             </div>
           </div>
 
           {/* AI Coastal City Landfall Danger Matrix */}
-          <div className="rounded-xl border border-[#1a3a6b] bg-[#0d1f3c] overflow-hidden">
-            <div className="px-4 py-3 bg-[#0a1628] border-b border-[#1a3a6b] flex items-center justify-between">
+          <div className="rounded-xl border border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] overflow-hidden shadow-md">
+            <div className="px-4 py-3 bg-slate-50 dark:bg-[#0a1628] border-b border-slate-200 dark:border-[#1a3a6b] flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldAlert size={16} className="text-[#00d4ff]" />
-                <h3 className="text-xs font-bold tracking-widest text-white uppercase font-mono">
+                <ShieldAlert size={16} className="text-cyan-600 dark:text-[#00d4ff]" />
+                <h3 className="text-xs font-bold tracking-widest text-slate-900 dark:text-white uppercase font-mono">
                   Coastal Landfall Danger Matrix
                 </h3>
               </div>
-              <span className="text-[10px] font-mono text-[#00d4ff]">
+              <span className="text-[10px] font-mono text-cyan-600 dark:text-[#00d4ff] font-semibold">
                 Decay Model Active
               </span>
             </div>
@@ -362,7 +362,7 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
             <div className="p-3 overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-[#1a3a6b] text-[#88a0c0] font-mono text-[10px] uppercase">
+                  <tr className="border-b border-slate-200 dark:border-[#1a3a6b] text-slate-500 dark:text-[#88a0c0] font-mono text-[10px] uppercase">
                     <th className="pb-2 pl-2">City</th>
                     <th className="pb-2">Dist</th>
                     <th className="pb-2">ETA</th>
@@ -370,28 +370,28 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
                     <th className="pb-2">Danger</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1a3a6b]/60 font-mono">
+                <tbody className="divide-y divide-slate-100 dark:divide-[#1a3a6b]/60 font-mono">
                   {cityImpacts.slice(0, 5).map((item, idx) => {
                     const isSevere = item.danger_score >= 85;
                     const isModerate = item.danger_score >= 60 && item.danger_score < 85;
                     return (
-                      <tr key={idx} className="hover:bg-[#102a4c] transition-colors">
-                        <td className="py-2.5 pl-2 font-bold text-white flex items-center gap-1">
-                          <MapPin size={11} className={isSevere ? 'text-red-400' : isModerate ? 'text-amber-400' : 'text-[#00d4ff]'} />
+                      <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-[#102a4c] transition-colors">
+                        <td className="py-2.5 pl-2 font-bold text-slate-900 dark:text-white flex items-center gap-1">
+                          <MapPin size={11} className={isSevere ? 'text-red-500' : isModerate ? 'text-amber-500' : 'text-cyan-600 dark:text-[#00d4ff]'} />
                           <span>{item.city}</span>
-                          <span className="text-[10px] text-[#88a0c0]">({item.state})</span>
+                          <span className="text-[10px] text-slate-500 dark:text-[#88a0c0]">({item.state})</span>
                         </td>
-                        <td className="py-2.5 text-[#88a0c0]">{item.distance_km}km</td>
-                        <td className="py-2.5 font-semibold text-white">{item.eta_hours}h</td>
-                        <td className="py-2.5 font-bold text-white">{item.predicted_wind_kmh}</td>
+                        <td className="py-2.5 text-slate-500 dark:text-[#88a0c0]">{item.distance_km}km</td>
+                        <td className="py-2.5 font-semibold text-slate-900 dark:text-white">{item.eta_hours}h</td>
+                        <td className="py-2.5 font-bold text-slate-900 dark:text-white">{item.predicted_wind_kmh}</td>
                         <td className="py-2.5">
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold inline-block border ${
                               isSevere
-                                ? 'bg-red-500/20 text-red-300 border-red-500/40'
+                                ? 'bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-300 dark:border-red-500/40'
                                 : isModerate
-                                ? 'bg-amber-500/20 text-yellow-300 border-amber-500/40'
-                                : 'bg-cyan-500/20 text-[#00d4ff] border-cyan-500/40'
+                                ? 'bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-yellow-300 border-amber-300 dark:border-amber-500/40'
+                                : 'bg-cyan-50 dark:bg-cyan-500/20 text-cyan-700 dark:text-[#00d4ff] border-cyan-300 dark:border-cyan-500/40'
                             }`}
                           >
                             {item.danger_score} · {item.alert_level.split(' ')[0]}
@@ -406,8 +406,8 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
           </div>
 
           {/* 96-Hour Projected Intensity Chart */}
-          <div className="rounded-xl border border-[#1a3a6b] p-4 bg-[#0d1f3c]">
-            <h3 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase font-mono mb-3">
+          <div className="rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-4 bg-white dark:bg-[#0d1f3c] shadow-md">
+            <h3 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase font-mono mb-3">
               96-Hour Projected Intensity
             </h3>
             <ResponsiveContainer width="100%" height={150}>
@@ -418,9 +418,9 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
                     <stop offset="95%" stopColor="#00d4ff" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1a3a6b" />
-                <XAxis dataKey="time" tick={{ fill: '#88a0c0', fontSize: 9 }} interval={4} />
-                <YAxis tick={{ fill: '#88a0c0', fontSize: 9 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" className="dark:stroke-[#1a3a6b]" />
+                <XAxis dataKey="time" tick={{ fill: '#64748b', fontSize: 9 }} interval={4} />
+                <YAxis tick={{ fill: '#64748b', fontSize: 9 }} />
                 <Tooltip content={<CustomTooltip />} />
                 <ReferenceLine x="Now" stroke="#ff9500" strokeDasharray="3 3" />
                 <Area type="monotone" dataKey="wind" stroke="#00d4ff" strokeWidth={2} fill="url(#iGrad)" />
@@ -429,8 +429,8 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
           </div>
 
           {/* Multi-Model Ensemble Matrix */}
-          <div className="rounded-xl border border-[#1a3a6b] p-4 bg-[#0d1f3c]">
-            <h3 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase font-mono mb-2.5">
+          <div className="rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-4 bg-white dark:bg-[#0d1f3c] shadow-md">
+            <h3 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase font-mono mb-2.5">
               Ensemble Model Trajectory Comparison
             </h3>
             <div className="space-y-2">
@@ -440,17 +440,19 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
                   <div
                     key={i}
                     className={`flex items-center gap-2.5 p-2 rounded-lg border text-xs ${
-                      isOurs ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-cyan-500/40 text-[#00d4ff]' : 'bg-[#0a1628] border-[#1a3a6b] text-[#88a0c0]'
+                      isOurs
+                        ? 'bg-cyan-50 dark:bg-gradient-to-r dark:from-cyan-500/20 dark:to-blue-500/10 border-cyan-300 dark:border-cyan-500/40 text-cyan-800 dark:text-[#00d4ff]'
+                        : 'bg-slate-50 dark:bg-[#0a1628] border-slate-200 dark:border-[#1a3a6b] text-slate-600 dark:text-[#88a0c0]'
                     }`}
                   >
-                    <div className={`w-1 h-7 rounded-full ${isOurs ? 'bg-[#00d4ff]' : 'bg-[#1a3a6b]'}`} />
+                    <div className={`w-1 h-7 rounded-full ${isOurs ? 'bg-cyan-500 dark:bg-[#00d4ff]' : 'bg-slate-300 dark:bg-[#1a3a6b]'}`} />
                     <div className="flex-1 min-w-0">
-                      <div className="font-bold text-white text-[11px]">{m.model}</div>
-                      <div className="text-[10px] font-mono text-[#88a0c0] truncate">
+                      <div className="font-bold text-slate-900 dark:text-white text-[11px]">{m.model}</div>
+                      <div className="text-[10px] font-mono text-slate-500 dark:text-[#88a0c0] truncate">
                         {m.track} · Landfall: {m.landfall}
                       </div>
                     </div>
-                    <span className="font-mono font-bold text-xs text-[#00d4ff]">
+                    <span className="font-mono font-bold text-xs text-cyan-700 dark:text-[#00d4ff]">
                       {m.wind} km/h
                     </span>
                   </div>
@@ -460,33 +462,33 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
           </div>
 
           {/* Landfall Parameters Card */}
-          <div className="rounded-xl border border-[#1a3a6b] p-4 bg-[#0d1f3c]">
+          <div className="rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-4 bg-white dark:bg-[#0d1f3c] shadow-md">
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-white uppercase tracking-wider font-mono">
-                <MapPin size={14} className="text-[#00d4ff]" />
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
+                <MapPin size={14} className="text-cyan-600 dark:text-[#00d4ff]" />
                 <span>Estimated Landfall</span>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold border border-emerald-500/40 bg-emerald-500/20 text-emerald-300 font-mono">
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold border border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-mono">
                 91% Confidence
               </span>
             </div>
 
             <div className="space-y-2 text-xs mb-4">
-              <div className="flex justify-between py-1 border-b border-[#1a3a6b]">
-                <span className="text-[#88a0c0]">Location Target</span>
-                <span className="font-semibold text-white">{cyclone.landfallLocation || 'Odisha Coast (Puri)'}</span>
+              <div className="flex justify-between py-1 border-b border-slate-200 dark:border-[#1a3a6b]">
+                <span className="text-slate-500 dark:text-[#88a0c0]">Location Target</span>
+                <span className="font-semibold text-slate-900 dark:text-white">{cyclone.landfallLocation || 'Odisha Coast (Puri)'}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-[#1a3a6b]">
-                <span className="text-[#88a0c0]">Landfall Window</span>
-                <span className="font-mono text-white">{cyclone.landfall || '14-Sep 18:00 IST'}</span>
+              <div className="flex justify-between py-1 border-b border-slate-200 dark:border-[#1a3a6b]">
+                <span className="text-slate-500 dark:text-[#88a0c0]">Landfall Window</span>
+                <span className="font-mono text-slate-900 dark:text-white">{cyclone.landfall || '14-Sep 18:00 IST'}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-[#1a3a6b]">
-                <span className="text-[#88a0c0]">Peak Inundation Surge</span>
-                <span className="font-mono font-bold text-[#00d4ff]">3.5 – 4.2 Meters</span>
+              <div className="flex justify-between py-1 border-b border-slate-200 dark:border-[#1a3a6b]">
+                <span className="text-slate-500 dark:text-[#88a0c0]">Peak Inundation Surge</span>
+                <span className="font-mono font-bold text-cyan-600 dark:text-[#00d4ff]">3.5 – 4.2 Meters</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-[#1a3a6b]">
-                <span className="text-[#88a0c0]">24-hr Expected Rainfall</span>
-                <span className="font-mono font-bold text-[#00d4ff]">200 – 300 mm</span>
+              <div className="flex justify-between py-1 border-b border-slate-200 dark:border-[#1a3a6b]">
+                <span className="text-slate-500 dark:text-[#88a0c0]">24-hr Expected Rainfall</span>
+                <span className="font-mono font-bold text-cyan-600 dark:text-[#00d4ff]">200 – 300 mm</span>
               </div>
             </div>
 
@@ -500,7 +502,7 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
               </button>
               <button
                 onClick={() => setImpactModalOpen(true)}
-                className="flex-1 py-2 rounded-lg font-semibold text-xs border border-[#1a3a6b] bg-[#0a1628] text-white hover:border-cyan-500/40 transition-colors"
+                className="flex-1 py-2 rounded-lg font-semibold text-xs border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-slate-800 dark:text-white hover:border-cyan-500/40 transition-colors shadow-sm"
               >
                 View Impact Zone
               </button>
@@ -512,24 +514,24 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
       {/* ISSUE ALERT EMERGENCY MODAL */}
       {alertModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-xl border border-red-500/50 p-6 bg-[#0d1f3c] shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1a3a6b] mb-4">
+          <div className="w-full max-w-md rounded-xl border border-red-500/50 p-6 bg-white dark:bg-[#0d1f3c] shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#1a3a6b] mb-4">
               <div className="flex items-center gap-2">
-                <ShieldAlert size={20} className="text-red-400" />
-                <h3 className="font-bold text-white text-sm">Emergency Warning Broadcast</h3>
+                <ShieldAlert size={20} className="text-red-500" />
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Emergency Warning Broadcast</h3>
               </div>
-              <button onClick={() => setAlertModalOpen(false)} className="text-[#88a0c0] hover:text-white">
+              <button onClick={() => setAlertModalOpen(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-white">
                 <X size={18} />
               </button>
             </div>
 
             <form onSubmit={handleDispatchAlert} className="space-y-3.5 text-xs">
               <div>
-                <label className="text-[#88a0c0] font-medium block mb-1">Alert Warning Stage</label>
+                <label className="text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Alert Warning Stage</label>
                 <select
                   value={alertForm.stage}
                   onChange={e => setAlertForm({ ...alertForm, stage: e.target.value })}
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-white font-semibold focus:outline-none focus:border-[#00d4ff]"
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white font-semibold focus:outline-none focus:border-[#00d4ff]"
                 >
                   <option>RED (Warning / Action - Landfall &lt; 24h)</option>
                   <option>ORANGE (Alert - Landfall &lt; 48h)</option>
@@ -538,26 +540,26 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
               </div>
 
               <div>
-                <label className="text-[#88a0c0] font-medium block mb-1">High-Risk Coastal Districts</label>
+                <label className="text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">High-Risk Coastal Districts</label>
                 <input
                   type="text"
                   value={alertForm.districts}
                   onChange={e => setAlertForm({ ...alertForm, districts: e.target.value })}
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-white focus:outline-none focus:border-[#00d4ff]"
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white focus:outline-none focus:border-[#00d4ff]"
                 />
               </div>
 
               <div>
-                <label className="text-[#88a0c0] font-medium block mb-1">Estimated Evacuation Requirement</label>
+                <label className="text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Estimated Evacuation Requirement</label>
                 <input
                   type="text"
                   value={alertForm.evacuationCount}
                   onChange={e => setAlertForm({ ...alertForm, evacuationCount: e.target.value })}
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-white focus:outline-none focus:border-[#00d4ff]"
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white focus:outline-none focus:border-[#00d4ff]"
                 />
               </div>
 
-              <div className="p-2.5 rounded bg-[#0a1628] border border-amber-500/40 text-[11px] text-amber-200">
+              <div className="p-2.5 rounded bg-amber-50 dark:bg-[#0a1628] border border-amber-300 dark:border-amber-500/40 text-[11px] text-amber-900 dark:text-amber-200">
                 ⚠ This will trigger an immediate push notification and SMS cascade to National Disaster Response Force (NDRF) and State Disaster Management Authorities (SDMA).
               </div>
 
@@ -565,7 +567,7 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
                 <button
                   type="button"
                   onClick={() => setAlertModalOpen(false)}
-                  className="flex-1 py-2 rounded-lg border border-[#1a3a6b] text-[#88a0c0] hover:text-white transition-colors"
+                  className="flex-1 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white transition-colors"
                 >
                   Cancel
                 </button>
@@ -573,7 +575,7 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
                   type="submit"
                   className="flex-1 py-2 rounded-lg font-bold text-white bg-red-600 hover:bg-red-500 transition-colors shadow-lg shadow-red-500/30"
                 >
-                  Confirm & Broadcast
+                  Confirm &amp; Broadcast
                 </button>
               </div>
             </form>
@@ -584,44 +586,44 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
       {/* VIEW IMPACT ZONE MODAL */}
       {impactModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-xl border border-[#1a3a6b] p-6 bg-[#0d1f3c] shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1a3a6b] mb-4">
+          <div className="w-full max-w-lg rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-6 bg-white dark:bg-[#0d1f3c] shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#1a3a6b] mb-4">
               <div>
-                <h3 className="font-bold text-white text-sm">Coastal Inundation & Impact Zone Assessment</h3>
-                <div className="text-xs text-[#88a0c0] font-mono mt-0.5">{cyclone.name} Landfall Simulation</div>
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Coastal Inundation &amp; Impact Zone Assessment</h3>
+                <div className="text-xs text-slate-500 dark:text-[#88a0c0] font-mono mt-0.5">{cyclone.name} Landfall Simulation</div>
               </div>
-              <button onClick={() => setImpactModalOpen(false)} className="text-[#88a0c0] hover:text-white">
+              <button onClick={() => setImpactModalOpen(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-white">
                 <X size={18} />
               </button>
             </div>
 
             <div className="grid grid-cols-3 gap-2.5 text-center text-xs mb-4">
-              <div className="p-2.5 rounded border border-[#1a3a6b] bg-[#0a1628]">
-                <div className="text-[#88a0c0] text-[10px] font-mono">COASTLINE THREAT</div>
-                <div className="font-bold text-white mt-1">180 km Front</div>
+              <div className="p-2.5 rounded border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
+                <div className="text-slate-500 dark:text-[#88a0c0] text-[10px] font-mono">COASTLINE THREAT</div>
+                <div className="font-bold text-slate-900 dark:text-white mt-1">180 km Front</div>
               </div>
-              <div className="p-2.5 rounded border border-[#1a3a6b] bg-[#0a1628]">
-                <div className="text-[#88a0c0] text-[10px] font-mono">POPULATION AT RISK</div>
-                <div className="font-bold text-white mt-1">1.42 Million</div>
+              <div className="p-2.5 rounded border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
+                <div className="text-slate-500 dark:text-[#88a0c0] text-[10px] font-mono">POPULATION AT RISK</div>
+                <div className="font-bold text-slate-900 dark:text-white mt-1">1.42 Million</div>
               </div>
-              <div className="p-2.5 rounded border border-[#1a3a6b] bg-[#0a1628]">
-                <div className="text-[#88a0c0] text-[10px] font-mono">SHELTERS ACTIVE</div>
-                <div className="font-bold text-white mt-1">840 Centers</div>
+              <div className="p-2.5 rounded border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
+                <div className="text-slate-500 dark:text-[#88a0c0] text-[10px] font-mono">SHELTERS ACTIVE</div>
+                <div className="font-bold text-slate-900 dark:text-white mt-1">840 Centers</div>
               </div>
             </div>
 
             <div className="space-y-2 text-xs mb-5">
-              <div className="font-bold text-white text-xs font-mono">Priority District Inundation Matrix:</div>
+              <div className="font-bold text-slate-900 dark:text-white text-xs font-mono">Priority District Inundation Matrix:</div>
               {[
-                { district: 'Puri District', surge: '3.8 - 4.2m', rainfall: '280 mm', alert: 'RED', alertClass: 'bg-red-500/20 text-red-300 border-red-500/40' },
-                { district: 'Jagatsinghpur', surge: '3.2 - 3.6m', rainfall: '250 mm', alert: 'RED', alertClass: 'bg-red-500/20 text-red-300 border-red-500/40' },
-                { district: 'Kendrapara', surge: '2.8 - 3.2m', rainfall: '220 mm', alert: 'ORANGE', alertClass: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' },
-                { district: 'Bhadrak', surge: '2.0 - 2.5m', rainfall: '190 mm', alert: 'ORANGE', alertClass: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' },
+                { district: 'Puri District', surge: '3.8 - 4.2m', rainfall: '280 mm', alert: 'RED', alertClass: 'bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-300 dark:border-red-500/40' },
+                { district: 'Jagatsinghpur', surge: '3.2 - 3.6m', rainfall: '250 mm', alert: 'RED', alertClass: 'bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-300 dark:border-red-500/40' },
+                { district: 'Kendrapara', surge: '2.8 - 3.2m', rainfall: '220 mm', alert: 'ORANGE', alertClass: 'bg-amber-50 dark:bg-yellow-500/20 text-amber-700 dark:text-yellow-300 border-amber-300 dark:border-yellow-500/40' },
+                { district: 'Bhadrak', surge: '2.0 - 2.5m', rainfall: '190 mm', alert: 'ORANGE', alertClass: 'bg-amber-50 dark:bg-yellow-500/20 text-amber-700 dark:text-yellow-300 border-amber-300 dark:border-yellow-500/40' },
               ].map(d => (
-                <div key={d.district} className="flex items-center justify-between p-2 rounded bg-[#0a1628] border border-[#1a3a6b]">
-                  <span className="font-semibold text-white">{d.district}</span>
-                  <span className="text-[#00d4ff] font-mono">Surge: {d.surge}</span>
-                  <span className="text-slate-300 font-mono">Rain: {d.rainfall}</span>
+                <div key={d.district} className="flex items-center justify-between p-2 rounded bg-slate-50 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b]">
+                  <span className="font-semibold text-slate-900 dark:text-white">{d.district}</span>
+                  <span className="text-cyan-600 dark:text-[#00d4ff] font-mono">Surge: {d.surge}</span>
+                  <span className="text-slate-700 dark:text-slate-300 font-mono">Rain: {d.rainfall}</span>
                   <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border font-mono ${d.alertClass}`}>
                     {d.alert}
                   </span>

@@ -140,7 +140,7 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
       {/* Top-Right Map Controls: Basemap Switcher + Ports & Cities Toggle */}
       <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[1000] flex flex-wrap gap-2 items-center max-w-[calc(100%-20px)] justify-end pointer-events-auto">
         {/* Basemap Switcher */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-2xl">
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-white/95 dark:bg-[#0a1628]/95 backdrop-blur-md border border-slate-200 dark:border-[#1a3a6b] shadow-2xl">
           {Object.keys(TILE_LAYERS).map(layer => {
             const isActive = activeLayer === layer;
             return (
@@ -151,7 +151,7 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
                 className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border select-none ${
                   isActive
                     ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-md shadow-cyan-500/30 font-extrabold'
-                    : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
+                    : 'text-slate-600 dark:text-[#88a0c0] border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
                 }`}
               >
                 {layer}
@@ -161,7 +161,7 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
         </div>
 
         {/* Ports & Coastal Cities Layer Toggle */}
-        <div className="flex items-center p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-2xl">
+        <div className="flex items-center p-1 rounded-xl bg-white/95 dark:bg-[#0a1628]/95 backdrop-blur-md border border-slate-200 dark:border-[#1a3a6b] shadow-2xl">
           <button
             type="button"
             onClick={() => {
@@ -170,47 +170,47 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
             }}
             className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border flex items-center gap-1.5 select-none ${
               showPorts
-                ? 'bg-cyan-500/25 text-[#00d4ff] border-cyan-500/50 shadow-sm shadow-cyan-500/20'
-                : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
+                ? 'bg-cyan-500/25 text-cyan-700 dark:text-[#00d4ff] border-cyan-500/50 shadow-sm shadow-cyan-500/20'
+                : 'text-slate-600 dark:text-[#88a0c0] border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
             }`}
           >
             <Building2 size={12} />
-            <span>Ports & Cities</span>
+            <span>Ports &amp; Cities</span>
           </button>
         </div>
       </div>
 
       {/* Floating Modern Legend (Bottom Left) */}
-      <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 z-[999] rounded-xl p-2.5 sm:p-3 text-[10px] sm:text-xs space-y-1 sm:space-y-1.5 backdrop-blur-xl bg-[#0a1628]/95 border border-[#1a3a6b] shadow-xl max-w-[200px] sm:max-w-none pointer-events-auto">
-        <div className="font-bold tracking-widest text-cyan-400 text-[9px] uppercase mb-1 font-mono">
+      <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 z-[999] rounded-xl p-2.5 sm:p-3 text-[10px] sm:text-xs space-y-1 sm:space-y-1.5 backdrop-blur-xl bg-white/95 dark:bg-[#0a1628]/95 border border-slate-200 dark:border-[#1a3a6b] shadow-xl max-w-[200px] sm:max-w-none pointer-events-auto">
+        <div className="font-bold tracking-widest text-cyan-600 dark:text-cyan-400 text-[9px] uppercase mb-1 font-mono">
           GIS MAP LEGEND
         </div>
         <div className="flex items-center gap-2">
           <span className="w-3 border-t-2 border-[#00d4ff] inline-block"></span>
-          <span className="text-slate-300 text-[11px]">Observed Track (Solid)</span>
+          <span className="text-slate-700 dark:text-slate-300 text-[11px]">Observed Track (Solid)</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 border-t-2 border-dotted border-red-400 inline-block"></span>
-          <span className="text-red-300 text-[11px] font-bold">72h AI Forecast (Glowing)</span>
+          <span className="w-3 border-t-2 border-dotted border-red-500 dark:border-red-400 inline-block"></span>
+          <span className="text-red-600 dark:text-red-300 text-[11px] font-bold">72h AI Forecast (Glowing)</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#00d4ff] inline-block border border-white"></span>
-          <span className="text-cyan-300 text-[11px]">Major Port / Maritime City</span>
+          <span className="text-cyan-700 dark:text-cyan-300 text-[11px]">Major Port / Maritime City</span>
         </div>
-        <div className="flex items-center gap-2 pt-1 border-t border-[#1a3a6b]">
+        <div className="flex items-center gap-2 pt-1 border-t border-slate-200 dark:border-[#1a3a6b]">
           <span className="w-2.5 h-2.5 rounded-full bg-[#ff3b3b] inline-block"></span>
-          <span className="text-red-300 text-[11px] font-bold">Severe (Cat 3+)</span>
+          <span className="text-red-600 dark:text-red-300 text-[11px] font-bold">Severe (Cat 3+)</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#ff9500] inline-block"></span>
-          <span className="text-yellow-300 text-[11px]">Moderate (Cat 1-2)</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-[#ff9500] inline-block"></span>
+          <span className="text-amber-600 dark:text-yellow-300 text-[11px]">Moderate (Cat 1-2)</span>
         </div>
       </div>
 
       <MapContainer
         center={[15.5, 82.5]}
         zoom={4}
-        style={{ height: '100%', width: '100%', minHeight: '350px', background: '#0a1628' }}
+        style={{ height: '100%', width: '100%', minHeight: '350px', background: isLight ? '#e2e8f0' : '#0a1628' }}
         zoomControl={false}
         attributionControl={false}
         className="touch-pan-x touch-pan-y w-full h-full min-h-[350px]"

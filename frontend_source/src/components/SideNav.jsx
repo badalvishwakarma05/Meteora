@@ -35,12 +35,12 @@ export default function SideNav() {
   return (
     <aside
       className={clsx(
-        'flex flex-row md:flex-col w-full md:w-60 border-b md:border-b-0 md:border-r border-[#1a3a6b] bg-[#0d1f3c] transition-all duration-300 relative z-20 select-none shrink-0 overflow-x-auto md:overflow-x-visible',
+        'flex flex-row md:flex-col w-full md:w-60 border-b md:border-b-0 md:border-r border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] transition-all duration-300 relative z-20 select-none shrink-0 overflow-x-auto md:overflow-x-visible shadow-sm',
         collapsed ? 'md:w-18' : 'md:w-60'
       )}
     >
       {/* Brand area (desktop) */}
-      <div className="hidden md:flex items-center gap-3 px-5 py-4 border-b border-[#1a3a6b]">
+      <div className="hidden md:flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-[#1a3a6b]">
         <div
           onClick={() => navigate('/dashboard')}
           className="cursor-pointer flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-transform hover:scale-105 shadow-lg shadow-cyan-500/20 border border-[#00d4ff]/40"
@@ -50,10 +50,10 @@ export default function SideNav() {
         </div>
         {!collapsed && (
           <div className="flex-1 min-w-0">
-            <span className="font-black text-sm tracking-wider block truncate bg-gradient-to-r from-white via-cyan-100 to-[#00d4ff] bg-clip-text text-transparent">
+            <span className="font-black text-sm tracking-wider block truncate text-slate-900 dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:via-cyan-100 dark:to-[#00d4ff] dark:bg-clip-text">
               METEORA
             </span>
-            <span className="text-[10px] text-[#8892a4] font-medium block truncate" title="Predict. Prepare. Protect.">
+            <span className="text-[10px] text-slate-500 dark:text-[#8892a4] font-medium block truncate" title="Predict. Prepare. Protect.">
               Predict. Prepare. Protect.
             </span>
           </div>
@@ -70,8 +70,8 @@ export default function SideNav() {
               clsx(
                 'flex items-center gap-2 md:gap-3 px-3 md:px-3.5 py-2 md:py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 border shrink-0 whitespace-nowrap',
                 isActive
-                  ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 text-[#00d4ff] border-cyan-500/40 shadow-md shadow-cyan-500/10'
-                  : 'text-[#8892a4] border-transparent hover:bg-white/[0.04] hover:text-white hover:border-white/[0.06]'
+                  ? 'bg-cyan-50 dark:bg-gradient-to-r dark:from-cyan-500/20 dark:to-blue-500/10 text-cyan-700 dark:text-[#00d4ff] border-cyan-300 dark:border-cyan-500/40 shadow-sm'
+                  : 'text-slate-600 dark:text-[#8892a4] border-transparent hover:bg-slate-100 dark:hover:bg-white/[0.04] hover:text-slate-900 dark:hover:text-white'
               )
             }
             title={collapsed ? label : undefined}
@@ -84,7 +84,7 @@ export default function SideNav() {
 
       {/* Collapse toggle (desktop only) */}
       <button
-        className="hidden md:flex absolute -right-3 top-20 w-6 h-6 rounded-full border border-[#1a3a6b] bg-[#0d1f3c] items-center justify-center z-30 transition-all hover:border-[#00d4ff] hover:text-[#00d4ff] text-[#8892a4] shadow-md cursor-pointer"
+        className="hidden md:flex absolute -right-3 top-20 w-6 h-6 rounded-full border border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] items-center justify-center z-30 transition-all hover:border-cyan-500 dark:hover:border-[#00d4ff] hover:text-cyan-600 dark:hover:text-[#00d4ff] text-slate-600 dark:text-[#8892a4] shadow-md cursor-pointer"
         onClick={() => setCollapsed(!collapsed)}
         title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
       >
@@ -92,11 +92,11 @@ export default function SideNav() {
       </button>
 
       {/* Bottom Sign Out Option (desktop) */}
-      <div className="hidden md:block p-3 border-t border-[#1a3a6b]">
+      <div className="hidden md:block p-3 border-t border-slate-200 dark:border-[#1a3a6b]">
         <button
           onClick={handleSignOut}
           className={clsx(
-            'w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#8892a4] hover:text-red-400 hover:bg-red-950/30 border border-transparent hover:border-red-500/20 transition-all cursor-pointer',
+            'w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-[#8892a4] hover:text-red-500 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-950/30 border border-transparent hover:border-red-200 dark:hover:border-red-500/20 transition-all cursor-pointer',
             collapsed && 'justify-center px-0'
           )}
           title="Sign Out"
@@ -106,7 +106,7 @@ export default function SideNav() {
         </button>
 
         {!collapsed && (
-          <div className="mt-2 text-[10px] text-[#8892a4]/60 text-center font-mono">
+          <div className="mt-2 text-[10px] text-slate-400 dark:text-[#8892a4]/60 text-center font-mono">
             IMD · RSMC v2.4
           </div>
         )}
