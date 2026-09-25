@@ -4,8 +4,8 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, ReferenceLine
 } from 'recharts';
-import { Download, Play, AlertTriangle, MapPin, Wind, Droplets, RefreshCw, X, ShieldAlert, CheckCircle2, Navigation, AlertCircle } from 'lucide-react';
-import { trackData, intensityHistory, ensembleModels, activeCyclones } from '../data/mockData';
+import { Download, Play, AlertTriangle, MapPin, Wind, Droplets, RefreshCw, X, ShieldAlert, CheckCircle2, Navigation, AlertCircle, Sparkles, Compass } from 'lucide-react';
+import { trackData, trackDataByCyclone, intensityHistory, ensembleModels, activeCyclones } from '../data/mockData';
 import CycloneMap from '../components/CycloneMap';
 import { useToast } from '../context/ToastContext';
 import { useDisasterAlert } from '../context/DisasterAlertContext';
@@ -32,6 +32,7 @@ export default function TrackForecast() {
   const [selected, setSelected] = useState(initCyclone.id);
   const cyclone = activeCyclones.find(c => c.id === selected) || activeCyclones[0];
 
+  const [trackFilter, setTrackFilter] = useState('all');
   const [isPredicting, setIsPredicting] = useState(false);
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [impactModalOpen, setImpactModalOpen] = useState(false);
@@ -50,6 +51,17 @@ export default function TrackForecast() {
 
   const { setForecastAlert } = useDisasterAlert();
 
+  const activeTrackWaypoints = (trackDataByCyclone && trackDataByCyclone[cyclone.id]) || trackDataByCyclone?.DANA || trackData;
+
+  const filteredTrackWaypoints = activeTrackWaypoints.filter(row => {
+    if (trackFilter === 'observed') return !row.predicted;
+    if (trackFilter === 'predicted') return row.predicted;
+    return true;
+  });
+
+  const observedCount = activeTrackWaypoints.filter(r => !r.predicted).length;
+  const predictedCount = activeTrackWaypoints.filter(r => r.predicted).length;
+
   useEffect(() => {
     async function loadImpactPredictions() {
       const data = await runCityImpactPrediction(cyclone.lat || 15.4, cyclone.lon || 87.2, cyclone.wind || 175);
@@ -65,12 +77,12 @@ export default function TrackForecast() {
     setSelected(id);
     const storm = activeCyclones.find(c => c.id === id);
     setForecastAlert(id);
-    showToast(`Loaded trajectory and ensemble metrics for ${storm?.name || id}. Synchronized with Citizen Portal.`, 'info');
+    showToast(`Loaded trajectory and synoptic sequence for ${storm?.name || id}.`, 'info');
   };
 
   const handleRunPrediction = async () => {
     setIsPredicting(true);
-    showToast('Executing 96-hour multi-model trajectory & city impact inference...', 'info');
+    showToast('Executing 96-hour multi-model trajectory & synoptic inference...', 'info');
 
     const data = await runCityImpactPrediction(cyclone.lat || 15.4, cyclone.lon || 87.2, cyclone.wind || 175);
     if (data && data.success) {
@@ -79,7 +91,7 @@ export default function TrackForecast() {
     }
 
     setIsPredicting(false);
-    showToast('City Landfall Impact & Danger Ratings recalculated. High-risk zones updated.', 'success');
+    showToast('96-Hour Synoptic Track & Landfall Matrix updated successfully.', 'success');
   };
 
   const handleExportPDF = () => {
@@ -119,19 +131,19 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
   };
 
   return (
-    <div className="flex flex-col gap-5 h-full">
+    <div className="flex flex-col gap-5 min-h-full">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div>
-            <div className="text-xs text-[#88a0c0] font-mono">Ensemble Guidance & Landfall Prediction</div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Track & Forecast Analysis</h1>
+            <div className="text-xs text-[#88a0c0] font-mono">Ensemble Guidance &amp; Landfall Prediction</div>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Track &amp; Forecast Analysis</h1>
           </div>
           {/* Cyclone selector */}
           <select
             value={selected}
             onChange={e => handleSelectCyclone(e.target.value)}
-            className="text-xs sm:text-sm font-bold px-3 py-2 rounded-lg border border-[#1a3a6b] bg-[#0d1f3c] text-white cursor-pointer focus:outline-none focus:border-[#00d4ff]"
+            className="text-xs sm:text-sm font-bold px-3 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] text-slate-900 dark:text-white cursor-pointer focus:outline-none focus:border-[#00d4ff] shadow-sm"
           >
             {activeCyclones.map(c => (
               <option key={c.id} value={c.id}>{c.name}</option>
@@ -142,9 +154,9 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
         <div className="flex gap-2">
           <button
             onClick={handleExportPDF}
-            className="flex items-center gap-2 text-xs sm:text-sm px-3.5 py-2 rounded-lg border border-[#1a3a6b] bg-[#0d1f3c] font-semibold text-[#88a0c0] hover:text-white hover:border-cyan-500/40 transition-all"
+            className="flex items-center gap-2 text-xs sm:text-sm px-3.5 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] font-semibold text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/40 transition-all shadow-sm"
           >
-            <Download size={14} className="text-[#00d4ff]" />
+            <Download size={14} className="text-cyan-600 dark:text-[#00d4ff]" />
             <span>Export Advisory</span>
           </button>
 
@@ -160,66 +172,138 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
       </div>
 
       {/* Main Content (2 Columns) */}
-      <div className="flex flex-col lg:flex-row gap-5 flex-1 min-h-0">
+      <div className="flex flex-col lg:flex-row gap-5 flex-1 items-stretch min-h-0">
         {/* Left Column: Map + Track Table */}
-        <div className="flex flex-col gap-4 flex-1 min-w-0">
+        <div className="flex flex-col gap-4 flex-1 min-w-0 min-h-full">
           {/* Map */}
-          <div className="h-[350px] sm:h-96 md:h-[420px] min-h-[350px] rounded-xl overflow-hidden border border-[#1a3a6b]">
+          <div className="h-[340px] sm:h-[380px] min-h-[320px] rounded-xl overflow-hidden border border-slate-200 dark:border-[#1a3a6b] shadow-md shrink-0">
             <CycloneMap onSelectCyclone={(c) => handleSelectCyclone(c.id)} />
           </div>
 
-          {/* 6-Hourly Track Positions Table */}
-          <div className="rounded-2xl border border-slate-200 dark:border-[#1a3a6b] overflow-hidden bg-white dark:bg-[#0d1f3c] flex-1 flex flex-col min-h-[300px] shadow-xl">
-            <div className="px-4 py-3 border-b border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] flex items-center justify-between flex-wrap gap-2 shrink-0">
-              <h3 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase font-mono flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></span>
-                <span>6-Hourly Synoptic Track Sequence ({cyclone.name})</span>
-              </h3>
-              <span className="text-[11px] font-mono text-cyan-600 dark:text-[#00d4ff] font-semibold">
-                * Cyan Italics = AI Neural Projections
-              </span>
+          {/* 6-Hourly Track Positions Table (Expanded to fill available space) */}
+          <div className="rounded-2xl border border-slate-200 dark:border-[#1a3a6b] overflow-hidden bg-white dark:bg-[#0d1f3c] flex-1 flex flex-col min-h-[380px] shadow-xl">
+            {/* Table Header Bar */}
+            <div className="px-4 py-3 border-b border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] flex items-center justify-between flex-wrap gap-3 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
+                <h3 className="text-xs font-bold tracking-wider text-slate-800 dark:text-white uppercase font-mono">
+                  6-Hourly Synoptic Track Sequence ({cyclone.name})
+                </h3>
+              </div>
+
+              {/* Filter Tabs */}
+              <div className="flex items-center gap-1.5 bg-slate-200/70 dark:bg-[#102a4c] p-1 rounded-lg text-[11px] font-mono">
+                <button
+                  onClick={() => setTrackFilter('all')}
+                  className={`px-2.5 py-1 rounded font-semibold transition-all ${
+                    trackFilter === 'all'
+                      ? 'bg-cyan-500 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  All ({activeTrackWaypoints.length})
+                </button>
+                <button
+                  onClick={() => setTrackFilter('observed')}
+                  className={`px-2.5 py-1 rounded font-semibold transition-all ${
+                    trackFilter === 'observed'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  Observed ({observedCount})
+                </button>
+                <button
+                  onClick={() => setTrackFilter('predicted')}
+                  className={`px-2.5 py-1 rounded font-semibold transition-all ${
+                    trackFilter === 'predicted'
+                      ? 'bg-cyan-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  AI Forecast ({predictedCount})
+                </button>
+              </div>
             </div>
 
-            <div className="overflow-x-auto overflow-y-auto flex-1 min-h-[220px] scrollbar-thin scrollbar-thumb-cyan-500/30">
+            {/* Scrollable Table Body */}
+            <div className="overflow-x-auto overflow-y-auto flex-1 min-h-[260px] scrollbar-thin scrollbar-thumb-cyan-500/30 scrollbar-track-slate-100 dark:scrollbar-track-[#0a1628]">
               <table className="w-full text-xs font-mono">
-                <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-[#0a1628] text-slate-500 dark:text-[#88a0c0] shadow-sm">
-                  <tr className="border-b border-slate-200 dark:border-[#1a3a6b] text-left uppercase text-[10px] tracking-wider">
-                    <th className="px-3.5 py-2.5">Date/Time</th>
-                    <th className="px-3.5 py-2.5">Coordinates</th>
-                    <th className="px-3.5 py-2.5">Wind (km/h)</th>
-                    <th className="px-3.5 py-2.5">Pressure (hPa)</th>
-                    <th className="px-3.5 py-2.5">Intensity Category</th>
-                    <th className="px-3.5 py-2.5">Verification Status</th>
+                <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-[#0a1628] text-slate-600 dark:text-[#88a0c0] shadow-sm border-b border-slate-200 dark:border-[#1a3a6b]">
+                  <tr className="text-left uppercase text-[10px] tracking-wider">
+                    <th className="px-3.5 py-2.5">Date / Time (UTC · IST)</th>
+                    <th className="px-3.5 py-2.5">Eye Coordinates</th>
+                    <th className="px-3.5 py-2.5">Sustained Wind</th>
+                    <th className="px-3.5 py-2.5">Central Pressure</th>
+                    <th className="px-3.5 py-2.5">Intensity &amp; Stage</th>
+                    <th className="px-3.5 py-2.5">Status &amp; Verification Source</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-[#1a3a6b]/60">
-                  {trackData.map((row, i) => (
+                  {filteredTrackWaypoints.map((row, i) => (
                     <tr
                       key={i}
                       className={`hover:bg-slate-50 dark:hover:bg-[#102a4c] transition-colors ${
-                        row.predicted ? 'text-cyan-600 dark:text-cyan-400 font-semibold italic bg-cyan-50/30 dark:bg-cyan-950/10' : 'text-slate-800 dark:text-slate-100'
+                        row.predicted
+                          ? 'text-cyan-700 dark:text-cyan-300 italic bg-cyan-50/20 dark:bg-cyan-950/15'
+                          : 'text-slate-800 dark:text-slate-100'
                       }`}
                     >
-                      <td className="px-3.5 py-2.5 font-bold">{row.time}</td>
-                      <td className="px-3.5 py-2.5 text-cyan-700 dark:text-cyan-300 font-semibold">{row.lat}°N, {row.lon}°E</td>
-                      <td className="px-3.5 py-2.5 font-black text-slate-900 dark:text-white">{row.wind}</td>
-                      <td className="px-3.5 py-2.5 text-slate-600 dark:text-[#88a0c0]">{row.pressure}</td>
                       <td className="px-3.5 py-2.5">
-                        <span
-                          className="px-2 py-0.5 rounded border border-cyan-300 dark:border-cyan-500/30 bg-cyan-50 dark:bg-cyan-500/10 text-[10px] font-bold text-cyan-700 dark:text-[#00d4ff]"
-                        >
-                          CAT {row.category}
-                        </span>
+                        <div className="font-bold text-slate-900 dark:text-white">{row.time}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-[#88a0c0]">{row.ist || ''}</div>
+                      </td>
+                      <td className="px-3.5 py-2.5">
+                        <div className="font-semibold text-cyan-700 dark:text-cyan-300">
+                          {row.lat}°N, {row.lon}°E
+                        </div>
+                      </td>
+                      <td className="px-3.5 py-2.5">
+                        <span className="font-black text-slate-900 dark:text-white text-sm">{row.wind}</span>
+                        <span className="text-[10px] text-slate-500 dark:text-[#88a0c0] ml-1">km/h</span>
+                        {row.gusts && (
+                          <div className="text-[10px] text-amber-600 dark:text-amber-400">
+                            Gusts: {row.gusts} km/h
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-3.5 py-2.5">
+                        <span className="font-bold text-slate-700 dark:text-slate-300">{row.pressure}</span>
+                        <span className="text-[10px] text-slate-500 dark:text-[#88a0c0] ml-1">hPa</span>
+                      </td>
+                      <td className="px-3.5 py-2.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                              row.category >= 4
+                                ? 'bg-red-50 dark:bg-red-950/30 border-red-300 dark:border-red-500/40 text-red-700 dark:text-red-400'
+                                : row.category === 3
+                                ? 'bg-orange-50 dark:bg-orange-950/30 border-orange-300 dark:border-orange-500/40 text-orange-700 dark:text-orange-400'
+                                : 'bg-cyan-50 dark:bg-cyan-950/30 border-cyan-300 dark:border-cyan-500/40 text-cyan-700 dark:text-[#00d4ff]'
+                            }`}
+                          >
+                            CAT {row.category}
+                          </span>
+                          <span className="text-[10px] text-slate-600 dark:text-slate-300 truncate max-w-[140px]">
+                            {row.stage || `Stage ${row.category}`}
+                          </span>
+                        </div>
                       </td>
                       <td className="px-3.5 py-2.5">
                         {row.predicted ? (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 dark:bg-[#ff9500]/20 border border-amber-300 dark:border-[#ff9500]/40 text-amber-700 dark:text-amber-300">
-                            AI PREDICTED
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-50 dark:bg-[#00d4ff]/15 border border-cyan-300 dark:border-[#00d4ff]/30 text-cyan-700 dark:text-cyan-300 flex items-center gap-1">
+                              <Sparkles size={10} className="text-cyan-600 dark:text-[#00d4ff]" />
+                              <span>{row.source || 'AI Neural Forecast'}</span>
+                            </span>
+                          </div>
                         ) : (
-                          <span className="text-emerald-600 dark:text-emerald-400 text-[11px] font-bold flex items-center gap-1">
-                            ✓ Observed
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-emerald-600 dark:text-emerald-400 text-[11px] font-bold flex items-center gap-1">
+                              <CheckCircle2 size={12} />
+                              <span>{row.source || 'Observed (IBTrACS)'}</span>
+                            </span>
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -232,10 +316,10 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
             <div className="px-4 py-2.5 bg-slate-50 dark:bg-[#0a1628] border-t border-slate-200 dark:border-[#1a3a6b] text-[11px] font-mono text-slate-500 dark:text-[#88a0c0] flex items-center justify-between flex-wrap gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
-                <span>Synoptic Waypoints: <strong className="text-slate-800 dark:text-white">{trackData.length} records</strong></span>
+                <span>Active Sequence: <strong className="text-slate-800 dark:text-white">{filteredTrackWaypoints.length} waypoints shown</strong></span>
               </div>
               <div className="text-cyan-600 dark:text-[#00d4ff] font-semibold text-[10px] sm:text-[11px]">
-                Verified by NOAA IBTrACS &amp; IMD Special Cyclone Advisory
+                Ground-Truth: NOAA IBTrACS v04 &amp; IMD Synoptic Bulletin · Model: 72h CNN-LSTM Trajectory
               </div>
             </div>
           </div>
