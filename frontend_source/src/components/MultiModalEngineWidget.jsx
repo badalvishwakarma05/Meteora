@@ -263,7 +263,7 @@ export default function MultiModalEngineWidget() {
         </div>
 
         {/* Streaming Data Feed List */}
-        <div className="divide-y divide-[#1a3a6b]/40 max-h-40 overflow-y-auto bg-[#0a1628] scrollbar-thin scrollbar-thumb-[#1a3a6b]">
+        <div className="divide-y divide-[#1a3a6b]/40 max-h-60 overflow-y-auto bg-[#0a1628] scrollbar-thin scrollbar-thumb-[#1a3a6b]">
           {records.length > 0 ? (
             records.map((row, idx) => (
               <div

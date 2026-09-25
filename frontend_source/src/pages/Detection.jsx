@@ -286,7 +286,7 @@ export default function Detection() {
               </h3>
             </div>
 
-            <div className="p-3 space-y-2 flex-1 overflow-y-auto max-h-64">
+            <div className="p-3 space-y-2 flex-1 overflow-y-auto min-h-[200px] scrollbar-thin scrollbar-thumb-cyan-500/30">
               {detections.map(d => {
                 const isOverAlert = d.conf >= alertThreshold;
                 return (

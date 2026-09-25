@@ -169,58 +169,74 @@ Authorized Forecaster: Dr. M. Kumar (Senior Meteorologist, IMD)
           </div>
 
           {/* 6-Hourly Track Positions Table */}
-          <div className="rounded-xl border border-[#1a3a6b] overflow-hidden bg-[#0d1f3c]">
-            <div className="px-4 py-2.5 border-b border-[#1a3a6b] bg-[#0a1628] flex items-center justify-between">
-              <h3 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase font-mono">
-                6-Hourly Synoptic Track Sequence ({cyclone.name})
+          <div className="rounded-2xl border border-slate-200 dark:border-[#1a3a6b] overflow-hidden bg-white dark:bg-[#0d1f3c] flex-1 flex flex-col min-h-[300px] shadow-xl">
+            <div className="px-4 py-3 border-b border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] flex items-center justify-between flex-wrap gap-2 shrink-0">
+              <h3 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase font-mono flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></span>
+                <span>6-Hourly Synoptic Track Sequence ({cyclone.name})</span>
               </h3>
-              <span className="text-[11px] font-mono text-[#00d4ff]">* Cyan Italics = AI Neural Projections</span>
+              <span className="text-[11px] font-mono text-cyan-600 dark:text-[#00d4ff] font-semibold">
+                * Cyan Italics = AI Neural Projections
+              </span>
             </div>
 
-            <div className="overflow-x-auto max-h-64">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="border-b border-[#1a3a6b] text-[#88a0c0] text-left uppercase text-[10px] tracking-wider font-mono">
-                    <th className="px-3.5 py-2">Date/Time</th>
-                    <th className="px-3.5 py-2">Coordinates</th>
-                    <th className="px-3.5 py-2">Wind (km/h)</th>
-                    <th className="px-3.5 py-2">Pressure (hPa)</th>
-                    <th className="px-3.5 py-2">Intensity Category</th>
-                    <th className="px-3.5 py-2">Verification Status</th>
+            <div className="overflow-x-auto overflow-y-auto flex-1 min-h-[220px] scrollbar-thin scrollbar-thumb-cyan-500/30">
+              <table className="w-full text-xs font-mono">
+                <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-[#0a1628] text-slate-500 dark:text-[#88a0c0] shadow-sm">
+                  <tr className="border-b border-slate-200 dark:border-[#1a3a6b] text-left uppercase text-[10px] tracking-wider">
+                    <th className="px-3.5 py-2.5">Date/Time</th>
+                    <th className="px-3.5 py-2.5">Coordinates</th>
+                    <th className="px-3.5 py-2.5">Wind (km/h)</th>
+                    <th className="px-3.5 py-2.5">Pressure (hPa)</th>
+                    <th className="px-3.5 py-2.5">Intensity Category</th>
+                    <th className="px-3.5 py-2.5">Verification Status</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-slate-100 dark:divide-[#1a3a6b]/60">
                   {trackData.map((row, i) => (
                     <tr
                       key={i}
-                      className={`border-b border-[#1a3a6b]/60 hover:bg-[#102a4c] transition-colors font-mono ${
-                        row.predicted ? 'text-cyan-500 font-semibold italic' : 'text-slate-100'
+                      className={`hover:bg-slate-50 dark:hover:bg-[#102a4c] transition-colors ${
+                        row.predicted ? 'text-cyan-600 dark:text-cyan-400 font-semibold italic bg-cyan-50/30 dark:bg-cyan-950/10' : 'text-slate-800 dark:text-slate-100'
                       }`}
                     >
-                      <td className="px-3.5 py-2">{row.time}</td>
-                      <td className="px-3.5 py-2">{row.lat}°N, {row.lon}°E</td>
-                      <td className="px-3.5 py-2 font-bold text-white">{row.wind}</td>
-                      <td className="px-3.5 py-2 text-[#88a0c0]">{row.pressure}</td>
-                      <td className="px-3.5 py-2">
+                      <td className="px-3.5 py-2.5 font-bold">{row.time}</td>
+                      <td className="px-3.5 py-2.5 text-cyan-700 dark:text-cyan-300 font-semibold">{row.lat}°N, {row.lon}°E</td>
+                      <td className="px-3.5 py-2.5 font-black text-slate-900 dark:text-white">{row.wind}</td>
+                      <td className="px-3.5 py-2.5 text-slate-600 dark:text-[#88a0c0]">{row.pressure}</td>
+                      <td className="px-3.5 py-2.5">
                         <span
-                          className="px-2 py-0.5 rounded border border-cyan-500/30 bg-cyan-500/10 text-[10px] font-bold text-[#00d4ff]"
+                          className="px-2 py-0.5 rounded border border-cyan-300 dark:border-cyan-500/30 bg-cyan-50 dark:bg-cyan-500/10 text-[10px] font-bold text-cyan-700 dark:text-[#00d4ff]"
                         >
                           CAT {row.category}
                         </span>
                       </td>
-                      <td className="px-3.5 py-2">
+                      <td className="px-3.5 py-2.5">
                         {row.predicted ? (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#ff9500]/20 border border-[#ff9500]/40 text-amber-300">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 dark:bg-[#ff9500]/20 border border-amber-300 dark:border-[#ff9500]/40 text-amber-700 dark:text-amber-300">
                             AI PREDICTED
                           </span>
                         ) : (
-                          <span className="text-emerald-400 text-[11px] font-semibold">✓ Observed</span>
+                          <span className="text-emerald-600 dark:text-emerald-400 text-[11px] font-bold flex items-center gap-1">
+                            ✓ Observed
+                          </span>
                         )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Bottom Footer Info Strip */}
+            <div className="px-4 py-2.5 bg-slate-50 dark:bg-[#0a1628] border-t border-slate-200 dark:border-[#1a3a6b] text-[11px] font-mono text-slate-500 dark:text-[#88a0c0] flex items-center justify-between flex-wrap gap-2 shrink-0">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+                <span>Synoptic Waypoints: <strong className="text-slate-800 dark:text-white">{trackData.length} records</strong></span>
+              </div>
+              <div className="text-cyan-600 dark:text-[#00d4ff] font-semibold text-[10px] sm:text-[11px]">
+                Verified by NOAA IBTrACS &amp; IMD Special Cyclone Advisory
+              </div>
             </div>
           </div>
         </div>

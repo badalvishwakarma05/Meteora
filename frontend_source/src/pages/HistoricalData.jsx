@@ -1359,23 +1359,23 @@ export default function HistoricalData() {
 
       {/* 5. CNN-LSTM 72-HOUR FUTURE TRAJECTORY BREAKDOWN TABLE */}
       {forecastData && forecastData.forecast_points && (
-        <div className="rounded-2xl border border-red-500/40 overflow-hidden bg-[#0d1f3c] shadow-xl">
-          <div className="px-4 py-3 bg-gradient-to-r from-red-950/40 to-[#0a1628] border-b border-[#1a3a6b] flex items-center justify-between flex-wrap gap-2">
+        <div className="rounded-2xl border border-red-500/40 overflow-hidden bg-white dark:bg-[#0d1f3c] shadow-xl transition-all duration-300">
+          <div className="px-4 py-3 bg-gradient-to-r from-red-50 dark:from-red-950/40 via-white dark:via-[#0a1628] to-slate-50 dark:to-[#0a1628] border-b border-red-200 dark:border-[#1a3a6b] flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
-              <Cpu size={16} className="text-red-400" />
-              <h3 className="text-xs font-bold tracking-wider text-white uppercase font-mono">
+              <Cpu size={16} className="text-red-500 dark:text-red-400" />
+              <h3 className="text-xs font-bold tracking-wider text-slate-900 dark:text-white uppercase font-mono">
                 CNN-LSTM 72-Hour Step-by-Step Trajectory Forecast Matrix
               </h3>
             </div>
-            <span className="text-[11px] font-mono text-[#00d4ff] font-bold">
+            <span className="text-[11px] font-mono text-cyan-600 dark:text-[#00d4ff] font-bold">
               Model: MultiModalCycloneCNNLSTM (Dual-Branch Spatial + Temporal)
             </span>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto overflow-y-auto max-h-[380px] scrollbar-thin scrollbar-thumb-red-500/30">
             <table className="w-full text-xs font-mono">
-              <thead>
-                <tr className="border-b border-[#1a3a6b] bg-[#0a1628] text-[#88a0c0] uppercase tracking-wider">
+              <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-[#0a1628] text-slate-600 dark:text-[#88a0c0] shadow-sm">
+                <tr className="border-b border-slate-200 dark:border-[#1a3a6b] uppercase tracking-wider">
                   <th className="px-4 py-2.5 text-left">Forecast Step</th>
                   <th className="px-4 py-2.5 text-left">Timestamp (UTC)</th>
                   <th className="px-4 py-2.5 text-left">Coordinates</th>
@@ -1386,26 +1386,26 @@ export default function HistoricalData() {
                   <th className="px-4 py-2.5 text-left">Uncertainty Cone</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1a3a6b]/60">
+              <tbody className="divide-y divide-slate-100 dark:divide-[#1a3a6b]/60">
                 {forecastData.forecast_points.map((step, idx) => (
                   <tr
                     key={idx}
-                    className={`hover:bg-[#102a4c]/60 transition-colors ${
+                    className={`hover:bg-slate-50 dark:hover:bg-[#102a4c]/60 transition-colors ${
                       step.is_landfall_step ? 'bg-red-500/15 border-l-4 border-l-red-500' : ''
                     }`}
                   >
-                    <td className="px-4 py-2.5 font-bold text-white flex items-center gap-1.5">
+                    <td className="px-4 py-2.5 font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: step.stage_color }}></span>
                       <span>{step.forecast_hour}</span>
                     </td>
-                    <td className="px-4 py-2.5 text-[#88a0c0]">{step.timestamp}</td>
-                    <td className="px-4 py-2.5 text-cyan-300">{step.lat}°N, {step.lon}°E</td>
-                    <td className="px-4 py-2.5 font-bold text-white">
-                      {step.wind_speed_kmh} km/h <span className="text-[10px] text-[#88a0c0]">({step.wind_speed_kts} kts)</span>
+                    <td className="px-4 py-2.5 text-slate-500 dark:text-[#88a0c0]">{step.timestamp}</td>
+                    <td className="px-4 py-2.5 text-cyan-700 dark:text-cyan-300 font-semibold">{step.lat}°N, {step.lon}°E</td>
+                    <td className="px-4 py-2.5 font-bold text-slate-900 dark:text-white">
+                      {step.wind_speed_kmh} km/h <span className="text-[10px] text-slate-400 dark:text-[#88a0c0]">({step.wind_speed_kts} kts)</span>
                     </td>
-                    <td className="px-4 py-2.5 text-amber-300 font-bold">{step.pressure_hpa} hPa</td>
+                    <td className="px-4 py-2.5 text-amber-600 dark:text-amber-300 font-bold">{step.pressure_hpa} hPa</td>
                     <td className="px-4 py-2.5">
-                      <span className={step.pressure_drop_hpa <= 0 ? 'text-red-400 font-bold' : 'text-emerald-400'}>
+                      <span className={step.pressure_drop_hpa <= 0 ? 'text-red-500 dark:text-red-400 font-bold' : 'text-emerald-500 dark:text-emerald-400 font-bold'}>
                         {step.pressure_drop_hpa > 0 ? `+${step.pressure_drop_hpa}` : step.pressure_drop_hpa} hPa
                       </span>
                     </td>
@@ -1421,7 +1421,7 @@ export default function HistoricalData() {
                         {step.category}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5 text-[#88a0c0]">±{step.uncertainty_radius_km} km</td>
+                    <td className="px-4 py-2.5 text-slate-500 dark:text-[#88a0c0]">±{step.uncertainty_radius_km} km</td>
                   </tr>
                 ))}
               </tbody>
