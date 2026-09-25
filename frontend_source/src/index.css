@@ -259,6 +259,14 @@ html.light .bg-gradient-to-b.from-\[\#0b2847\] {
   background-image: linear-gradient(to bottom, #f0f9ff, #ffffff) !important;
 }
 
+html.light .bg-gradient-to-br.from-red-950\/30,
+html.light .bg-gradient-to-r.from-red-950\/40,
+html.light .bg-gradient-to-br.from-red-950\/40,
+html.light [class*="from-red-950"] {
+  background-image: linear-gradient(to right, #fff1f2, #fff7ed, #ffffff) !important;
+  border-color: #fecdd3 !important;
+}
+
 /* 5. Border re-mappings */
 html.light .border-\[\#1a3a6b\],
 html.light .border-white {

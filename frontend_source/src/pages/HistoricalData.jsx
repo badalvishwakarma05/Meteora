@@ -873,14 +873,14 @@ export default function HistoricalData() {
 
                 {/* 72-Hour CNN-LSTM Trajectory Forecast Card */}
                 {forecastData && (
-                  <div className="p-3.5 rounded-xl border border-red-500/40 bg-gradient-to-br from-red-950/30 to-[#0a1628] mb-4">
+                  <div className="p-3.5 rounded-xl border border-red-500/40 bg-gradient-to-br from-red-950/30 to-[#0a1628] mb-4 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
-                      <div className="text-xs font-bold font-mono text-red-300 flex items-center gap-1.5">
-                        <Cpu size={14} className="text-red-400 animate-pulse" />
-                        <span>CNN-LSTM 72-HOUR TRAJECTORY PROJECTION</span>
+                      <div className="text-xs font-bold font-mono text-red-400 flex items-center gap-1.5">
+                        <Cpu size={14} className="text-red-500 animate-pulse" />
+                        <span className="tracking-wide">CNN-LSTM 72-HOUR TRAJECTORY PROJECTION</span>
                       </div>
                       {forecastData.rapid_intensification_alert && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-500/30 text-red-300 border border-red-500/50">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40">
                           RAPID INTENSIFICATION
                         </span>
                       )}
@@ -888,12 +888,12 @@ export default function HistoricalData() {
 
                     <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-[#88a0c0] mb-2">
                       <div>🎯 Landfall Target: <strong className="text-white">{forecastData.estimated_landfall?.target_coast}</strong></div>
-                      <div>⏳ Landfall ETA: <strong className="text-amber-300">+{forecastData.estimated_landfall?.eta_hours}h</strong></div>
-                      <div>💨 Peak Projected Wind: <strong className="text-red-400">{forecastData.peak_forecast_wind_kmh} km/h</strong></div>
-                      <div>🌊 Estimated Surge: <strong className="text-cyan-300">{forecastData.estimated_landfall?.surge_height_m} meters</strong></div>
+                      <div>⏳ Landfall ETA: <strong className="text-amber-400">+{forecastData.estimated_landfall?.eta_hours}h</strong></div>
+                      <div>💨 Peak Projected Wind: <strong className="text-red-400 font-bold">{forecastData.peak_forecast_wind_kmh} km/h</strong></div>
+                      <div>🌊 Estimated Surge: <strong className="text-cyan-400 font-bold">{forecastData.estimated_landfall?.surge_height_m} meters</strong></div>
                     </div>
 
-                    <p className="text-[11px] text-slate-300 italic">
+                    <p className="text-[11px] text-slate-300 italic leading-relaxed">
                       Model uses dual-branch TimeDistributedCNN (INSAT-3D radiometer) + WeatherGRU (Open-Meteo MSL & wind tendencies) with BiLSTM temporal aggregation.
                     </p>
                   </div>
@@ -934,7 +934,7 @@ export default function HistoricalData() {
                 CNN-LSTM 72-Hour Step-by-Step Trajectory Forecast Matrix
               </h3>
             </div>
-            <span className="text-[11px] font-mono text-cyan-300">
+            <span className="text-[11px] font-mono text-[#00d4ff] font-bold">
               Model: MultiModalCycloneCNNLSTM (Dual-Branch Spatial + Temporal)
             </span>
           </div>
