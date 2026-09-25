@@ -886,6 +886,43 @@ if HAS_FLASK:
                 "error": str(e)
             }), 500
 
+    # ==========================================================================
+    # Live Open-Meteo Real-Time Atmospheric Precursors Endpoint
+    # ==========================================================================
+    @app.route("/api/live-weather", methods=["GET", "POST"])
+    @app.route("/live-weather", methods=["GET", "POST"])
+    def get_live_weather_endpoint():
+        """
+        Open-Meteo Live Atmospheric Conditions Endpoint:
+        Fetches live temperature, wind speed, wind direction, surface pressure,
+        relative humidity, and 3-hour barometric tendencies for given GPS coordinates.
+        """
+        lat_param = request.args.get("lat") or request.args.get("latitude")
+        lon_param = request.args.get("lon") or request.args.get("longitude")
+
+        if request.method == "POST":
+            data = request.get_json(silent=True) or request.form.to_dict() or {}
+            lat_param = lat_param or data.get("lat") or data.get("latitude")
+            lon_param = lon_param or data.get("lon") or data.get("longitude")
+
+        try:
+            lat_val = float(lat_param) if lat_param is not None else 15.4
+            lon_val = float(lon_param) if lon_param is not None else 87.2
+        except (ValueError, TypeError):
+            lat_val = 15.4
+            lon_val = 87.2
+
+        try:
+            from ml.historical_noaa_engine import fetch_live_open_meteo_weather
+            result = fetch_live_open_meteo_weather(lat=lat_val, lon=lon_val)
+            return jsonify(result)
+        except Exception as e:
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+
 
 # ==============================================================================
 # Standalone Runner

@@ -11,7 +11,8 @@ from .views import (
     api_live_intensification_view,
     api_historical_tracks_view,
     api_historical_cyclones_view,
-    api_predict_trajectory_view
+    api_predict_trajectory_view,
+    api_live_weather_view
 )
 
 urlpatterns = [
@@ -28,7 +29,9 @@ urlpatterns = [
     path('api/historical-tracks/', api_historical_tracks_view, name='api_historical_tracks'),
     path('api/historical-cyclones/', api_historical_cyclones_view, name='api_historical_cyclones'),
     path('api/predict-trajectory/', api_predict_trajectory_view, name='api_predict_trajectory'),
+    path('api/live-weather/', api_live_weather_view, name='api_live_weather'),
 ]
+
 
 
 

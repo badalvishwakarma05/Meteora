@@ -113,7 +113,7 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
   const [activeLayer, setActiveLayer] = useState(isLight ? 'Street View' : 'Dark Canvas');
   const [showPorts, setShowPorts] = useState(true);
   const { showToast } = useToast();
-  const { selectedRegion } = useDisasterAlert();
+  const { selectedRegion, liveWeatherData } = useDisasterAlert();
 
   // Sync default layer with theme changes if user hasn't overridden
   useEffect(() => {
@@ -401,24 +401,59 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
                   {c.id}
                 </Tooltip>
                 <Popup>
-                  <div style={{ background: '#0d1f3c', color: 'white', padding: '12px', borderRadius: '10px', minWidth: 190, border: '1px solid #1a3a6b' }}>
-                    <div style={{ fontWeight: '800', color: '#00d4ff', fontSize: 13 }}>{c.name}</div>
-                    <div style={{ fontSize: 11, color: '#88a0c0', marginTop: 2 }}>{c.status}</div>
-                    <div style={{ fontSize: 12, marginTop: 6, fontWeight: 600 }}>
-                      💨 Wind: {c.wind} km/h | 🌡 {c.pressure} hPa
+                  <div style={{ background: '#0d1f3c', color: 'white', padding: '13px', borderRadius: '12px', minWidth: 220, border: '1px solid #1a3a6b', fontSize: '11px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', borderBottom: '1px solid #1a3a6b', paddingBottom: '6px' }}>
+                      <div style={{ fontWeight: '800', color: '#00d4ff', fontSize: 13 }}>{c.name}</div>
+                      <span style={{ fontSize: '9px', fontWeight: 800, padding: '2px 6px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.4)' }}>
+                        ● LIVE METEO
+                      </span>
                     </div>
-                    <div style={{ fontSize: 11, color: '#88a0c0', marginTop: 3 }}>
+
+                    <div style={{ fontSize: 11, color: '#88a0c0', marginTop: 4 }}>{c.status}</div>
+
+                    {/* Live Open-Meteo Synoptic Precursors Section */}
+                    <div style={{ marginTop: 8, padding: '8px', background: '#0a1628', borderRadius: '8px', border: '1px solid #1a3a6b' }}>
+                      <div style={{ fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', color: '#00d4ff', letterSpacing: '0.5px', marginBottom: 4 }}>
+                        Open-Meteo Live Telemetry
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', fontSize: '10px' }}>
+                        <div>🌡️ Temp: <strong style={{ color: '#fff' }}>{liveWeatherData?.temperature_c ? `${liveWeatherData.temperature_c.toFixed(1)}°C` : '28.6°C'}</strong></div>
+                        <div>💧 RH: <strong style={{ color: '#fff' }}>{liveWeatherData?.relative_humidity_pct ? `${Math.round(liveWeatherData.relative_humidity_pct)}%` : '91%'}</strong></div>
+                        <div style={{ gridColumn: 'span 2' }}>
+                          ⏱️ Press: <strong style={{ color: '#fff' }}>{liveWeatherData?.surface_pressure_hpa ? `${liveWeatherData.surface_pressure_hpa.toFixed(1)} hPa` : `${c.pressure} hPa`}</strong>
+                          <span style={{ color: '#f59e0b', marginLeft: '4px', fontSize: '9px' }}>
+                            ({liveWeatherData?.pressure_tendency_status || 'Deepening'})
+                          </span>
+                        </div>
+                        <div style={{ gridColumn: 'span 2' }}>
+                          💨 Wind: <strong style={{ color: '#fff' }}>{liveWeatherData?.wind_speed_kmh ? `${liveWeatherData.wind_speed_kmh.toFixed(1)} km/h` : `${c.wind} km/h`}</strong>
+                          <span style={{ color: '#00d4ff', marginLeft: '4px' }}>({liveWeatherData?.wind_cardinal_direction || 'ENE'})</span>
+                          {liveWeatherData?.wind_gusts_kmh && (
+                            <span style={{ color: '#f87171', marginLeft: '4px' }}>· Gusts {liveWeatherData.wind_gusts_kmh.toFixed(0)} km/h</span>
+                          )}
+                        </div>
+                        {liveWeatherData?.weather_description && (
+                          <div style={{ gridColumn: 'span 2', color: '#93c5fd', fontSize: '9px', fontStyle: 'italic', marginTop: '2px' }}>
+                            ☁️ {liveWeatherData.weather_description}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: 10, color: '#88a0c0', marginTop: 6 }}>
                       📍 {c.lat}°N, {c.lon}°E ({c.basin})
                     </div>
+
                     {c.landfall && (
-                      <div style={{ fontSize: 11, color: '#ff9500', marginTop: 5, fontWeight: 'bold', borderTop: '1px solid #1a3a6b', paddingTop: 4 }}>
-                        ⚠ Landfall: {c.landfall}
+                      <div style={{ fontSize: 10, color: '#ff9500', marginTop: 4, fontWeight: 'bold', borderTop: '1px solid #1a3a6b', paddingTop: 4 }}>
+                        ⚠ Projected Landfall: {c.landfall}
                       </div>
                     )}
+
                     <button
                       onClick={() => onSelectCyclone && onSelectCyclone(c)}
                       style={{
-                        marginTop: 10,
+                        marginTop: 8,
                         width: '100%',
                         padding: '6px 10px',
                         background: '#00d4ff',

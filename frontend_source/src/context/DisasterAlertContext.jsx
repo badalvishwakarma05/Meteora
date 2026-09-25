@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { fetchLiveWeather } from '../services/api';
 
 const DisasterAlertContext = createContext(null);
 
@@ -257,15 +258,64 @@ export function DisasterAlertProvider({ children }) {
 
   const [weatherCountdown, setWeatherCountdown] = useState(25);
 
+  const [liveWeatherData, setLiveWeatherData] = useState(null);
+  const [liveWeatherLoading, setLiveWeatherLoading] = useState(false);
+
   const [liveTelemetry, setLiveTelemetry] = useState(() => ({
     surfaceWind: 185,
     gusts: 205,
     pressure: 948.2,
+    temperature: 28.5,
+    humidity: 92,
+    windDirection: 'ENE',
+    conditionText: 'Severe Tropical Cyclone Warning Active',
+    pressureTendency: -4.2,
     surge: '3.5m - 4.2m',
     radarReflectivity: '54 dBZ',
     dvorakT: 'T5.5',
     lastUpdate: 'Live Synoptic Stream Active',
   }));
+
+  // Fetch real atmospheric precursors from Open-Meteo endpoint
+  const loadLiveWeatherData = useCallback(async (lat = null, lon = null) => {
+    const targetLat = lat ?? (activeCyclone?.lat || selectedRegion?.lat || 15.4);
+    const targetLon = lon ?? (activeCyclone?.lon || selectedRegion?.lon || 87.2);
+
+    setLiveWeatherLoading(true);
+    try {
+      const data = await fetchLiveWeather(targetLat, targetLon);
+      if (data && data.success && data.current) {
+        setLiveWeatherData(data);
+        setLiveTelemetry(prev => ({
+          ...prev,
+          surfaceWind: data.current.wind_speed_kmh,
+          gusts: data.current.wind_gusts_kmh,
+          pressure: data.current.surface_pressure_hpa,
+          temperature: data.current.temperature_c,
+          humidity: data.current.relative_humidity_pct,
+          windDirection: data.current.wind_direction_cardinal,
+          conditionText: data.current.condition_text,
+          pressureTendency: data.current.pressure_tendency_3h_hpa,
+          lastUpdate: `Open-Meteo Live · ${data.current.timestamp_utc}`,
+        }));
+      }
+    } catch (err) {
+      console.warn('Error querying Open-Meteo live weather:', err);
+    } finally {
+      setLiveWeatherLoading(false);
+    }
+  }, [activeCyclone?.lat, activeCyclone?.lon, selectedRegion?.lat, selectedRegion?.lon]);
+
+  // Initial Open-Meteo fetch & auto-polling
+  useEffect(() => {
+    loadLiveWeatherData();
+    const pollTimer = setInterval(() => {
+      if (isLiveWeatherActive) {
+        loadLiveWeatherData();
+      }
+    }, 20000);
+    return () => clearInterval(pollTimer);
+  }, [isLiveWeatherActive, loadLiveWeatherData]);
 
   // Cyclone shelters directory
   const [shelters, setShelters] = useState(() => {
@@ -603,6 +653,9 @@ export function DisasterAlertProvider({ children }) {
         toggleLiveWeather,
         weatherCountdown,
         liveTelemetry,
+        liveWeatherData,
+        liveWeatherLoading,
+        loadLiveWeatherData,
       }}
     >
       {children}

@@ -785,6 +785,47 @@ def api_predict_trajectory_view(request):
     resp['Access-Control-Allow-Headers'] = '*'
     return resp
 
+@csrf_exempt
+def api_live_weather_view(request):
+    """
+    Open-Meteo Live Atmospheric Conditions Endpoint:
+    Fetches real-time temperature, wind speed, wind direction, surface pressure,
+    relative humidity, and 3-hour barometric tendencies for given coordinates.
+    """
+    import json
+    lat_param = request.GET.get('lat') or request.GET.get('latitude')
+    lon_param = request.GET.get('lon') or request.GET.get('longitude')
+
+    if request.method == "POST":
+        try:
+            body_data = json.loads(request.body.decode('utf-8'))
+            lat_param = lat_param or body_data.get('lat') or body_data.get('latitude')
+            lon_param = lon_param or body_data.get('lon') or body_data.get('longitude')
+        except Exception:
+            pass
+
+    try:
+        lat_val = float(lat_param) if lat_param is not None else 15.4
+        lon_val = float(lon_param) if lon_param is not None else 87.2
+    except (ValueError, TypeError):
+        lat_val = 15.4
+        lon_val = 87.2
+
+    try:
+        from ml.historical_noaa_engine import fetch_live_open_meteo_weather
+        result = fetch_live_open_meteo_weather(lat=lat_val, lon=lon_val)
+        resp = JsonResponse(result)
+    except Exception as e:
+        resp = JsonResponse({
+            "success": False,
+            "error": str(e)
+        }, status=500)
+
+    resp['Access-Control-Allow-Origin'] = '*'
+    resp['Access-Control-Allow-Headers'] = '*'
+    return resp
+
+
 
 
 
