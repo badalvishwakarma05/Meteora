@@ -194,17 +194,6 @@ const TILE_LAYERS = {
 const DARK_LABELS_OVERLAY = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}';
 const SATELLITE_LABELS_OVERLAY = 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}';
 
-function getDistanceKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return Math.round(R * c);
-}
-
 function MapController({ targetLat, targetLon }) {
   const map = useMap();
   useEffect(() => {
@@ -237,7 +226,7 @@ export default function HistoricalData() {
   const [showForecastOnMap, setShowForecastOnMap] = useState(true);
 
   // Map & GIS display toggles
-  const [activeLayer, setActiveLayer] = useState(isLight ? 'OpenStreetMap' : 'Dark Canvas');
+  const [activeLayer, setActiveLayer] = useState(isLight ? 'Street View' : 'Dark Canvas');
   const [showCities, setShowCities] = useState(true);
   const [showRiskRings, setShowRiskRings] = useState(true);
   const [analogues, setAnalogues] = useState([]);
@@ -245,8 +234,8 @@ export default function HistoricalData() {
   // Sync active layer with theme
   useEffect(() => {
     if (isLight && activeLayer === 'Dark Canvas') {
-      setActiveLayer('OpenStreetMap');
-    } else if (!isLight && activeLayer === 'OpenStreetMap') {
+      setActiveLayer('Street View');
+    } else if (!isLight && activeLayer === 'Street View') {
       setActiveLayer('Dark Canvas');
     }
   }, [isLight]);
