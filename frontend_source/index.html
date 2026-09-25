@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>METEORA — Predict. Prepare. Protect | AI-Powered Cyclone Forecasting &amp; Early Warning System</title>
     <meta name="description" content="METEORA — Predict. Prepare. Protect. AI-Powered Cyclone Forecasting &amp; Early Warning System." />
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('meteora_theme');
+          var theme = (saved === 'light' || saved === 'dark') ? saved : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          var root = document.documentElement;
+          root.classList.remove('light', 'dark');
+          root.classList.add(theme);
+          root.setAttribute('data-theme', theme);
+          root.style.colorScheme = theme;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

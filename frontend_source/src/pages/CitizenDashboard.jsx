@@ -310,16 +310,16 @@ export default function CitizenDashboard() {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row flex-1 w-full h-full overflow-x-hidden md:overflow-hidden bg-[#0a1628] text-white">
+    <div className="flex flex-col md:flex-row flex-1 w-full h-full overflow-x-hidden md:overflow-hidden bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white transition-colors duration-200">
       {/* SIDEBAR NAVIGATION PANEL */}
-      <aside className="w-full md:w-64 lg:w-72 h-auto md:h-full flex-shrink-0 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#1a3a6b] bg-[#0d1f3c] z-20 select-none overflow-x-auto md:overflow-y-auto p-3 sm:p-4 gap-3">
+      <aside className="w-full md:w-64 lg:w-72 h-auto md:h-full flex-shrink-0 flex flex-col justify-between border-b md:border-b-0 md:border-r border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] z-20 select-none overflow-x-auto md:overflow-y-auto p-3 sm:p-4 gap-3">
         <div className="flex flex-col gap-3">
           {/* Sidebar Header */}
-          <div className="p-3 sm:p-3.5 rounded-2xl bg-[#0a1628] border border-[#1a3a6b] shadow-lg">
-            <div className="text-[10px] font-mono tracking-widest text-[#7090b0] uppercase font-bold mb-2">
+          <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] shadow-sm dark:shadow-lg">
+            <div className="text-[10px] font-mono tracking-widest text-slate-500 dark:text-[#7090b0] uppercase font-bold mb-2">
               PUBLIC SAFETY NAVIGATION
             </div>
-            <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[#102a4c] border border-[#1a3a6b]">
+            <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-100 dark:bg-[#102a4c] border border-slate-200 dark:border-[#1a3a6b]">
               <div
                 className="w-3.5 h-3.5 rounded-full lamp-active relative flex items-center justify-center flex-shrink-0"
                 style={{
@@ -332,7 +332,7 @@ export default function CitizenDashboard() {
                 <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider border ${lampConfig.badgeBg}`}>
                   {lampConfig.label}
                 </span>
-                <div className="text-[10px] text-[#7090b0] truncate mt-1">
+                <div className="text-[10px] text-slate-500 dark:text-[#7090b0] truncate mt-1">
                   {activeCyclone?.shortName || 'CYCLONE DANA'}
                 </div>
               </div>
@@ -340,7 +340,7 @@ export default function CitizenDashboard() {
           </div>
 
           {/* Sidebar Buttons */}
-          <nav className="flex flex-row md:flex-col gap-1.5 p-1.5 rounded-2xl bg-[#0a1628] border border-[#1a3a6b] shadow-lg font-mono overflow-x-auto md:overflow-x-visible">
+          <nav className="flex flex-row md:flex-col gap-1.5 p-1.5 rounded-2xl bg-slate-50 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] shadow-sm dark:shadow-lg font-mono overflow-x-auto md:overflow-x-visible">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -353,15 +353,15 @@ export default function CitizenDashboard() {
                   }}
                   className={`w-auto md:w-full flex items-center justify-between px-3 md:px-3.5 py-2.5 md:py-3 rounded-xl text-xs font-bold transition-all text-left cursor-pointer shrink-0 whitespace-nowrap ${
                     isActive
-                      ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-[#00d4ff] border border-cyan-500/40 shadow-lg shadow-cyan-950/40'
-                      : 'text-slate-300 hover:bg-[#102a4c] hover:text-white border border-transparent'
+                      ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-cyan-700 dark:text-[#00d4ff] border border-cyan-500/40 shadow-sm dark:shadow-lg shadow-cyan-950/40'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#102a4c] hover:text-slate-900 dark:hover:text-white border border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-2 md:gap-2.5 min-w-0">
                     <Icon
                       size={16}
                       className={`flex-shrink-0 ${
-                        isActive ? 'text-[#00d4ff]' : item.highlight ? 'text-red-400' : 'text-[#7090b0]'
+                        isActive ? 'text-cyan-600 dark:text-[#00d4ff]' : item.highlight ? 'text-red-500 dark:text-red-400' : 'text-slate-400 dark:text-[#7090b0]'
                       }`}
                     />
                     <span className="truncate">{item.label}</span>
@@ -369,7 +369,7 @@ export default function CitizenDashboard() {
                   {item.badge && (
                     <span
                       className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border flex-shrink-0 ml-2 hidden sm:inline-block ${
-                        isActive ? 'bg-cyan-500/20 text-[#00d4ff] border-cyan-500/40' : item.badgeColor
+                        isActive ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-800 dark:text-[#00d4ff] border-cyan-300 dark:border-cyan-500/40' : item.badgeColor
                       }`}
                     >
                       {item.badge}
@@ -382,32 +382,32 @@ export default function CitizenDashboard() {
         </div>
 
         {/* Sidebar Helplines Quick Card */}
-        <div className="p-3.5 rounded-2xl bg-[#0a1628] border border-[#1a3a6b] text-xs font-mono">
-          <div className="text-[10px] tracking-wider text-[#7090b0] uppercase font-bold mb-2">
+        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] text-xs font-mono">
+          <div className="text-[10px] tracking-wider text-slate-500 dark:text-[#7090b0] uppercase font-bold mb-2">
             DIRECT 24/7 HELPLINES
           </div>
           <div className="grid grid-cols-2 gap-1.5 text-[11px] font-bold">
             <a
               href="tel:1078"
-              className="p-1.5 rounded-lg bg-red-500/10 text-red-300 border border-red-500/30 hover:bg-red-500/20 text-center transition-colors"
+              className="p-1.5 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-500/30 hover:bg-red-200 dark:hover:bg-red-500/20 text-center transition-colors"
             >
               NDRF 1078
             </a>
             <a
               href="tel:1070"
-              className="p-1.5 rounded-lg bg-orange-500/10 text-orange-300 border border-orange-500/30 hover:bg-orange-500/20 text-center transition-colors"
+              className="p-1.5 rounded-lg bg-amber-100 dark:bg-orange-500/10 text-amber-800 dark:text-orange-300 border border-amber-300 dark:border-orange-500/30 hover:bg-amber-200 dark:hover:bg-orange-500/20 text-center transition-colors"
             >
               SEOC 1070
             </a>
             <a
               href="tel:1554"
-              className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/20 text-center transition-colors"
+              className="p-1.5 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/30 hover:bg-cyan-200 dark:hover:bg-cyan-500/20 text-center transition-colors"
             >
               Coast 1554
             </a>
             <a
               href="tel:112"
-              className="p-1.5 rounded-lg bg-blue-500/10 text-blue-300 border border-blue-500/30 hover:bg-blue-500/20 text-center transition-colors"
+              className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-500/10 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30 hover:bg-blue-200 dark:hover:bg-blue-500/20 text-center transition-colors"
             >
               Police 112
             </a>
@@ -416,7 +416,7 @@ export default function CitizenDashboard() {
       </aside>
 
       {/* EXPANSIVE MAIN WORKSPACE */}
-      <main className="flex-1 h-full overflow-x-hidden overflow-y-auto p-4 sm:p-7 lg:p-8 space-y-6 bg-[#0a1628] w-full min-w-0">
+      <main className="flex-1 h-full overflow-x-hidden overflow-y-auto p-4 sm:p-7 lg:p-8 space-y-6 bg-slate-50 dark:bg-[#0a1628] w-full min-w-0">
         {/* TAB 1: CURRENT SITUATION */}
         {activeTab === 'situation' && (
           <div className="space-y-6 w-full">

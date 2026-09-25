@@ -30,6 +30,7 @@ export function ThemeProvider({ children }) {
       if (body) {
         body.classList.add('light');
         body.classList.remove('dark');
+        body.setAttribute('data-theme', 'light');
       }
     } else {
       root.classList.add('dark');
@@ -39,6 +40,7 @@ export function ThemeProvider({ children }) {
       if (body) {
         body.classList.add('dark');
         body.classList.remove('light');
+        body.setAttribute('data-theme', 'dark');
       }
     }
   }, []);
