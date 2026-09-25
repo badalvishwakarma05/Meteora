@@ -141,34 +141,34 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-4 pb-6 relative">
       {/* SYNCHRONIZED FORECAST RECORDING & CITIZEN BROADCAST BAR */}
-      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-[#1a3a6b]/70 bg-[#0d1f3c]/90 shadow-xl backdrop-blur-md transition-all duration-500">
+      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-slate-200 dark:border-[#1a3a6b]/70 bg-white dark:bg-[#0d1f3c]/90 shadow-xl backdrop-blur-md transition-all duration-500">
         {/* Left: Forecast Assessment Information */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#0a1628] border border-[#1a3a6b] flex items-center justify-center flex-shrink-0">
-            <BannerIcon size={18} className={condition === 'severe' ? 'text-red-400' : condition === 'intermediate' ? 'text-yellow-400' : 'text-emerald-400'} />
+          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] flex items-center justify-center flex-shrink-0">
+            <BannerIcon size={18} className={condition === 'severe' ? 'text-red-500 dark:text-red-400' : condition === 'intermediate' ? 'text-amber-500 dark:text-yellow-400' : 'text-emerald-500 dark:text-emerald-400'} />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs sm:text-sm font-bold text-white tracking-wide">
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-wide">
                 Forecasted Meteorological Assessment
               </span>
               <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${currentTheme.badgeBg}`}>
                 {currentTheme.name}
               </span>
-              <span className="text-[10px] font-mono text-[#00d4ff] font-bold">
+              <span className="text-[10px] font-mono text-cyan-700 dark:text-[#00d4ff] font-bold">
                 [{activeCyclone?.name || selectedCycloneId}]
               </span>
             </div>
-            <p className="text-[11px] text-[#88a0c0] leading-tight mt-0.5">
+            <p className="text-[11px] text-slate-500 dark:text-[#88a0c0] leading-tight mt-0.5">
               Authoritative IMD forecast stream directly synchronized with Citizen Emergency Portal
             </p>
           </div>
         </div>
 
         {/* Center: Synoptic Alert Controls (Safe / Intermediate / Severe) */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-[#0a1628] border border-[#1a3a6b]">
-          <span className="text-[10px] font-mono uppercase font-black text-[#88a0c0] px-2 tracking-wider flex items-center gap-1.5">
-            <Radio size={12} className="text-[#00d4ff]" />
+        <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-slate-100 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b]">
+          <span className="text-[10px] font-mono uppercase font-black text-slate-500 dark:text-[#88a0c0] px-2 tracking-wider flex items-center gap-1.5">
+            <Radio size={12} className="text-cyan-600 dark:text-[#00d4ff]" />
             SYNOPTIC ALERT LEVEL:
           </span>
 
@@ -178,11 +178,11 @@ export default function Dashboard() {
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
               condition === 'safe'
                 ? 'bg-emerald-600 text-white font-bold border-emerald-500 shadow-md shadow-emerald-500/20'
-                : 'bg-[#0a1628] text-[#88a0c0] border-[#1a3a6b] hover:text-white hover:border-emerald-500/50'
+                : 'bg-white dark:bg-[#0a1628] text-slate-600 dark:text-[#88a0c0] border-slate-200 dark:border-[#1a3a6b] hover:text-slate-900 dark:hover:text-white hover:border-emerald-500/50'
             }`}
             title="Calibrate Synoptic Stage to Safe"
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'safe' ? 'bg-white' : 'bg-emerald-400'}`}></span>
+            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'safe' ? 'bg-white' : 'bg-emerald-500'}`}></span>
             <span>Safe</span>
           </button>
 
@@ -192,11 +192,11 @@ export default function Dashboard() {
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
               condition === 'intermediate'
                 ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-md shadow-amber-500/20'
-                : 'bg-[#0a1628] text-[#88a0c0] border-[#1a3a6b] hover:text-white hover:border-yellow-500/50'
+                : 'bg-white dark:bg-[#0a1628] text-slate-600 dark:text-[#88a0c0] border-slate-200 dark:border-[#1a3a6b] hover:text-slate-900 dark:hover:text-white hover:border-yellow-500/50'
             }`}
             title="Calibrate Synoptic Stage to Intermediate"
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'intermediate' ? 'bg-slate-950' : 'bg-amber-400'}`}></span>
+            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'intermediate' ? 'bg-slate-950' : 'bg-amber-500'}`}></span>
             <span>Intermediate</span>
           </button>
 
@@ -206,11 +206,11 @@ export default function Dashboard() {
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
               condition === 'severe'
                 ? 'bg-red-600 text-white font-bold border-red-500 shadow-md shadow-red-500/20'
-                : 'bg-[#0a1628] text-[#88a0c0] border-[#1a3a6b] hover:text-white hover:border-red-500/50'
+                : 'bg-white dark:bg-[#0a1628] text-slate-600 dark:text-[#88a0c0] border-slate-200 dark:border-[#1a3a6b] hover:text-slate-900 dark:hover:text-white hover:border-red-500/50'
             }`}
             title="Calibrate Synoptic Stage to Severe"
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'severe' ? 'bg-white' : 'bg-red-400'}`}></span>
+            <span className={`w-1.5 h-1.5 rounded-full ${condition === 'severe' ? 'bg-white' : 'bg-red-500'}`}></span>
             <span>Severe</span>
           </button>
         </div>
@@ -228,7 +228,7 @@ export default function Dashboard() {
                 'info'
               );
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0a1628] border border-[#1a3a6b] hover:border-cyan-500/60 text-[11px] font-mono transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] hover:border-cyan-500/60 text-[11px] font-mono transition-colors cursor-pointer text-slate-700 dark:text-white shadow-sm"
             title="Toggle autonomous real-time weather progression"
           >
             {isLiveWeatherActive ? (
@@ -237,19 +237,19 @@ export default function Dashboard() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                 </span>
-                <span className="text-[#00d4ff] font-bold">Live Stream: {weatherCountdown}s</span>
+                <span className="text-cyan-700 dark:text-[#00d4ff] font-bold">Live Stream: {weatherCountdown}s</span>
               </>
             ) : (
               <>
-                <Play size={12} className="text-cyan-400" />
-                <span className="text-[#88a0c0]">Stream: Paused</span>
+                <Play size={12} className="text-cyan-600 dark:text-cyan-400" />
+                <span className="text-slate-500 dark:text-[#88a0c0]">Stream: Paused</span>
               </>
             )}
           </button>
 
           {/* Status Light Lens */}
-          <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#0a1628] border border-[#1a3a6b] shadow-inner select-none">
-            <span className="text-[10px] font-mono tracking-wider text-[#88a0c0] uppercase font-semibold">
+          <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] shadow-inner select-none">
+            <span className="text-[10px] font-mono tracking-wider text-slate-500 dark:text-[#88a0c0] uppercase font-semibold">
               STATUS LIGHT
             </span>
 
@@ -297,54 +297,54 @@ export default function Dashboard() {
       </div>
 
       {/* COMPACT DYNAMIC ADVISORY STRIP */}
-      <div className={`px-3.5 py-2 rounded-xl border text-[11px] font-medium flex items-center gap-2 transition-all duration-300 ${currentTheme.bannerBg}`}>
+      <div className={`px-3.5 py-2 rounded-xl border text-[11px] font-medium flex items-center gap-2 transition-all duration-300 shadow-sm ${currentTheme.bannerBg}`}>
         <BannerIcon size={14} className="flex-shrink-0" />
         <span className="truncate">{currentTheme.bannerText}</span>
       </div>
 
       {/* GEOGRAPHIC REGIONAL RISK ALERT CARD MODULE */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-[#0d1f3c] border border-[#1a3a6b]/80 shadow-xl space-y-3.5 relative overflow-hidden flex-shrink-0">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#1a3a6b] pb-3">
+      <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0d1f3c] border border-slate-200 dark:border-[#1a3a6b]/80 shadow-xl space-y-3.5 relative overflow-hidden flex-shrink-0 transition-colors">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-[#1a3a6b] pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#0a1628] border border-[#1a3a6b] flex items-center justify-center text-[#00d4ff] flex-shrink-0">
-              <Zap size={18} className="text-[#00d4ff]" />
+            <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] flex items-center justify-center text-cyan-600 dark:text-[#00d4ff] flex-shrink-0">
+              <Zap size={18} className="text-cyan-600 dark:text-[#00d4ff]" />
             </div>
             <div>
-              <h3 className="font-extrabold text-sm text-white flex items-center gap-2">
-                GEOGRAPHIC REGIONAL RISK ALERT & SPATIAL VULNERABILITY INDEX
+              <h3 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                GEOGRAPHIC REGIONAL RISK ALERT &amp; SPATIAL VULNERABILITY INDEX
               </h3>
-              <div className="text-[11px] text-[#88a0c0]">Automated spatial boundary lookup & coastal state impact rating based on MOSDAC telemetry</div>
+              <div className="text-[11px] text-slate-500 dark:text-[#88a0c0]">Automated spatial boundary lookup &amp; coastal state impact rating based on MOSDAC telemetry</div>
             </div>
           </div>
-          <span className="px-2.5 py-1 rounded-full bg-[#0a1628] text-[#00d4ff] border border-cyan-500/40 text-[10px] font-black uppercase tracking-wider self-start sm:self-auto flex items-center gap-1.5 font-mono">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff] animate-ping"></span>
+          <span className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-[#0a1628] text-cyan-700 dark:text-[#00d4ff] border border-cyan-300 dark:border-cyan-500/40 text-[10px] font-black uppercase tracking-wider self-start sm:self-auto flex items-center gap-1.5 font-mono shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-[#00d4ff] animate-ping"></span>
             SPATIAL RISK ENGINE LIVE
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {[
-            { state: 'Odisha', score: '88.4', code: 'HIGH RISK', badge: 'bg-red-500/20 text-red-300 border-red-500/40 font-black', border: 'border-red-500/50', dist: '182 km', wind: '185 km/h', surge: '4.2 m', urgency: '⚡ MANDATORY EVACUATION DISPATCH' },
-            { state: 'West Bengal', score: '62.1', code: 'MODERATE RISK', badge: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40 font-bold', border: 'border-yellow-500/40', dist: '310 km', wind: '125 km/h', surge: '2.8 m', urgency: '⚠️ PREPARE EMERGENCY SHELTERS' },
-            { state: 'Andhra Pradesh', score: '24.5', code: 'SAFE WATCH', badge: 'bg-blue-500/20 text-sky-300 border-blue-500/40 font-medium', border: 'border-[#1a3a6b]', dist: '460 km', wind: '75 km/h', surge: '1.0 m', urgency: '✓ MONITOR METEOROLOGICAL BULLETINS' },
-            { state: 'Tamil Nadu', score: '12.8', code: 'SAFE WATCH', badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-medium', border: 'border-[#1a3a6b]', dist: '680 km', wind: '45 km/h', surge: '0.4 m', urgency: '✓ NORMAL COASTAL OPERATIONS' },
+            { state: 'Odisha', score: '88.4', code: 'HIGH RISK', badge: 'bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-300 dark:border-red-500/40 font-black', border: 'border-red-300 dark:border-red-500/50', dist: '182 km', wind: '185 km/h', surge: '4.2 m', urgency: '⚡ MANDATORY EVACUATION DISPATCH' },
+            { state: 'West Bengal', score: '62.1', code: 'MODERATE RISK', badge: 'bg-amber-50 dark:bg-yellow-500/20 text-amber-700 dark:text-yellow-300 border-amber-300 dark:border-yellow-500/40 font-bold', border: 'border-amber-300 dark:border-yellow-500/40', dist: '310 km', wind: '125 km/h', surge: '2.8 m', urgency: '⚠️ PREPARE EMERGENCY SHELTERS' },
+            { state: 'Andhra Pradesh', score: '24.5', code: 'SAFE WATCH', badge: 'bg-sky-50 dark:bg-blue-500/20 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-blue-500/40 font-medium', border: 'border-slate-200 dark:border-[#1a3a6b]', dist: '460 km', wind: '75 km/h', surge: '1.0 m', urgency: '✓ MONITOR METEOROLOGICAL BULLETINS' },
+            { state: 'Tamil Nadu', score: '12.8', code: 'SAFE WATCH', badge: 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/40 font-medium', border: 'border-slate-200 dark:border-[#1a3a6b]', dist: '680 km', wind: '45 km/h', surge: '0.4 m', urgency: '✓ NORMAL COASTAL OPERATIONS' },
           ].map((st, i) => (
-            <div key={i} className={`p-3.5 rounded-xl bg-[#0a1628] border ${st.border} space-y-2 transition-all hover:border-cyan-500/50 shadow-inner`}>
+            <div key={i} className={`p-3.5 rounded-xl bg-slate-50 dark:bg-[#0a1628] border ${st.border} space-y-2 transition-all hover:border-cyan-500/50 shadow-sm`}>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white uppercase tracking-wide">{st.state}</span>
+                <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">{st.state}</span>
                 <span className={`px-2 py-0.5 rounded text-[10px] border ${st.badge}`}>
                   {st.code}
                 </span>
               </div>
               <div className="flex items-baseline justify-between">
-                <div className="text-2xl font-black font-mono text-white">{st.score}<span className="text-xs text-[#88a0c0]">/100</span></div>
-                <div className="text-[10px] font-mono text-[#88a0c0]">{st.dist} to Eye</div>
+                <div className="text-2xl font-black font-mono text-slate-900 dark:text-white">{st.score}<span className="text-xs text-slate-500 dark:text-[#88a0c0]">/100</span></div>
+                <div className="text-[10px] font-mono text-slate-500 dark:text-[#88a0c0]">{st.dist} to Eye</div>
               </div>
-              <div className="space-y-1 text-[11px] font-mono text-[#88a0c0] pt-1 border-t border-[#1a3a6b]">
-                <div className="flex justify-between"><span>Est. Wind:</span><strong className="text-white">{st.wind}</strong></div>
-                <div className="flex justify-between"><span>Storm Surge:</span><strong className="text-[#00d4ff]">{st.surge}</strong></div>
+              <div className="space-y-1 text-[11px] font-mono text-slate-500 dark:text-[#88a0c0] pt-1 border-t border-slate-200 dark:border-[#1a3a6b]">
+                <div className="flex justify-between"><span>Est. Wind:</span><strong className="text-slate-900 dark:text-white">{st.wind}</strong></div>
+                <div className="flex justify-between"><span>Storm Surge:</span><strong className="text-cyan-700 dark:text-[#00d4ff]">{st.surge}</strong></div>
               </div>
-              <div className="text-[10px] text-[#88a0c0] font-semibold pt-1 border-t border-[#1a3a6b] truncate" title={st.urgency}>
+              <div className="text-[10px] text-slate-600 dark:text-[#88a0c0] font-semibold pt-1 border-t border-slate-200 dark:border-[#1a3a6b] truncate" title={st.urgency}>
                 {st.urgency}
               </div>
             </div>
@@ -661,33 +661,29 @@ export default function Dashboard() {
                 </button>
               </div>
             );
-          })}
-        </div>
-      </div>
-
       {/* BOTTOM ANALYTICS ROW: GRAPH & SATELLITE IMAGES */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
         {/* Dynamic Intensity Curve */}
-        <div className="rounded-xl p-3.5 border border-[#1a3a6b] bg-[#0d1f3c] flex flex-col shadow-xl">
+        <div className="rounded-xl p-3.5 border border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] flex flex-col shadow-md transition-colors">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <h3 className="text-xs font-bold tracking-widest uppercase text-white flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff]" />
+              <h3 className="text-xs font-bold tracking-widest uppercase text-slate-900 dark:text-white flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-[#00d4ff]" />
                 <span>INTENSITY TREND CURVE — CYCLONE {selectedCycloneId}</span>
               </h3>
-              <span className="text-[10px] text-[#88a0c0]">Historical observation + neural ensemble forecast</span>
+              <span className="text-[10px] text-slate-500 dark:text-[#88a0c0]">Historical observation + neural ensemble forecast</span>
             </div>
 
             {/* Range Toggle Buttons */}
-            <div className="flex gap-1 p-0.5 rounded-lg bg-[#0a1628] border border-[#1a3a6b]">
+            <div className="flex gap-1 p-0.5 rounded-lg bg-slate-100 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b]">
               {['24h', '48h', '72h'].map(r => (
                 <button
                   key={r}
                   onClick={() => setChartRange(r)}
                   className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer border ${
                     chartRange === r
-                      ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff]'
-                      : 'bg-transparent text-[#88a0c0] border-transparent hover:text-white'
+                      ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-sm'
+                      : 'bg-transparent text-slate-600 dark:text-[#88a0c0] border-transparent hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   ±{r}
@@ -701,13 +697,13 @@ export default function Dashboard() {
               <AreaChart data={filteredIntensity} margin={{ top: 6, right: 6, left: -24, bottom: 0 }}>
                 <defs>
                   <linearGradient id="windGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#00d4ff" stopOpacity="0.4" />
-                    <stop offset="95%" stopColor="#00d4ff" stopOpacity="0" />
+                    <stop offset="5%" stopColor="#00d4ff" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#00d4ff" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1a3a6b" />
-                <XAxis dataKey="time" tick={{ fill: '#88a0c0', fontSize: 9 }} interval={2} />
-                <YAxis tick={{ fill: '#88a0c0', fontSize: 9 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" className="dark:stroke-[#1a3a6b]" />
+                <XAxis dataKey="time" tick={{ fill: '#64748b', fontSize: 9 }} interval={2} />
+                <YAxis tick={{ fill: '#64748b', fontSize: 9 }} />
                 <Tooltip content={<CustomTooltip />} />
                 <ReferenceLine x="Now" stroke="#ff9500" strokeDasharray="3 3" label={{ value: 'NOW', fill: '#ff9500', fontSize: 9 }} />
                 <Area type="monotone" dataKey="wind" stroke="#00d4ff" strokeWidth={2} fill="url(#windGrad)" />
@@ -717,17 +713,17 @@ export default function Dashboard() {
         </div>
 
         {/* AI Satellite Cyclone Imagery Feed */}
-        <div className="rounded-xl p-3.5 border border-[#1a3a6b] bg-[#0d1f3c] flex flex-col justify-between shadow-xl">
+        <div className="rounded-xl p-3.5 border border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] flex flex-col justify-between shadow-md transition-colors">
           <div>
             <div className="flex items-center justify-between mb-2.5">
               <div>
-                <h3 className="text-xs font-bold tracking-widest uppercase text-[#88a0c0] flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff]" />
-                  <span>AI SATELLITE INGESTION & CYCLONE IMAGERY</span>
+                <h3 className="text-xs font-bold tracking-widest uppercase text-slate-900 dark:text-[#88a0c0] flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-[#00d4ff]" />
+                  <span>AI SATELLITE INGESTION &amp; CYCLONE IMAGERY</span>
                 </h3>
-                <span className="text-[10px] text-[#88a0c0]/80">Live multi-spectral downlinks with neural bounding boxes</span>
+                <span className="text-[10px] text-slate-500 dark:text-[#88a0c0]/80">Live multi-spectral downlinks with neural bounding boxes</span>
               </div>
-              <span className="text-[9px] px-2 py-0.5 rounded font-bold bg-[#0a1628] text-[#00d4ff] border border-[#1a3a6b] tracking-wider">
+              <span className="text-[9px] px-2 py-0.5 rounded font-bold bg-slate-100 dark:bg-[#0a1628] text-cyan-700 dark:text-[#00d4ff] border border-slate-200 dark:border-[#1a3a6b] tracking-wider shadow-sm">
                 NEURAL OVERLAY ON
               </span>
             </div>
@@ -737,7 +733,7 @@ export default function Dashboard() {
               {/* Image 1: INSAT-3D Thermal Infrared Convective Core */}
               <div
                 onClick={() => navigate('/detection')}
-                className="rounded-xl border border-[#1a3a6b] hover:border-cyan-500/60 transition-all bg-[#0a1628] p-2 cursor-pointer group flex flex-col shadow-inner"
+                className="rounded-xl border border-slate-200 dark:border-[#1a3a6b] hover:border-cyan-500/60 transition-all bg-slate-50 dark:bg-[#0a1628] p-2 cursor-pointer group flex flex-col shadow-sm"
               >
                 <div className="h-28 relative rounded-lg bg-[#050d1a] overflow-hidden border border-[#1a3a6b]/80 flex items-center justify-center select-none">
                   {/* Grid Overlay */}

@@ -129,8 +129,8 @@ Export Timestamp: ${new Date().toUTCString()}
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs text-[#88a0c0]">Multi-Sensor Downlink Engine</div>
-          <h1 className="text-xl font-bold text-white">Live Satellite Feed Viewer</h1>
+          <div className="text-xs text-slate-500 dark:text-[#88a0c0]">Multi-Sensor Downlink Engine</div>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">Live Satellite Feed Viewer</h1>
         </div>
         <div className="flex gap-2">
           <button
@@ -138,17 +138,17 @@ Export Timestamp: ${new Date().toUTCString()}
               setComparison(!comparison);
               showToast(comparison ? 'Exited dual compare mode.' : 'Activated dual satellite compare mode.', 'info');
             }}
-            className={`text-xs sm:text-sm px-3 py-2 rounded-lg border font-semibold transition-all cursor-pointer ${
+            className={`text-xs sm:text-sm px-3 py-2 rounded-lg border font-semibold transition-all cursor-pointer shadow-sm ${
               comparison
-                ? 'bg-cyan-500/20 text-[#00d4ff] border-cyan-500/50'
-                : 'bg-[#0a1628] text-[#88a0c0] border-[#1a3a6b] hover:border-cyan-500/40 hover:text-white'
+                ? 'bg-cyan-500/20 text-cyan-700 dark:text-[#00d4ff] border-cyan-500/50'
+                : 'bg-white dark:bg-[#0a1628] text-slate-700 dark:text-[#88a0c0] border-slate-300 dark:border-[#1a3a6b] hover:border-cyan-500/40 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             {comparison ? '✓ Dual Compare Active' : 'Enable Dual Compare Mode'}
           </button>
           <button
             onClick={handleDownloadFrame}
-            className="flex items-center gap-2 text-xs sm:text-sm px-3.5 py-2 rounded-lg font-bold text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 border border-cyan-400 transition-colors cursor-pointer shadow-lg shadow-cyan-500/20"
+            className="flex items-center gap-2 text-xs sm:text-sm px-3.5 py-2 rounded-lg font-bold text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 border border-cyan-400 transition-colors cursor-pointer shadow-lg shadow-cyan-500/20"
           >
             <Download size={14} />
             <span>Download Frame</span>
@@ -160,15 +160,15 @@ Export Timestamp: ${new Date().toUTCString()}
         {/* Main Viewer Area */}
         <div className="flex-1 flex flex-col gap-3 min-w-0">
           {/* Source Selector Tabs */}
-          <div className="flex gap-1 p-1 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
+          <div className="flex gap-1 p-1 rounded-xl border border-slate-200 dark:border-[#1a3a6b] bg-slate-100 dark:bg-[#0a1628] shadow-sm">
             {sources.map(s => (
               <button
                 key={s}
                 onClick={() => handleSourceChange(s)}
                 className={`flex-1 text-xs py-1.5 rounded-lg font-semibold transition-all cursor-pointer border ${
                   source === s
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-[#00d4ff] border-cyan-500/40'
-                    : 'bg-transparent text-[#88a0c0] border-transparent hover:text-white'
+                    ? 'bg-white dark:bg-gradient-to-r dark:from-cyan-500/20 dark:to-blue-500/20 text-cyan-700 dark:text-[#00d4ff] border-slate-200 dark:border-cyan-500/40 shadow-sm'
+                    : 'bg-transparent text-slate-600 dark:text-[#88a0c0] border-transparent hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {s}
@@ -183,10 +183,10 @@ Export Timestamp: ${new Date().toUTCString()}
                 <button
                   key={b}
                   onClick={() => handleBandChange(b)}
-                  className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all cursor-pointer ${
+                  className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all cursor-pointer shadow-sm ${
                     band === b
-                      ? 'bg-cyan-500/20 text-[#00d4ff] border-cyan-500/50'
-                      : 'bg-[#0d1f3c] text-[#88a0c0] border-[#1a3a6b] hover:text-white hover:border-cyan-500/30'
+                      ? 'bg-cyan-500/20 text-cyan-700 dark:text-[#00d4ff] border-cyan-500/50'
+                      : 'bg-white dark:bg-[#0d1f3c] text-slate-600 dark:text-[#88a0c0] border-slate-300 dark:border-[#1a3a6b] hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/30'
                   }`}
                 >
                   {b}
@@ -195,31 +195,31 @@ Export Timestamp: ${new Date().toUTCString()}
             </div>
 
             {/* HDF5 Dataset File Selector Dropdown */}
-            <div className="flex items-center gap-2 px-3 py-1 rounded-xl border border-[#1a3a6b] bg-[#0d1f3c]">
-              <HardDrive size={14} className="text-[#00d4ff]" />
-              <span className="text-xs text-[#88a0c0] font-medium">Dataset:</span>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-xl border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] shadow-sm">
+              <HardDrive size={14} className="text-cyan-600 dark:text-[#00d4ff]" />
+              <span className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium">Dataset:</span>
               <select
                 value={selectedFile}
                 onChange={e => {
                   setSelectedFile(e.target.value);
                   showToast(`Selected satellite file: ${e.target.value}`, 'info');
                 }}
-                className="text-xs bg-[#0a1628] text-white font-mono font-semibold px-2 py-1 rounded-lg border border-[#1a3a6b] focus:outline-none focus:border-[#00d4ff]"
+                className="text-xs bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white font-mono font-semibold px-2 py-1 rounded-lg border border-slate-300 dark:border-[#1a3a6b] focus:outline-none focus:border-cyan-500"
               >
                 {availableFiles.length > 0 ? (
-                  availableFiles.map(f => <option key={f} value={f} className="bg-[#0a1628] text-white">{f}</option>)
+                  availableFiles.map(f => <option key={f} value={f} className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">{f}</option>)
                 ) : (
-                  <option value="" className="bg-[#0a1628] text-white">No .h5 files found in ./data/</option>
+                  <option value="" className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">No .h5 files found in ./data/</option>
                 )}
               </select>
             </div>
           </div>
 
           {/* Image Canvas Container */}
-          <div className="flex gap-3 flex-1 min-h-[320px] rounded-2xl overflow-hidden">
+          <div className="flex gap-3 flex-1 min-h-[320px] rounded-2xl overflow-hidden shadow-lg">
             {/* Primary Frame */}
             <div
-              className={`flex-1 relative rounded-2xl overflow-hidden border border-[#1a3a6b] select-none bg-[#050d1a] ${
+              className={`flex-1 relative rounded-2xl overflow-hidden border border-slate-200 dark:border-[#1a3a6b] select-none bg-[#050d1a] ${
                 activeTool ? 'cursor-crosshair' : 'cursor-default'
               }`}
               onClick={handleCanvasClick}
@@ -256,8 +256,8 @@ Export Timestamp: ${new Date().toUTCString()}
 
               {loadingPatch && (
                 <div className="absolute inset-0 bg-[#0a1628]/80 backdrop-blur-sm flex items-center justify-center z-30">
-                  <div className="flex items-center gap-2 text-xs font-mono text-[#00d4ff]">
-                    <RefreshCw size={16} className="animate-spin text-[#00d4ff]" />
+                  <div className="flex items-center gap-2 text-xs font-mono text-cyan-300 dark:text-[#00d4ff]">
+                    <RefreshCw size={16} className="animate-spin text-cyan-400" />
                     <span>Extracting HDF5 Radiometric Patch...</span>
                   </div>
                 </div>
@@ -278,8 +278,8 @@ Export Timestamp: ${new Date().toUTCString()}
               ))}
 
               {/* Metadata Overlay Bottom Bar */}
-              <div className="absolute bottom-0 inset-x-0 px-3.5 py-2 flex items-center justify-between backdrop-blur-md bg-[#0a1628]/85 border-t border-[#1a3a6b] z-20">
-                <div className="text-xs font-mono text-[#88a0c0]">
+              <div className="absolute bottom-0 inset-x-0 px-3.5 py-2 flex items-center justify-between backdrop-blur-md bg-slate-900/85 dark:bg-[#0a1628]/85 border-t border-slate-700 dark:border-[#1a3a6b] z-20">
+                <div className="text-xs font-mono text-slate-300 dark:text-[#88a0c0]">
                   <span className="text-white font-bold">{source}</span> · {band} · Frame: -{24 - timeIndex}h (14-Sep 12:00 UTC)
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold font-mono">
@@ -292,14 +292,14 @@ Export Timestamp: ${new Date().toUTCString()}
               </div>
 
               {/* Thermal Temperature Scale */}
-              <div className="absolute right-3 top-4 bottom-12 w-3 rounded overflow-hidden border border-[#1a3a6b] z-20"
+              <div className="absolute right-3 top-4 bottom-12 w-3 rounded overflow-hidden border border-slate-300 dark:border-[#1a3a6b] z-20"
                    style={{ background: 'linear-gradient(to bottom, #ff1744, #ff9100, #ffd600, #00e676, #00b0ff, #0a1628)' }} />
             </div>
 
             {/* Comparison Frame (when enabled) */}
             {comparison && (
               <div
-                className="flex-1 relative rounded-2xl overflow-hidden border border-[#1a3a6b] bg-[#050d1a]"
+                className="flex-1 relative rounded-2xl overflow-hidden border border-slate-200 dark:border-[#1a3a6b] bg-[#050d1a]"
               >
                 <div
                   className="absolute inset-0"
@@ -313,7 +313,7 @@ Export Timestamp: ${new Date().toUTCString()}
                          style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.7) 10%, transparent 65%)' }} />
                   </div>
                 </div>
-                <div className="absolute bottom-0 inset-x-0 px-3.5 py-2 backdrop-blur-md bg-[#0a1628]/85 border-t border-[#1a3a6b] text-xs font-mono text-[#88a0c0]">
+                <div className="absolute bottom-0 inset-x-0 px-3.5 py-2 backdrop-blur-md bg-slate-900/85 dark:bg-[#0a1628]/85 border-t border-slate-700 dark:border-[#1a3a6b] text-xs font-mono text-slate-300 dark:text-[#88a0c0]">
                   <span className="text-white font-bold">INSAT-3DR</span> · Water Vapor 6.2μm · Frame: -{24 - timeIndex}h
                 </div>
               </div>
@@ -321,19 +321,19 @@ Export Timestamp: ${new Date().toUTCString()}
           </div>
 
           {/* Interactive Playback & Image Processing Controls */}
-          <div className="rounded-2xl p-3.5 border border-[#1a3a6b] flex flex-wrap items-center gap-4 bg-[#0d1f3c]">
+          <div className="rounded-2xl p-3.5 border border-slate-200 dark:border-[#1a3a6b] flex flex-wrap items-center gap-4 bg-white dark:bg-[#0d1f3c] shadow-lg">
             {/* Playback Buttons */}
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setTimeIndex(Math.max(0, timeIndex - 1))}
-                className="p-1.5 rounded-lg hover:bg-[#102a4c] text-[#88a0c0] hover:text-white cursor-pointer"
+                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#102a4c] text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white cursor-pointer"
                 title="Step Backward 1 Hour"
               >
                 <SkipBack size={16} />
               </button>
               <button
                 onClick={() => setPlaying(!playing)}
-                className="px-3 py-1.5 rounded-lg font-bold text-xs flex items-center gap-1.5 transition-all text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 border border-cyan-400 cursor-pointer shadow-md shadow-cyan-500/20"
+                className="px-3 py-1.5 rounded-lg font-bold text-xs flex items-center gap-1.5 transition-all text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 border border-cyan-400 cursor-pointer shadow-md shadow-cyan-500/20"
                 title={playing ? 'Pause Loop' : 'Play 24h Loop'}
               >
                 {playing ? <Pause size={14} /> : <Play size={14} />}
@@ -341,7 +341,7 @@ Export Timestamp: ${new Date().toUTCString()}
               </button>
               <button
                 onClick={() => setTimeIndex(Math.min(24, timeIndex + 1))}
-                className="p-1.5 rounded-lg hover:bg-[#102a4c] text-[#88a0c0] hover:text-white cursor-pointer"
+                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#102a4c] text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white cursor-pointer"
                 title="Step Forward 1 Hour"
               >
                 <SkipForward size={16} />
@@ -350,9 +350,9 @@ Export Timestamp: ${new Date().toUTCString()}
 
             {/* Timeline Range Scrubber */}
             <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <div className="flex justify-between text-[11px] font-mono text-[#88a0c0]">
+              <div className="flex justify-between text-[11px] font-mono text-slate-600 dark:text-[#88a0c0]">
                 <span>-24h (T0)</span>
-                <span className="text-[#00d4ff] font-bold">-{24 - timeIndex}h Observed</span>
+                <span className="text-cyan-700 dark:text-[#00d4ff] font-bold">-{24 - timeIndex}h Observed</span>
                 <span>Now (T+0)</span>
               </div>
               <input
@@ -361,32 +361,32 @@ Export Timestamp: ${new Date().toUTCString()}
                 max="24"
                 value={timeIndex}
                 onChange={e => setTimeIndex(Number(e.target.value))}
-                className="w-full accent-[#00d4ff] h-1.5 bg-[#0a1628] rounded cursor-pointer"
+                className="w-full accent-cyan-500 h-1.5 bg-slate-200 dark:bg-[#0a1628] rounded cursor-pointer"
               />
             </div>
 
             {/* Image Enhancements */}
-            <div className="flex items-center gap-3 text-xs border-l border-[#1a3a6b] pl-3">
+            <div className="flex items-center gap-3 text-xs border-l border-slate-200 dark:border-[#1a3a6b] pl-3">
               <div>
-                <span className="text-[#88a0c0] text-[10px] block">Brightness: {brightness}%</span>
+                <span className="text-slate-600 dark:text-[#88a0c0] text-[10px] block">Brightness: {brightness}%</span>
                 <input
                   type="range"
                   min="50"
                   max="150"
                   value={brightness}
                   onChange={e => setBrightness(Number(e.target.value))}
-                  className="w-16 accent-[#00d4ff] h-1 bg-[#0a1628] rounded cursor-pointer"
+                  className="w-16 accent-cyan-500 h-1 bg-slate-200 dark:bg-[#0a1628] rounded cursor-pointer"
                 />
               </div>
               <div>
-                <span className="text-[#88a0c0] text-[10px] block">Contrast: {contrast}%</span>
+                <span className="text-slate-600 dark:text-[#88a0c0] text-[10px] block">Contrast: {contrast}%</span>
                 <input
                   type="range"
                   min="50"
                   max="150"
                   value={contrast}
                   onChange={e => setContrast(Number(e.target.value))}
-                  className="w-16 accent-[#00d4ff] h-1 bg-[#0a1628] rounded cursor-pointer"
+                  className="w-16 accent-cyan-500 h-1 bg-slate-200 dark:bg-[#0a1628] rounded cursor-pointer"
                 />
               </div>
             </div>
@@ -397,41 +397,41 @@ Export Timestamp: ${new Date().toUTCString()}
         <div className="w-full lg:w-72 flex flex-col gap-3 flex-shrink-0">
           {/* Active Dataset HDF5 Radiometric Metrics */}
           {patchData && patchData.stats ? (
-            <div className="rounded-2xl p-3.5 border border-[#1a3a6b] bg-[#0d1f3c] space-y-2">
-              <div className="flex items-center justify-between border-b border-[#1a3a6b] pb-2">
-                <span className="text-[10px] font-bold tracking-widest text-[#00d4ff] uppercase font-mono">HDF5 Radiometric Stats</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <div className="rounded-2xl p-3.5 border border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] space-y-2 shadow-lg">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-[#1a3a6b] pb-2">
+                <span className="text-[10px] font-bold tracking-widest text-cyan-700 dark:text-[#00d4ff] uppercase font-mono">HDF5 Radiometric Stats</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
               </div>
-              <div className="text-[11px] font-mono space-y-1 text-slate-300">
+              <div className="text-[11px] font-mono space-y-1 text-slate-700 dark:text-slate-300">
                 <div className="flex justify-between">
-                  <span className="text-[#88a0c0]">Active File:</span>
-                  <span className="text-white font-bold truncate max-w-[150px]" title={patchData.selected_file}>{patchData.selected_file}</span>
+                  <span className="text-slate-500 dark:text-[#88a0c0]">Active File:</span>
+                  <span className="text-slate-900 dark:text-white font-bold truncate max-w-[150px]" title={patchData.selected_file}>{patchData.selected_file}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#88a0c0]">Min Brightness:</span>
-                  <span className="text-[#00d4ff] font-bold">{patchData.stats.min}</span>
+                  <span className="text-slate-500 dark:text-[#88a0c0]">Min Brightness:</span>
+                  <span className="text-cyan-700 dark:text-[#00d4ff] font-bold">{patchData.stats.min}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#88a0c0]">Max Brightness:</span>
-                  <span className="text-[#00d4ff] font-bold">{patchData.stats.max}</span>
+                  <span className="text-slate-500 dark:text-[#88a0c0]">Max Brightness:</span>
+                  <span className="text-cyan-700 dark:text-[#00d4ff] font-bold">{patchData.stats.max}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#88a0c0]">Mean Radiance:</span>
-                  <span className="text-sky-300 font-bold">{patchData.stats.mean}</span>
+                  <span className="text-slate-500 dark:text-[#88a0c0]">Mean Radiance:</span>
+                  <span className="text-sky-600 dark:text-sky-300 font-bold">{patchData.stats.mean}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#88a0c0]">Std Deviation:</span>
-                  <span className="text-sky-300 font-bold">{patchData.stats.std}</span>
+                  <span className="text-slate-500 dark:text-[#88a0c0]">Std Deviation:</span>
+                  <span className="text-sky-600 dark:text-sky-300 font-bold">{patchData.stats.std}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#88a0c0]">Target Center:</span>
-                  <span className="text-white font-bold">{patchData.target_lat}°N, {patchData.target_lon}°E</span>
+                  <span className="text-slate-500 dark:text-[#88a0c0]">Target Center:</span>
+                  <span className="text-slate-900 dark:text-white font-bold">{patchData.target_lat}°N, {patchData.target_lon}°E</span>
                 </div>
               </div>
             </div>
           ) : null}
 
-          <h3 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase">
+          <h3 className="text-xs font-bold tracking-widest text-slate-600 dark:text-[#88a0c0] uppercase font-mono">
             Active Satellite Downlinks
           </h3>
 
@@ -440,26 +440,26 @@ Export Timestamp: ${new Date().toUTCString()}
               <div
                 key={f.id}
                 onClick={() => handleSourceChange(f.source)}
-                className={`rounded-xl p-3 border cursor-pointer transition-all ${
-                  source === f.source ? 'border-cyan-500/50 bg-[#102a4c]' : 'border-[#1a3a6b] bg-[#0d1f3c] hover:border-cyan-500/30'
+                className={`rounded-xl p-3 border cursor-pointer transition-all shadow-sm ${
+                  source === f.source ? 'border-cyan-500 bg-slate-100 dark:bg-[#102a4c]' : 'border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] hover:border-cyan-500/40'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="font-bold text-white text-xs">{f.source}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span className="font-bold text-slate-900 dark:text-white text-xs">{f.source}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                 </div>
-                <div className="text-[11px] text-[#88a0c0] space-y-0.5 font-mono">
-                  <div>Band: <span className="text-[#00d4ff]">{f.band}</span></div>
-                  <div>Resolution: <span className="text-white">{f.resolution}</span></div>
-                  <div>Sync: <span className="text-slate-300">{f.time}</span></div>
+                <div className="text-[11px] text-slate-600 dark:text-[#88a0c0] space-y-0.5 font-mono">
+                  <div>Band: <span className="text-cyan-700 dark:text-[#00d4ff]">{f.band}</span></div>
+                  <div>Resolution: <span className="text-slate-800 dark:text-white">{f.resolution}</span></div>
+                  <div>Sync: <span className="text-slate-600 dark:text-slate-300">{f.time}</span></div>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Spatial Annotation Suite */}
-          <div className="rounded-2xl p-3.5 border border-[#1a3a6b] mt-auto bg-[#0d1f3c]">
-            <h4 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase mb-2">
+          <div className="rounded-2xl p-3.5 border border-slate-200 dark:border-[#1a3a6b] mt-auto bg-white dark:bg-[#0d1f3c] shadow-lg">
+            <h4 className="text-xs font-bold tracking-widest text-slate-600 dark:text-[#88a0c0] uppercase mb-2 font-mono">
               Spatial Annotation Tools
             </h4>
             <div className="space-y-2">
@@ -469,10 +469,10 @@ Export Timestamp: ${new Date().toUTCString()}
                   setActiveTool(next);
                   showToast(next ? 'Click on satellite canvas to place coordinate marker.' : 'Marker tool deactivated.', 'info');
                 }}
-                className={`w-full py-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={`w-full py-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm ${
                   activeTool === 'marker'
-                    ? 'bg-cyan-500/20 text-[#00d4ff] border-cyan-500/50'
-                    : 'bg-[#0a1628] border-[#1a3a6b] text-[#88a0c0] hover:text-white hover:border-cyan-500/30'
+                    ? 'bg-cyan-500/20 text-cyan-700 dark:text-[#00d4ff] border-cyan-500/50'
+                    : 'bg-slate-50 dark:bg-[#0a1628] border-slate-300 dark:border-[#1a3a6b] text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/40'
                 }`}
               >
                 <MapPin size={13} />
@@ -485,10 +485,10 @@ Export Timestamp: ${new Date().toUTCString()}
                   setActiveTool(next);
                   showToast(next ? 'Click on canvas to sample bounding convective flux.' : 'Region tool deactivated.', 'info');
                 }}
-                className={`w-full py-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={`w-full py-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm ${
                   activeTool === 'region'
-                    ? 'bg-cyan-500/20 text-[#00d4ff] border-cyan-500/50'
-                    : 'bg-[#0a1628] border-[#1a3a6b] text-[#88a0c0] hover:text-white hover:border-cyan-500/30'
+                    ? 'bg-cyan-500/20 text-cyan-700 dark:text-[#00d4ff] border-cyan-500/50'
+                    : 'bg-slate-50 dark:bg-[#0a1628] border-slate-300 dark:border-[#1a3a6b] text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/40'
                 }`}
               >
                 <Square size={13} />
@@ -498,7 +498,7 @@ Export Timestamp: ${new Date().toUTCString()}
               {markers.length > 0 && (
                 <button
                   onClick={() => { setMarkers([]); showToast('All placed markers cleared.', 'info'); }}
-                  className="w-full py-1.5 rounded-lg text-[11px] text-[#88a0c0] hover:text-white hover:bg-[#102a4c] transition-colors cursor-pointer border border-transparent hover:border-[#1a3a6b]"
+                  className="w-full py-1.5 rounded-lg text-[11px] text-slate-500 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#102a4c] transition-colors cursor-pointer border border-transparent hover:border-slate-300 dark:hover:border-[#1a3a6b]"
                 >
                   Clear Placed Markers ({markers.length})
                 </button>

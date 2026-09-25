@@ -5,10 +5,10 @@ import { useTheme } from '../context/ThemeContext';
 
 function SettingsSection({ icon: Icon, title, children }) {
   return (
-    <div className="rounded-xl border border-[#1a3a6b] p-5 bg-[#0d1f3c]">
-      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#1a3a6b]">
-        <Icon size={16} className="text-[#00d4ff]" />
-        <h2 className="font-bold text-white text-sm tracking-tight font-mono">{title}</h2>
+    <div className="rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-5 bg-white dark:bg-[#0d1f3c] shadow-lg">
+      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-200 dark:border-[#1a3a6b]">
+        <Icon size={16} className="text-cyan-600 dark:text-[#00d4ff]" />
+        <h2 className="font-bold text-slate-900 dark:text-white text-sm tracking-tight font-mono">{title}</h2>
       </div>
       {children}
     </div>
@@ -17,21 +17,21 @@ function SettingsSection({ icon: Icon, title, children }) {
 
 function Toggle({ label, sub, checked, onChange }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-[#1a3a6b]/60">
+    <div className="flex items-center justify-between py-2 border-b border-slate-200 dark:border-[#1a3a6b]/60">
       <div>
-        <div className="text-xs font-semibold text-white">{label}</div>
-        {sub && <div className="text-[11px] text-[#88a0c0] font-mono">{sub}</div>}
+        <div className="text-xs font-semibold text-slate-900 dark:text-white">{label}</div>
+        {sub && <div className="text-[11px] text-slate-500 dark:text-[#88a0c0] font-mono">{sub}</div>}
       </div>
       <button
         type="button"
         onClick={onChange}
-        className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 border border-[#1a3a6b] cursor-pointer ${
-          checked ? 'bg-[#00d4ff]' : 'bg-[#0a1628]'
+        className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 border border-slate-300 dark:border-[#1a3a6b] cursor-pointer ${
+          checked ? 'bg-cyan-500 dark:bg-[#00d4ff]' : 'bg-slate-200 dark:bg-[#0a1628]'
         }`}
       >
         <div
           className={`absolute top-0.5 w-3.5 h-3.5 rounded-full transition-all ${
-            checked ? 'left-[22px] bg-[#050d1a]' : 'left-0.5 bg-[#88a0c0]'
+            checked ? 'left-[22px] bg-slate-950 dark:bg-[#050d1a]' : 'left-0.5 bg-slate-400 dark:bg-[#88a0c0]'
           }`}
         />
       </button>
@@ -128,12 +128,12 @@ export default function Settings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs text-[#88a0c0] font-mono">System Configuration & Administration</div>
-          <h1 className="text-xl font-bold text-white tracking-tight">Operational Settings</h1>
+          <div className="text-xs text-slate-500 dark:text-[#88a0c0] font-mono">System Configuration & Administration</div>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Operational Settings</h1>
         </div>
         <button
           onClick={handleSaveAll}
-          className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-lg font-bold text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
+          className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-lg font-bold text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
         >
           <Save size={14} />
           <span>Save All Changes</span>
@@ -144,7 +144,7 @@ export default function Settings() {
         {/* Display & Appearance (Theme Switcher) */}
         <SettingsSection icon={Palette} title="Display, Appearance & Theme Mode">
           <div className="space-y-3">
-            <div className="text-xs text-[#88a0c0] font-mono">
+            <div className="text-xs text-slate-500 dark:text-[#88a0c0] font-mono">
               Choose your preferred visual theme for the command center and maps.
             </div>
             <div className="grid grid-cols-2 gap-3 pt-1">
@@ -156,18 +156,18 @@ export default function Settings() {
                 }}
                 className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-2 ${
                   isDark
-                    ? 'border-[#00d4ff] bg-[#0a1628] shadow-lg shadow-cyan-950/40'
-                    : 'border-[#1a3a6b] bg-[#0a1628]/40 hover:border-slate-400'
+                    ? 'border-cyan-500 bg-slate-900 text-white shadow-lg shadow-cyan-950/40'
+                    : 'border-slate-300 bg-slate-100 text-slate-700 hover:border-slate-400'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Moon size={16} className="text-[#00d4ff]" />
-                    <span className="font-bold text-white text-xs">Dark Theme</span>
+                    <Moon size={16} className="text-cyan-400" />
+                    <span className="font-bold text-xs">Dark Theme</span>
                   </div>
-                  {isDark && <CheckCircle size={14} className="text-[#00d4ff]" />}
+                  {isDark && <CheckCircle size={14} className="text-cyan-400" />}
                 </div>
-                <p className="text-[11px] text-[#88a0c0] leading-snug">
+                <p className="text-[11px] text-slate-400 dark:text-[#88a0c0] leading-snug">
                   High contrast dark palette optimized for meteorological analysis & night operations.
                 </p>
               </button>
@@ -180,18 +180,18 @@ export default function Settings() {
                 }}
                 className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-2 ${
                   !isDark
-                    ? 'border-[#00d4ff] bg-[#f8fafc] shadow-lg shadow-cyan-950/20 text-[#0f172a]'
-                    : 'border-[#1a3a6b] bg-[#0a1628]/40 hover:border-slate-400'
+                    ? 'border-cyan-500 bg-white shadow-lg shadow-cyan-950/10 text-slate-900'
+                    : 'border-slate-700 bg-slate-900/40 text-slate-300 hover:border-slate-500'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sun size={16} className="text-amber-500" />
-                    <span className="font-bold text-white text-xs">Light Theme</span>
+                    <span className="font-bold text-xs">Light Theme</span>
                   </div>
-                  {!isDark && <CheckCircle size={14} className="text-[#00d4ff]" />}
+                  {!isDark && <CheckCircle size={14} className="text-cyan-500" />}
                 </div>
-                <p className="text-[11px] text-[#88a0c0] leading-snug">
+                <p className="text-[11px] text-slate-600 dark:text-[#88a0c0] leading-snug">
                   Clean crisp daylight palette suited for bright field environments and briefing displays.
                 </p>
               </button>
@@ -226,18 +226,18 @@ export default function Settings() {
             onChange={() => handleToggleSource('meteosat')}
           />
           <div className="mt-3.5">
-            <label className="text-xs text-[#88a0c0] font-mono block mb-1">
+            <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-mono block mb-1">
               Automated Data Polling Cadence
             </label>
             <select
               value={dataSources.interval}
               onChange={e => setDataSources({ ...dataSources, interval: e.target.value })}
-              className="w-full text-xs px-2.5 py-2 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-white font-mono font-semibold focus:outline-none focus:border-[#00d4ff]"
+              className="w-full text-xs px-2.5 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white font-mono font-semibold focus:outline-none focus:border-cyan-500 shadow-sm"
             >
-              <option>15 minutes (High Alert)</option>
-              <option>30 minutes (Operational Standard)</option>
-              <option>1 hour (Low Activity)</option>
-              <option>3 hours (Standby Mode)</option>
+              <option className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">15 minutes (High Alert)</option>
+              <option className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">30 minutes (Operational Standard)</option>
+              <option className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">1 hour (Low Activity)</option>
+              <option className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">3 hours (Standby Mode)</option>
             </select>
           </div>
         </SettingsSection>
@@ -248,21 +248,21 @@ export default function Settings() {
             {modelsList.map(m => (
               <div
                 key={m.id}
-                className="flex items-center justify-between p-2.5 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-xs"
+                className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-xs shadow-sm"
               >
                 <div>
-                  <div className="font-semibold text-white">{m.name}</div>
-                  <div className="text-[11px] text-[#88a0c0] font-mono">
-                    Validation Accuracy: <span className="text-[#00d4ff] font-mono font-bold">{m.acc}</span>
+                  <div className="font-semibold text-slate-900 dark:text-white">{m.name}</div>
+                  <div className="text-[11px] text-slate-500 dark:text-[#88a0c0] font-mono">
+                    Validation Accuracy: <span className="text-cyan-700 dark:text-[#00d4ff] font-mono font-bold">{m.acc}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded border border-emerald-500/40 bg-emerald-500/20 text-[10px] font-bold text-emerald-300 font-mono">
+                  <span className="px-2 py-0.5 rounded border border-emerald-500/40 bg-emerald-500/15 dark:bg-emerald-500/20 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 font-mono">
                     {m.status}
                   </span>
                   <button
                     onClick={() => handleUpdateModel(m)}
-                    className="px-2 py-1 rounded text-xs border border-[#1a3a6b] bg-[#0d1f3c] text-[#88a0c0] hover:text-white hover:border-cyan-500/40 transition-colors cursor-pointer"
+                    className="px-2 py-1 rounded text-xs border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/40 transition-colors cursor-pointer shadow-sm"
                   >
                     Calibrate
                   </button>
@@ -300,8 +300,8 @@ export default function Settings() {
           />
           <div className="mt-3.5">
             <div className="flex justify-between text-xs mb-1 font-mono">
-              <span className="text-[#88a0c0]">Confidence Alert Threshold</span>
-              <span className="font-mono font-bold text-[#00d4ff]">{alertConfig.threshold}%</span>
+              <span className="text-slate-600 dark:text-[#88a0c0]">Confidence Alert Threshold</span>
+              <span className="font-mono font-bold text-cyan-700 dark:text-[#00d4ff]">{alertConfig.threshold}%</span>
             </div>
             <input
               type="range"
@@ -309,7 +309,7 @@ export default function Settings() {
               max="95"
               value={alertConfig.threshold}
               onChange={e => setAlertConfig({ ...alertConfig, threshold: Number(e.target.value) })}
-              className="w-full accent-[#00d4ff] h-1.5 bg-[#0a1628] rounded cursor-pointer"
+              className="w-full accent-cyan-500 h-1.5 bg-slate-200 dark:bg-[#0a1628] rounded cursor-pointer"
             />
           </div>
         </SettingsSection>
@@ -320,21 +320,21 @@ export default function Settings() {
             {usersList.map(u => (
               <div
                 key={u.id}
-                className="flex items-center justify-between p-2.5 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-xs"
+                className="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-xs shadow-sm"
               >
                 <div>
-                  <div className="font-semibold text-white">{u.name}</div>
-                  <div className="text-[11px] text-[#88a0c0] font-mono">{u.role}</div>
+                  <div className="font-semibold text-slate-900 dark:text-white">{u.name}</div>
+                  <div className="text-[11px] text-slate-500 dark:text-[#88a0c0] font-mono">{u.role}</div>
                 </div>
                 <div className="flex items-center gap-2 font-mono">
                   <span className={`text-[10px] font-bold ${
-                    u.status === 'Online' ? 'text-emerald-400' : 'text-slate-500'
+                    u.status === 'Online' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'
                   }`}>
                     ● {u.status}
                   </span>
                   <button
                     onClick={() => showToast(`Editing credentials for ${u.name}...`, 'info')}
-                    className="px-2 py-0.5 rounded text-[11px] border border-[#1a3a6b] text-[#88a0c0] hover:text-white transition-colors cursor-pointer"
+                    className="px-2 py-0.5 rounded text-[11px] border border-slate-300 dark:border-[#1a3a6b] text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer shadow-sm"
                   >
                     Edit
                   </button>
@@ -345,7 +345,7 @@ export default function Settings() {
 
           <button
             onClick={() => setAddUserModalOpen(true)}
-            className="w-full py-2 rounded-lg border border-cyan-500/40 bg-cyan-500/10 text-[#00d4ff] hover:bg-cyan-500/20 text-xs font-semibold transition-all font-mono cursor-pointer"
+            className="w-full py-2 rounded-lg border border-cyan-500/40 bg-cyan-500/10 text-cyan-700 dark:text-[#00d4ff] hover:bg-cyan-500/20 text-xs font-semibold transition-all font-mono cursor-pointer"
           >
             + Register New Forecaster User
           </button>
@@ -354,39 +354,39 @@ export default function Settings() {
 
       {/* REGISTER NEW USER MODAL */}
       {addUserModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-xl border border-[#1a3a6b] p-6 bg-[#0d1f3c] shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1a3a6b] mb-4">
-              <h3 className="font-bold text-white text-sm font-mono">Register New Forecaster</h3>
-              <button onClick={() => setAddUserModalOpen(false)} className="text-[#88a0c0] hover:text-white">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-6 bg-white dark:bg-[#0d1f3c] shadow-2xl transition-colors">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#1a3a6b] mb-4">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm font-mono">Register New Forecaster</h3>
+              <button onClick={() => setAddUserModalOpen(false)} className="text-slate-500 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white cursor-pointer">
                 <X size={16} />
               </button>
             </div>
 
             <form onSubmit={handleAddUser} className="space-y-3.5 text-xs font-mono">
               <div>
-                <label className="text-[#88a0c0] font-medium block mb-1">Full Name & Title</label>
+                <label className="text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Full Name & Title</label>
                 <input
                   required
                   type="text"
                   placeholder="e.g. Dr. Anita Roy"
                   value={newUserName}
                   onChange={e => setNewUserName(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-white focus:outline-none focus:border-[#00d4ff] font-sans"
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 font-sans shadow-sm"
                 />
               </div>
 
               <div>
-                <label className="text-[#88a0c0] font-medium block mb-1">Designation Role</label>
+                <label className="text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Designation Role</label>
                 <select
                   value={newUserRole}
                   onChange={e => setNewUserRole(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-white focus:outline-none focus:border-[#00d4ff]"
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 shadow-sm"
                 >
-                  <option>Operational Forecaster</option>
-                  <option>Senior Meteorologist</option>
-                  <option>Remote Sensing Analyst</option>
-                  <option>Disaster Response Officer</option>
+                  <option className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">Operational Forecaster</option>
+                  <option className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">Senior Meteorologist</option>
+                  <option className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">Remote Sensing Analyst</option>
+                  <option className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">Disaster Response Officer</option>
                 </select>
               </div>
 
@@ -394,13 +394,13 @@ export default function Settings() {
                 <button
                   type="button"
                   onClick={() => setAddUserModalOpen(false)}
-                  className="flex-1 py-2 rounded-lg border border-[#1a3a6b] text-[#88a0c0] hover:text-white transition-colors"
+                  className="flex-1 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 rounded-lg font-bold text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors"
+                  className="flex-1 py-2 rounded-lg font-bold text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 transition-colors cursor-pointer shadow-sm"
                 >
                   Add User
                 </button>
@@ -412,28 +412,28 @@ export default function Settings() {
 
       {/* MODEL CALIBRATION MODAL */}
       {modelModalOpen && calibratingModel && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-xl border border-[#1a3a6b] p-6 bg-[#0d1f3c] shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1a3a6b] mb-4">
-              <h3 className="font-bold text-white text-sm font-mono">Model Calibration Engine</h3>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-6 bg-white dark:bg-[#0d1f3c] shadow-2xl transition-colors">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#1a3a6b] mb-4">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm font-mono">Model Calibration Engine</h3>
               {!calibrating && (
-                <button onClick={() => setModelModalOpen(false)} className="text-[#88a0c0] hover:text-white">
+                <button onClick={() => setModelModalOpen(false)} className="text-slate-500 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white cursor-pointer">
                   <X size={16} />
                 </button>
               )}
             </div>
 
             <div className="space-y-3 text-xs mb-5">
-              <div className="font-bold text-white text-sm font-sans">{calibratingModel.name}</div>
-              <div className="flex items-center gap-2 text-slate-300 font-mono">
+              <div className="font-bold text-slate-900 dark:text-white text-sm font-sans">{calibratingModel.name}</div>
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-mono">
                 {calibrating ? (
                   <>
-                    <RefreshCw size={14} className="animate-spin text-[#00d4ff]" />
+                    <RefreshCw size={14} className="animate-spin text-cyan-500 dark:text-[#00d4ff]" />
                     <span>Synchronizing model weights with MoES HPC cluster...</span>
                   </>
                 ) : (
                   <>
-                    <CheckCircle size={14} className="text-emerald-400" />
+                    <CheckCircle size={14} className="text-emerald-600 dark:text-emerald-400" />
                     <span>Checkpoint successfully applied. Accuracy verified at {calibratingModel.acc}.</span>
                   </>
                 )}
@@ -443,7 +443,7 @@ export default function Settings() {
             {!calibrating && (
               <button
                 onClick={() => setModelModalOpen(false)}
-                className="w-full py-2 rounded-lg font-bold text-xs text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors"
+                className="w-full py-2 rounded-lg font-bold text-xs text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 transition-colors cursor-pointer shadow-sm"
               >
                 Close Calibration
               </button>

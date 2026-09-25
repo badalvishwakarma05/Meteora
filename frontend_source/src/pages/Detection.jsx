@@ -102,43 +102,43 @@ export default function Detection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs text-[#88a0c0]">Deep Learning Computer Vision</div>
-          <h1 className="text-xl font-bold text-white">AI Detection Engine</h1>
+          <div className="text-xs text-slate-500 dark:text-[#88a0c0]">Deep Learning Computer Vision</div>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">AI Detection Engine</h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {/* HDF5 Dataset Selector */}
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#1a3a6b] bg-[#0d1f3c]">
-            <HardDrive size={14} className="text-[#00d4ff]" />
-            <span className="text-xs text-[#88a0c0] font-medium hidden sm:inline">HDF5 File:</span>
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] shadow-sm">
+            <HardDrive size={14} className="text-cyan-600 dark:text-[#00d4ff]" />
+            <span className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium hidden sm:inline">HDF5 File:</span>
             <select
               value={selectedFile}
               onChange={e => {
                 setSelectedFile(e.target.value);
                 showToast(`Selected dataset file for detection: ${e.target.value}`, 'info');
               }}
-              className="text-xs bg-[#0a1628] text-white font-mono font-semibold px-2 py-1 rounded-lg border border-[#1a3a6b] focus:outline-none focus:border-[#00d4ff]"
+              className="text-xs bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white font-mono font-semibold px-2 py-1 rounded-lg border border-slate-300 dark:border-[#1a3a6b] focus:outline-none focus:border-cyan-500"
             >
               {availableFiles.length > 0 ? (
-                availableFiles.map(f => <option key={f} value={f} className="bg-[#0a1628] text-white">{f}</option>)
+                availableFiles.map(f => <option key={f} value={f} className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">{f}</option>)
               ) : (
-                <option value="" className="bg-[#0a1628] text-white">No .h5 files found</option>
+                <option value="" className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">No .h5 files found</option>
               )}
             </select>
           </div>
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-[#1a3a6b] font-semibold text-[#88a0c0] hover:text-white hover:border-cyan-500/50 bg-[#0d1f3c] transition-all cursor-pointer"
+            className="flex items-center gap-2 text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-[#1a3a6b] font-semibold text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/50 bg-white dark:bg-[#0d1f3c] transition-all cursor-pointer shadow-sm"
           >
-            <Upload size={14} className="text-[#00d4ff]" />
+            <Upload size={14} className="text-cyan-600 dark:text-[#00d4ff]" />
             <span>Upload Satellite Frame</span>
           </button>
           <button
             onClick={handleRunDetection}
             disabled={isScanning}
-            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-xl font-bold text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 border border-cyan-400 transition-all cursor-pointer shadow-lg shadow-cyan-500/20 disabled:opacity-50"
+            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-xl font-bold text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 border border-cyan-400 transition-all cursor-pointer shadow-lg shadow-cyan-500/20 disabled:opacity-50"
           >
-            {isScanning ? <RefreshCw size={14} className="animate-spin text-[#050d1a]" /> : <Play size={14} />}
+            {isScanning ? <RefreshCw size={14} className="animate-spin text-slate-950" /> : <Play size={14} />}
             <span>{isScanning ? 'Processing Frame...' : 'Run Detection'}</span>
           </button>
         </div>
@@ -146,16 +146,16 @@ export default function Detection() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Detection Canvas (2 columns) */}
-        <div className="lg:col-span-2 rounded-2xl border border-[#1a3a6b] overflow-hidden flex flex-col bg-[#0d1f3c]">
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#1a3a6b] bg-[#0a1628]">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-[#1a3a6b] overflow-hidden flex flex-col bg-white dark:bg-[#0d1f3c] shadow-lg">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
             <div className="flex items-center gap-2">
-              <Layers size={15} className="text-[#00d4ff]" />
-              <h3 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase">
+              <Layers size={15} className="text-cyan-600 dark:text-[#00d4ff]" />
+              <h3 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase font-mono">
                 Neural Inference Bounding Canvas
               </h3>
             </div>
-            <div className="flex items-center gap-2 text-xs text-emerald-400 font-mono font-bold">
-              <CheckCircle size={13} className="text-emerald-400" />
+            <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-mono font-bold">
+              <CheckCircle size={13} className="text-emerald-600 dark:text-emerald-400" />
               <span>Inference: 0.28s · {visibleDetections.length} Features Tagged</span>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function Detection() {
             ))}
 
             {/* Canvas Telemetry Overlay */}
-            <div className="absolute bottom-2 left-3 text-[11px] font-mono text-[#88a0c0] bg-[#0a1628]/90 px-2 py-1 rounded border border-[#1a3a6b]">
+            <div className="absolute bottom-2 left-3 text-[11px] font-mono text-cyan-300 dark:text-[#88a0c0] bg-[#0a1628]/90 px-2 py-1 rounded border border-[#1a3a6b]">
               FOV: Bay of Bengal Convective Core · Resolution: 4km/px
             </div>
           </div>
@@ -221,30 +221,30 @@ export default function Detection() {
         {/* Model Config & Detection Log */}
         <div className="flex flex-col gap-4">
           {/* Model Config Card */}
-          <div className="rounded-2xl border border-[#1a3a6b] p-4 bg-[#0d1f3c]">
-            <h3 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase mb-3 flex items-center gap-1.5">
-              <Sliders size={13} className="text-[#00d4ff]" />
+          <div className="rounded-2xl border border-slate-200 dark:border-[#1a3a6b] p-4 bg-white dark:bg-[#0d1f3c] shadow-lg">
+            <h3 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase mb-3 flex items-center gap-1.5 font-mono">
+              <Sliders size={13} className="text-cyan-600 dark:text-[#00d4ff]" />
               <span>Inference Parameters</span>
             </h3>
 
             <div className="mb-3.5">
-              <label className="text-xs text-[#88a0c0] font-medium block mb-1">Architecture Backbone</label>
+              <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Architecture Backbone</label>
               <select
                 value={model}
                 onChange={e => {
                   setModel(e.target.value);
                   showToast(`Active neural network switched to ${e.target.value}.`, 'info');
                 }}
-                className="w-full text-xs px-2.5 py-2 rounded-lg border appearance-none text-white font-medium bg-[#0a1628] border-[#1a3a6b]"
+                className="w-full text-xs px-2.5 py-2 rounded-lg border appearance-none text-slate-900 dark:text-white font-medium bg-slate-50 dark:bg-[#0a1628] border-slate-300 dark:border-[#1a3a6b] shadow-sm"
               >
-                {models.map(m => <option key={m} className="bg-[#0a1628] text-white">{m}</option>)}
+                {models.map(m => <option key={m} className="bg-white dark:bg-[#0a1628] text-slate-900 dark:text-white">{m}</option>)}
               </select>
             </div>
 
             <div className="mb-3.5">
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-[#88a0c0]">Confidence Filter Threshold</span>
-                <span className="font-mono font-bold text-[#00d4ff]">{threshold}%</span>
+                <span className="text-slate-600 dark:text-[#88a0c0]">Confidence Filter Threshold</span>
+                <span className="font-mono font-bold text-cyan-700 dark:text-[#00d4ff]">{threshold}%</span>
               </div>
               <input
                 type="range"
@@ -252,17 +252,17 @@ export default function Detection() {
                 max="95"
                 value={threshold}
                 onChange={e => setThreshold(Number(e.target.value))}
-                className="w-full accent-[#00d4ff] h-1.5 bg-[#0a1628] rounded cursor-pointer"
+                className="w-full accent-cyan-500 h-1.5 bg-slate-200 dark:bg-[#0a1628] rounded cursor-pointer"
               />
-              <span className="text-[10px] text-[#88a0c0]/70 mt-1 block">
+              <span className="text-[10px] text-slate-500 dark:text-[#88a0c0]/70 mt-1 block">
                 Hides candidate detections below {threshold}% certainty.
               </span>
             </div>
 
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-[#88a0c0]">Rapid Warning Alert Threshold</span>
-                <span className="font-mono font-bold text-amber-400">{alertThreshold}%</span>
+                <span className="text-slate-600 dark:text-[#88a0c0]">Rapid Warning Alert Threshold</span>
+                <span className="font-mono font-bold text-amber-600 dark:text-amber-400">{alertThreshold}%</span>
               </div>
               <input
                 type="range"
@@ -270,18 +270,18 @@ export default function Detection() {
                 max="98"
                 value={alertThreshold}
                 onChange={e => setAlertThreshold(Number(e.target.value))}
-                className="w-full accent-amber-400 h-1.5 bg-[#0a1628] rounded cursor-pointer"
+                className="w-full accent-amber-500 h-1.5 bg-slate-200 dark:bg-[#0a1628] rounded cursor-pointer"
               />
-              <span className="text-[10px] text-[#88a0c0]/70 mt-1 block">
+              <span className="text-[10px] text-slate-500 dark:text-[#88a0c0]/70 mt-1 block">
                 Auto-flags notifications when eye structure &gt; {alertThreshold}%.
               </span>
             </div>
           </div>
 
           {/* Detection Log Card */}
-          <div className="rounded-2xl border border-[#1a3a6b] flex-1 flex flex-col overflow-hidden bg-[#0d1f3c]">
-            <div className="px-4 py-2.5 border-b border-[#1a3a6b] bg-[#0a1628]">
-              <h3 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase">
+          <div className="rounded-2xl border border-slate-200 dark:border-[#1a3a6b] flex-1 flex flex-col overflow-hidden bg-white dark:bg-[#0d1f3c] shadow-lg">
+            <div className="px-4 py-2.5 border-b border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
+              <h3 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase font-mono">
                 Extracted Feature Telemetry
               </h3>
             </div>
@@ -292,20 +292,20 @@ export default function Detection() {
                 return (
                   <div
                     key={d.id}
-                    className="flex items-start gap-2.5 p-2.5 rounded-xl border border-[#1a3a6b] text-xs transition-colors bg-[#0a1628]"
+                    className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-200 dark:border-[#1a3a6b] text-xs transition-colors bg-slate-50 dark:bg-[#0a1628]"
                   >
                     <div className="w-2 h-2 rounded-full flex-shrink-0 mt-0.5" style={{ background: d.color }}></div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-bold text-white flex items-center justify-between">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center justify-between">
                         <span className="truncate">{d.class}</span>
-                        <span className="font-mono text-[10px] text-[#88a0c0]">{d.time}</span>
+                        <span className="font-mono text-[10px] text-slate-500 dark:text-[#88a0c0]">{d.time}</span>
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="font-mono font-bold" style={{ color: d.color }}>
                           Certainty: {d.conf}%
                         </span>
                         {isOverAlert && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-0.5 font-mono">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 flex items-center gap-0.5 font-mono">
                             <AlertTriangle size={10} /> Alert Triggered
                           </span>
                         )}

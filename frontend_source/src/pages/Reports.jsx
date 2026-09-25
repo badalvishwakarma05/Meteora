@@ -167,31 +167,31 @@ DISTRIBUTION LIST:
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <div className="text-xs text-[#88a0c0] font-mono">Official Meteorological Communications</div>
-        <h1 className="text-xl font-bold text-white tracking-tight">Reports, Bulletins & Public Advisories</h1>
+        <div className="text-xs text-slate-500 dark:text-[#88a0c0] font-mono">Official Meteorological Communications</div>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Reports, Bulletins & Public Advisories</h1>
       </div>
 
       {/* Template Gallery */}
       <div>
-        <h2 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase font-mono mb-3">
+        <h2 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase font-mono mb-3">
           Standard IMD Bulletin Templates
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {templates.map(t => (
             <div
               key={t.id}
-              className="rounded-xl border border-[#1a3a6b] p-4 bg-[#0d1f3c] hover:border-cyan-500/50 cursor-pointer transition-all flex flex-col"
+              className="rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-4 bg-white dark:bg-[#0d1f3c] hover:border-cyan-500/50 cursor-pointer transition-all flex flex-col shadow-md"
             >
               <div className="text-2xl mb-2">{t.icon}</div>
-              <div className="font-bold text-sm text-white mb-1">{t.name}</div>
-              <div className="text-xs text-[#88a0c0] mb-3 flex-1">{t.desc}</div>
-              <div className="flex items-center justify-between pt-2 border-t border-[#1a3a6b] font-mono">
-                <span className="text-[11px] text-[#88a0c0] flex items-center gap-1">
+              <div className="font-bold text-sm text-slate-900 dark:text-white mb-1">{t.name}</div>
+              <div className="text-xs text-slate-500 dark:text-[#88a0c0] mb-3 flex-1">{t.desc}</div>
+              <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-[#1a3a6b] font-mono">
+                <span className="text-[11px] text-slate-500 dark:text-[#88a0c0] flex items-center gap-1">
                   <Clock size={11} /> ~{t.time}
                 </span>
                 <button
                   onClick={() => handleSelectTemplate(t)}
-                  className="text-xs px-2.5 py-1 rounded font-bold text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors"
+                  className="text-xs px-2.5 py-1 rounded font-bold text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 transition-colors cursor-pointer shadow-sm"
                 >
                   Load Template
                 </button>
@@ -202,14 +202,14 @@ DISTRIBUTION LIST:
       </div>
 
       {/* Quick Report Builder */}
-      <div className="rounded-xl border border-[#1a3a6b] p-5 bg-[#0d1f3c]">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase font-mono">
+      <div className="rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-5 bg-white dark:bg-[#0d1f3c] shadow-lg">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <h2 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase font-mono">
             Operational Bulletin Builder
           </h2>
           <button
             onClick={handleAutoPopulate}
-            className="text-xs px-3 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/10 text-[#00d4ff] hover:bg-cyan-500/20 font-semibold transition-all font-mono"
+            className="text-xs px-3 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-500/10 text-cyan-700 dark:text-[#00d4ff] hover:bg-cyan-500/20 font-semibold transition-all font-mono cursor-pointer"
           >
             Auto-populate from Live DANA Telemetry
           </button>
@@ -217,62 +217,62 @@ DISTRIBUTION LIST:
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 font-mono">
           <div>
-            <label className="text-xs text-[#88a0c0] font-medium block mb-1">Cyclone Name</label>
+            <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Cyclone Name</label>
             <input
               value={formData.cycloneName}
               onChange={e => setFormData({ ...formData, cycloneName: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-sm text-white focus:outline-none focus:border-[#00d4ff]"
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-sm text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 shadow-sm"
             />
           </div>
           <div>
-            <label className="text-xs text-[#88a0c0] font-medium block mb-1">Report Heading / Bulletin #</label>
+            <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Report Heading / Bulletin #</label>
             <input
               value={formData.reportType}
               onChange={e => setFormData({ ...formData, reportType: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-sm text-white focus:outline-none focus:border-[#00d4ff]"
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-sm text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 shadow-sm"
             />
           </div>
           <div>
-            <label className="text-xs text-[#88a0c0] font-medium block mb-1">Observation Valid Time</label>
+            <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Observation Valid Time</label>
             <input
               value={formData.validTime}
               onChange={e => setFormData({ ...formData, validTime: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-sm text-white focus:outline-none focus:border-[#00d4ff]"
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-sm text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 shadow-sm"
             />
           </div>
           <div>
-            <label className="text-xs text-[#88a0c0] font-medium block mb-1">Issuing Authority</label>
+            <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Issuing Authority</label>
             <input
               value={formData.authority}
               onChange={e => setFormData({ ...formData, authority: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-sm text-white focus:outline-none focus:border-[#00d4ff]"
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-sm text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 shadow-sm"
             />
           </div>
         </div>
 
         <div className="mb-4">
-          <label className="text-xs text-[#88a0c0] font-medium block mb-1 font-mono">Advisory Content</label>
+          <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1 font-mono">Advisory Content</label>
           <textarea
             rows={5}
             value={formData.body}
             onChange={e => setFormData({ ...formData, body: e.target.value })}
-            className="w-full px-3 py-2 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-sm text-white font-mono leading-relaxed resize-none focus:outline-none focus:border-[#00d4ff]"
+            className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-sm text-slate-900 dark:text-white font-mono leading-relaxed resize-none focus:outline-none focus:border-cyan-500 shadow-sm"
           />
         </div>
 
         <div className="flex flex-wrap gap-2.5 items-center">
           <button
             onClick={handleGenerateDownload}
-            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-lg font-bold text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
+            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-lg font-bold text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
           >
             <Download size={14} />
             <span>Generate & Download Bulletin</span>
           </button>
           <button
             onClick={() => setPreviewOpen(true)}
-            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-lg border border-[#1a3a6b] bg-[#0a1628] text-[#88a0c0] hover:text-white hover:border-cyan-500/40 transition-colors cursor-pointer"
+            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/40 transition-colors cursor-pointer shadow-sm"
           >
-            <Eye size={14} className="text-[#00d4ff]" />
+            <Eye size={14} className="text-cyan-600 dark:text-[#00d4ff]" />
             <span>Preview Official Format</span>
           </button>
           <button
@@ -284,7 +284,7 @@ DISTRIBUTION LIST:
           </button>
           <button
             onClick={handleEmailDistribution}
-            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-lg font-semibold text-amber-300 border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 cursor-pointer transition-all"
+            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-lg font-semibold text-amber-700 dark:text-amber-300 border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 cursor-pointer transition-all"
           >
             <Mail size={14} />
             <span>Email to NDRF & State</span>
@@ -294,13 +294,13 @@ DISTRIBUTION LIST:
 
       {/* Recent Reports Archive */}
       <div>
-        <h2 className="text-xs font-bold tracking-widest text-[#88a0c0] uppercase font-mono mb-3">
+        <h2 className="text-xs font-bold tracking-widest text-slate-700 dark:text-[#88a0c0] uppercase font-mono mb-3">
           Published Bulletins & Archives
         </h2>
-        <div className="rounded-xl border border-[#1a3a6b] overflow-hidden bg-[#0d1f3c]">
+        <div className="rounded-xl border border-slate-200 dark:border-[#1a3a6b] overflow-hidden bg-white dark:bg-[#0d1f3c] shadow-lg">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#1a3a6b] bg-[#0a1628] text-xs font-bold text-[#88a0c0] uppercase tracking-wider font-mono">
+              <tr className="border-b border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] text-xs font-bold text-slate-600 dark:text-[#88a0c0] uppercase tracking-wider font-mono">
                 <th className="px-4 py-2.5 text-left">Bulletin Name</th>
                 <th className="px-4 py-2.5 text-left">Timestamp</th>
                 <th className="px-4 py-2.5 text-left">Type</th>
@@ -309,21 +309,21 @@ DISTRIBUTION LIST:
                 <th className="px-4 py-2.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1a3a6b]/60 font-mono">
+            <tbody className="divide-y divide-slate-200 dark:divide-[#1a3a6b]/60 font-mono">
               {recentReports.map(r => (
-                <tr key={r.id} className="hover:bg-[#102a4c] transition-colors">
-                  <td className="px-4 py-3 font-semibold text-white font-sans">{r.name}</td>
-                  <td className="px-4 py-3 text-xs text-[#88a0c0]">{r.date}</td>
-                  <td className="px-4 py-3 text-xs text-[#88a0c0]">{r.type}</td>
-                  <td className="px-4 py-3 text-xs text-white">{r.author}</td>
+                <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-[#102a4c] transition-colors">
+                  <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white font-sans">{r.name}</td>
+                  <td className="px-4 py-3 text-xs text-slate-500 dark:text-[#88a0c0]">{r.date}</td>
+                  <td className="px-4 py-3 text-xs text-slate-500 dark:text-[#88a0c0]">{r.type}</td>
+                  <td className="px-4 py-3 text-xs text-slate-700 dark:text-white">{r.author}</td>
                   <td className="px-4 py-3">
                     <span
                       className={`px-2 py-0.5 rounded border text-xs font-bold ${
                         r.status.includes('Live')
-                          ? 'border-red-500/40 bg-red-500/20 text-red-300'
+                          ? 'border-red-500/40 bg-red-500/15 dark:bg-red-500/20 text-red-700 dark:text-red-300'
                           : r.status === 'Published'
-                          ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-300'
-                          : 'border-yellow-500/40 bg-yellow-500/20 text-yellow-300'
+                          ? 'border-emerald-500/40 bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                          : 'border-yellow-500/40 bg-yellow-500/15 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-300'
                       }`}
                     >
                       {r.status}
@@ -332,13 +332,13 @@ DISTRIBUTION LIST:
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => setSelectedReportView(r)}
-                      className="px-2.5 py-1 rounded text-xs border border-[#1a3a6b] text-[#88a0c0] hover:text-white hover:border-cyan-500/40 transition-colors mr-2 cursor-pointer"
+                      className="px-2.5 py-1 rounded text-xs border border-slate-300 dark:border-[#1a3a6b] text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/40 transition-colors mr-2 cursor-pointer shadow-sm"
                     >
                       View
                     </button>
                     <button
                       onClick={handleGenerateDownload}
-                      className="px-2.5 py-1 rounded text-xs border border-cyan-500/40 bg-cyan-500/10 text-[#00d4ff] hover:bg-cyan-500/20 transition-colors cursor-pointer"
+                      className="px-2.5 py-1 rounded text-xs border border-cyan-500/40 bg-cyan-500/10 text-cyan-700 dark:text-[#00d4ff] hover:bg-cyan-500/20 transition-colors cursor-pointer"
                     >
                       Download
                     </button>
@@ -352,51 +352,51 @@ DISTRIBUTION LIST:
 
       {/* PREVIEW BULLETIN MODAL */}
       {(previewOpen || selectedReportView) && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-2xl rounded-xl border border-[#1a3a6b] p-6 bg-[#0d1f3c] shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#1a3a6b] mb-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-2xl rounded-xl border border-slate-200 dark:border-[#1a3a6b] p-6 bg-white dark:bg-[#0d1f3c] shadow-2xl transition-colors">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#1a3a6b] mb-4">
               <div className="flex items-center gap-2">
-                <FileText size={18} className="text-[#00d4ff]" />
-                <h3 className="font-bold text-white text-base">Official IMD Meteorological Bulletin</h3>
+                <FileText size={18} className="text-cyan-600 dark:text-[#00d4ff]" />
+                <h3 className="font-bold text-slate-900 dark:text-white text-base">Official IMD Meteorological Bulletin</h3>
               </div>
               <button
                 onClick={() => { setPreviewOpen(false); setSelectedReportView(null); }}
-                className="text-[#88a0c0] hover:text-white"
+                className="text-slate-500 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white cursor-pointer"
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Letterhead Header */}
-            <div className="p-4 rounded-lg bg-[#0a1628] border border-[#1a3a6b] text-center mb-4">
-              <div className="text-[11px] font-bold text-[#88a0c0] font-mono">GOVERNMENT OF INDIA · MINISTRY OF EARTH SCIENCES</div>
-              <div className="text-sm font-bold text-white mt-0.5 tracking-tight font-mono">INDIA METEOROLOGICAL DEPARTMENT</div>
-              <div className="text-[10px] text-cyan-400 font-mono">CYCLONE WARNING DIVISION · MAUSAM BHAVAN, NEW DELHI</div>
+            <div className="p-4 rounded-lg bg-slate-50 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] text-center mb-4">
+              <div className="text-[11px] font-bold text-slate-600 dark:text-[#88a0c0] font-mono">GOVERNMENT OF INDIA · MINISTRY OF EARTH SCIENCES</div>
+              <div className="text-sm font-bold text-slate-900 dark:text-white mt-0.5 tracking-tight font-mono">INDIA METEOROLOGICAL DEPARTMENT</div>
+              <div className="text-[10px] text-cyan-600 dark:text-cyan-400 font-mono">CYCLONE WARNING DIVISION · MAUSAM BHAVAN, NEW DELHI</div>
             </div>
 
             <div className="space-y-2 text-xs mb-4 font-mono">
-              <div className="flex justify-between py-1 border-b border-[#1a3a6b]">
-                <span className="text-[#88a0c0]">Cyclone Name:</span>
-                <span className="font-bold text-white">{formData.cycloneName}</span>
+              <div className="flex justify-between py-1 border-b border-slate-200 dark:border-[#1a3a6b]">
+                <span className="text-slate-600 dark:text-[#88a0c0]">Cyclone Name:</span>
+                <span className="font-bold text-slate-900 dark:text-white">{formData.cycloneName}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-[#1a3a6b]">
-                <span className="text-[#88a0c0]">Bulletin Number:</span>
-                <span className="font-semibold text-white">{formData.reportType}</span>
+              <div className="flex justify-between py-1 border-b border-slate-200 dark:border-[#1a3a6b]">
+                <span className="text-slate-600 dark:text-[#88a0c0]">Bulletin Number:</span>
+                <span className="font-semibold text-slate-900 dark:text-white">{formData.reportType}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-[#1a3a6b]">
-                <span className="text-[#88a0c0]">Valid Horizon:</span>
-                <span className="text-white">{formData.validTime}</span>
+              <div className="flex justify-between py-1 border-b border-slate-200 dark:border-[#1a3a6b]">
+                <span className="text-slate-600 dark:text-[#88a0c0]">Valid Horizon:</span>
+                <span className="text-slate-800 dark:text-white">{formData.validTime}</span>
               </div>
             </div>
 
-            <div className="p-4 rounded-lg bg-[#0a1628] border border-[#1a3a6b] text-xs font-mono text-slate-300 leading-relaxed max-h-48 overflow-y-auto whitespace-pre-wrap mb-5">
+            <div className="p-4 rounded-lg bg-slate-50 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] text-xs font-mono text-slate-700 dark:text-slate-300 leading-relaxed max-h-48 overflow-y-auto whitespace-pre-wrap mb-5">
               {formData.body}
             </div>
 
             <div className="flex gap-2">
               <button
                 onClick={() => { setPreviewOpen(false); setSelectedReportView(null); }}
-                className="flex-1 py-2 rounded-lg border border-[#1a3a6b] text-xs text-[#88a0c0] hover:text-white transition-colors"
+                className="flex-1 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] text-xs text-slate-700 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer shadow-sm"
               >
                 Close Preview
               </button>
@@ -406,7 +406,7 @@ DISTRIBUTION LIST:
                   setPreviewOpen(false);
                   setSelectedReportView(null);
                 }}
-                className="flex-1 py-2 rounded-lg font-bold text-xs text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors"
+                className="flex-1 py-2 rounded-lg font-bold text-xs text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 transition-colors cursor-pointer shadow-sm"
               >
                 Download Official PDF/Text
               </button>
