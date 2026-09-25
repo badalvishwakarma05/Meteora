@@ -207,10 +207,10 @@ const catColor = (c) => {
 };
 
 const TILE_LAYERS = {
-  'Dark Canvas': 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-  'OpenStreetMap': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   'Satellite View': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
   'Ocean Topo': 'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
+  'Street View': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  'Dark Canvas': 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
 };
 
 const DARK_LABELS_OVERLAY = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}';
@@ -556,27 +556,38 @@ export default function HistoricalData() {
         <div className="lg:col-span-7 flex flex-col gap-3">
           <div className="relative h-[400px] sm:h-[480px] md:h-[560px] min-h-[400px] rounded-2xl overflow-hidden border border-[#1a3a6b] bg-[#0a1628] shadow-2xl">
             
-            {/* Top Map Layer Switcher & Toggles */}
-            <div className="absolute top-3 right-3 z-[999] flex flex-wrap gap-1.5 items-end max-w-[calc(100%-20px)] justify-end">
-              <div className="flex flex-wrap gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-lg">
-                {Object.keys(TILE_LAYERS).map(layer => (
-                  <button
-                    key={layer}
-                    onClick={() => setActiveLayer(layer)}
-                    className={`text-[10px] px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
-                      activeLayer === layer ? 'bg-[#00d4ff] text-[#050d1a] font-bold' : 'text-[#88a0c0] hover:text-white'
-                    }`}
-                  >
-                    {layer}
-                  </button>
-                ))}
+            {/* Top Map Layer Switcher & Feature Toggles */}
+            <div className="absolute top-3 right-3 z-[999] flex flex-wrap gap-2 items-center max-w-[calc(100%-20px)] justify-end">
+              {/* Basemap Switcher */}
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl">
+                {Object.keys(TILE_LAYERS).map(layer => {
+                  const isActive = activeLayer === layer;
+                  return (
+                    <button
+                      key={layer}
+                      type="button"
+                      onClick={() => setActiveLayer(layer)}
+                      className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border ${
+                        isActive
+                          ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-md shadow-cyan-500/30'
+                          : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {layer}
+                    </button>
+                  );
+                })}
               </div>
 
-              <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-lg text-[10px] font-semibold text-slate-300">
+              {/* Trajectory & City Toggles */}
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl text-[10px] font-semibold text-slate-300">
                 <button
+                  type="button"
                   onClick={() => setShowForecastOnMap(!showForecastOnMap)}
-                  className={`px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all ${
-                    showForecastOnMap ? 'bg-red-500/20 text-red-300 border border-red-500/40 font-bold' : 'text-[#88a0c0] border border-[#1a3a6b]'
+                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all border font-bold ${
+                    showForecastOnMap
+                      ? 'bg-red-500/25 text-red-300 border-red-500/50 shadow-sm shadow-red-500/20'
+                      : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
                   }`}
                 >
                   <Cpu size={11} />
@@ -584,9 +595,12 @@ export default function HistoricalData() {
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setShowCities(!showCities)}
-                  className={`px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all ${
-                    showCities ? 'bg-cyan-500/20 text-[#00d4ff] border border-cyan-500/40' : 'text-[#88a0c0] border border-[#1a3a6b]'
+                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all border font-bold ${
+                    showCities
+                      ? 'bg-cyan-500/25 text-[#00d4ff] border-cyan-500/50 shadow-sm shadow-cyan-500/20'
+                      : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
                   }`}
                 >
                   <Building2 size={11} />
@@ -647,9 +661,17 @@ export default function HistoricalData() {
               zoomControl={true}
               attributionControl={false}
             >
-              <TileLayer url={TILE_LAYERS[activeLayer]} />
-              {activeLayer === 'Dark Canvas' && <TileLayer url={DARK_LABELS_OVERLAY} />}
-              {activeLayer === 'Satellite View' && <TileLayer url={SATELLITE_LABELS_OVERLAY} />}
+              {/* Dynamic Base Tile Layer with key for instantaneous layer swapping */}
+              <TileLayer
+                key={activeLayer}
+                url={TILE_LAYERS[activeLayer] || TILE_LAYERS['Satellite View']}
+              />
+              {activeLayer === 'Dark Canvas' && (
+                <TileLayer key="dark-labels" url={DARK_LABELS_OVERLAY} />
+              )}
+              {activeLayer === 'Satellite View' && (
+                <TileLayer key="sat-labels" url={SATELLITE_LABELS_OVERLAY} />
+              )}
 
               <MapController targetLat={selectedStorm?.lat} targetLon={selectedStorm?.lon} />
 

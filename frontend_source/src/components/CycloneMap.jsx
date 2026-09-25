@@ -87,10 +87,10 @@ const negativeSampleLPAs = [
 
 // Basemap layers (Esri & OpenStreetMap)
 const TILE_LAYERS = {
-  Infrared: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-  Satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  'Water Vapor': 'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
-  Radar: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  'Satellite View': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  'Ocean Topo': 'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
+  'Street View': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  'Dark Canvas': 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
 };
 
 function MapController({ selectedRegion }) {
@@ -106,13 +106,13 @@ function MapController({ selectedRegion }) {
 }
 
 export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) {
-  const [activeLayer, setActiveLayer] = useState('Infrared');
+  const [activeLayer, setActiveLayer] = useState('Satellite View');
   const { showToast } = useToast();
   const { selectedRegion } = useDisasterAlert();
 
   const handleLayerChange = (layer) => {
     setActiveLayer(layer);
-    showToast(`Switched map layer to ${layer}.`, 'info');
+    showToast(`Switched map basemap to ${layer}.`, 'info');
   };
 
   const getMarkerColor = (severity) => {
@@ -123,20 +123,20 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
 
   return (
     <div className="relative h-[350px] md:h-full min-h-[350px] w-full rounded-2xl overflow-hidden border border-[#1a3a6b]/60 shadow-2xl bg-[#0a1628] touch-pan-x touch-pan-y">
-      {/* Clean Layer Switcher (Top Right) */}
-      <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[999] flex flex-wrap gap-1 p-1 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] shadow-lg max-w-[calc(100%-20px)]">
+      {/* Basemap Switcher (Top Right) */}
+      <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[999] flex items-center gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl max-w-[calc(100%-20px)]">
         {Object.keys(TILE_LAYERS).map(layer => {
           const isActive = activeLayer === layer;
           return (
             <button
               key={layer}
+              type="button"
               onClick={() => handleLayerChange(layer)}
-              className="text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg font-semibold transition-all cursor-pointer border"
-              style={{
-                background: isActive ? '#00d4ff' : 'transparent',
-                color: isActive ? '#050d1a' : '#88a0c0',
-                borderColor: isActive ? '#00d4ff' : 'transparent',
-              }}
+              className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border select-none ${
+                isActive
+                  ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-md shadow-cyan-500/30'
+                  : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
+              }`}
             >
               {layer}
             </button>
@@ -189,8 +189,14 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
       >
         <TileLayer
           key={activeLayer}
-          url={TILE_LAYERS[activeLayer]}
+          url={TILE_LAYERS[activeLayer] || TILE_LAYERS['Satellite View']}
         />
+        {activeLayer === 'Dark Canvas' && (
+          <TileLayer key="dark-labels-cm" url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}" />
+        )}
+        {activeLayer === 'Satellite View' && (
+          <TileLayer key="sat-labels-cm" url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}" />
+        )}
         <MapController selectedRegion={selectedRegion} />
 
         {/* 1. HISTORICAL TRAINING TRACKS (FAINT DOTTED OVERLAY) */}
