@@ -316,16 +316,19 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
             <React.Fragment key={c.id}>
               {/* Past track */}
               {pastTrack.length > 1 && (
-                <Polyline positions={pastTrack} color="#00d4ff" weight={2} opacity={0.7} />
+                <Polyline positions={pastTrack} color="#00d4ff" weight={3} opacity={0.85} />
               )}
-              {/* Predicted track (dashed) */}
+              {/* Predicted future track (animated glowing dotted polyline) */}
               {futureTrack.length > 1 && (
                 <Polyline
                   positions={futureTrack}
-                  color="#ff9500"
-                  weight={2.5}
-                  opacity={0.95}
-                  dashArray="5 6"
+                  pathOptions={{
+                    color: '#ff3b3b',
+                    weight: 3.5,
+                    opacity: 1,
+                    dashArray: '6, 8',
+                    className: 'animate-forecast-glow'
+                  }}
                 />
               )}
               {/* Outer Intensity Ring */}

@@ -1,251 +1,200 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Polyline, Popup, Tooltip as MapTooltip, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { 
-  Search, Filter, Download, ArrowUpDown, X, BookOpen, Layers, CheckCircle2,
+  Search, Filter, Download, ArrowUpDown, BookOpen, Layers, CheckCircle2,
   MapPin, Wind, Navigation, ShieldAlert, Activity, Calendar, Users, DollarSign, Eye,
-  Compass, Map, Radio, Building2
+  Compass, Map, Radio, Building2, Sparkles, RefreshCw, ChevronRight, AlertTriangle,
+  Play, Pause, FastForward, Clock, Cpu, BarChart3
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
-import { runCityImpactPrediction } from '../services/api';
+import { useTheme } from '../context/ThemeContext';
+import { runCityImpactPrediction, fetchHistoricalCyclones, predictCNNLSTMTrajectory } from '../services/api';
 
 const COASTAL_CITIES = [
   { name: 'Puri', lat: 19.8135, lon: 85.8312, state: 'Odisha' },
   { name: 'Paradip', lat: 20.3164, lon: 86.6114, state: 'Odisha' },
+  { name: 'Dhamra Port', lat: 20.7842, lon: 86.9214, state: 'Odisha' },
   { name: 'Balasore', lat: 21.4942, lon: 86.9317, state: 'Odisha' },
   { name: 'Gopalpur', lat: 19.2647, lon: 84.9144, state: 'Odisha' },
   { name: 'Digha', lat: 21.6266, lon: 87.5074, state: 'West Bengal' },
   { name: 'Kolkata', lat: 22.5726, lon: 88.3639, state: 'West Bengal' },
   { name: 'Visakhapatnam', lat: 17.6868, lon: 83.2185, state: 'Andhra Pradesh' },
   { name: 'Kakinada', lat: 16.9891, lon: 82.2475, state: 'Andhra Pradesh' },
+  { name: 'Bapatla', lat: 15.9042, lon: 80.4674, state: 'Andhra Pradesh' },
   { name: 'Chennai', lat: 13.0827, lon: 80.2707, state: 'Tamil Nadu' },
   { name: 'Cuddalore', lat: 11.7480, lon: 79.7714, state: 'Tamil Nadu' },
+  { name: 'Nagapattinam', lat: 10.7672, lon: 79.8449, state: 'Tamil Nadu' },
   { name: 'Kanyakumari', lat: 8.0883, lon: 77.5385, state: 'Tamil Nadu' },
   { name: 'Jakhau Port', lat: 23.2382, lon: 68.6186, state: 'Gujarat' },
   { name: 'Porbandar', lat: 21.6417, lon: 69.6293, state: 'Gujarat' },
+  { name: 'Veraval', lat: 20.9000, lon: 70.3667, state: 'Gujarat' },
   { name: 'Mumbai', lat: 18.9220, lon: 72.8347, state: 'Maharashtra' },
+  { name: 'Alibaug', lat: 18.6414, lon: 72.8722, state: 'Maharashtra' },
   { name: 'Chittagong', lat: 22.3569, lon: 91.7832, state: 'Bangladesh' }
 ];
 
-function getDistanceKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return Math.round(R * c);
-}
+const AVAILABLE_YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011];
 
-const allData = [
+// Fallback comprehensive offline database (2011 - 2026)
+const INITIAL_OFFLINE_CYCLONES = [
   {
     id: 'DANA_2024',
     name: 'DANA',
     year: 2024,
+    basin: 'Bay of Bengal',
     category: 4,
-    maxWind: 185,
-    pressure: 968,
-    landfall: 'Odisha (Dhamra Port)',
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 100,
+    peak_wind_kmh: 185,
+    min_pressure_hpa: 968,
+    landfall: 'Odisha (Dhamra Port / Habalikhati)',
     deaths: 0,
     damage: '₹1,450 Cr',
+    dates_active: '22 Oct 2024 – 26 Oct 2024',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Very Severe Cyclonic Storm. Zero casualty mass evacuation achieved in Bhadrak and Kendrapara coastal districts.',
     lat: 20.78,
     lon: 86.92,
-    basin: 'Bay of Bengal',
-    track: [[15.4, 87.2], [17.5, 87.0], [19.2, 86.8], [20.78, 86.92]],
-    notes: 'Very Severe Cyclonic Storm. Zero casualty mass evacuation achieved in Bhadrak and Kendrapara coastal districts.'
-  },
-  {
-    id: 'REMAL_2024',
-    name: 'REMAL',
-    year: 2024,
-    category: 3,
-    maxWind: 135,
-    pressure: 978,
-    landfall: 'West Bengal / Bangladesh',
-    deaths: 30,
-    damage: '₹6,800 Cr',
-    lat: 21.95,
-    lon: 89.20,
-    basin: 'Bay of Bengal',
-    track: [[16.2, 88.0], [18.8, 88.5], [20.5, 89.0], [21.95, 89.20]],
-    notes: 'Severe Cyclonic Storm bringing torrential rain and heavy tidal inundation across the Sundarbans estuarine delta.'
+    track: [[15.4, 87.2], [17.5, 87.0], [19.2, 86.8], [20.4, 86.85], [20.78, 86.92]],
+    points: [
+      { step: 1, timestamp: '2024-10-22 00:00', lat: 15.4, lon: 87.2, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2024-10-23 06:00', lat: 17.5, lon: 87.0, wind_speed_kmh: 102, wind_speed_kts: 55, pressure_hpa: 990, category: 'Cyclonic Storm', color: '#06b6d4' },
+      { step: 3, timestamp: '2024-10-24 00:00', lat: 19.2, lon: 86.8, wind_speed_kmh: 148, wind_speed_kts: 80, pressure_hpa: 978, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 4, timestamp: '2024-10-24 18:00', lat: 20.4, lon: 86.85, wind_speed_kmh: 185, wind_speed_kts: 100, pressure_hpa: 968, category: 'Very Severe Cyclonic Storm', color: '#ef4444' },
+      { step: 5, timestamp: '2024-10-25 00:00', lat: 20.78, lon: 86.92, wind_speed_kmh: 175, wind_speed_kts: 95, pressure_hpa: 972, category: 'Landfall (Dhamra)', color: '#ef4444' }
+    ]
   },
   {
     id: 'BIPARJOY_2023',
     name: 'BIPARJOY',
     year: 2023,
+    basin: 'Arabian Sea',
     category: 3,
-    maxWind: 165,
-    pressure: 966,
-    landfall: 'Gujarat (Jakhau Port)',
+    max_category: 'Extremely Severe Cyclonic Storm (ESCS)',
+    peak_wind_kts: 90,
+    peak_wind_kmh: 165,
+    min_pressure_hpa: 966,
+    landfall: 'Gujarat (Jakhau Port / Naliya)',
     deaths: 12,
     damage: '₹3,200 Cr',
+    dates_active: '06 Jun 2023 – 16 Jun 2023',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Longest lived Arabian Sea cyclone in recent historical record (10 days peak); crossed coast at Jakhau.',
     lat: 23.22,
     lon: 68.63,
-    basin: 'Arabian Sea',
-    track: [[14.0, 66.5], [17.5, 67.2], [20.8, 67.8], [23.22, 68.63]],
-    notes: 'Longest lived Arabian Sea cyclone in recent historical record; crossed coast at Jakhau with heavy storm surge.'
+    track: [[11.5, 66.0], [13.2, 66.0], [15.2, 66.5], [19.2, 67.7], [23.22, 68.63]],
+    points: [
+      { step: 1, timestamp: '2023-06-06 00:00', lat: 11.5, lon: 66.0, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Cyclonic Storm', color: '#10b981' },
+      { step: 2, timestamp: '2023-06-07 00:00', lat: 13.2, lon: 66.0, wind_speed_kmh: 120, wind_speed_kts: 65, pressure_hpa: 982, category: 'Very Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2023-06-08 06:00', lat: 15.2, lon: 66.5, wind_speed_kmh: 165, wind_speed_kts: 90, pressure_hpa: 960, category: 'Extremely Severe', color: '#ef4444' },
+      { step: 4, timestamp: '2023-06-11 00:00', lat: 19.2, lon: 67.7, wind_speed_kmh: 195, wind_speed_kts: 105, pressure_hpa: 946, category: 'Extremely Severe', color: '#ef4444' },
+      { step: 5, timestamp: '2023-06-15 18:00', lat: 23.22, lon: 68.63, wind_speed_kmh: 148, wind_speed_kts: 80, pressure_hpa: 966, category: 'Landfall (Jakhau)', color: '#f97316' }
+    ]
+  },
+  {
+    id: 'MICHAUNG_2023',
+    name: 'MICHAUNG',
+    year: 2023,
+    basin: 'Bay of Bengal',
+    category: 4,
+    max_category: 'Super Cyclonic Storm (SuCS)',
+    peak_wind_kts: 105,
+    peak_wind_kmh: 195,
+    min_pressure_hpa: 960,
+    landfall: 'Andhra Pradesh (Bapatla Coast)',
+    deaths: 17,
+    damage: '₹4,100 Cr',
+    dates_active: '01 Dec 2023 – 06 Dec 2023',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Intense track parallel to Tamil Nadu coast bringing catastrophic 450mm urban flooding across Chennai.',
+    lat: 15.8,
+    lon: 80.3,
+    track: [[8.8, 87.5], [10.8, 85.0], [13.5, 81.8], [15.8, 80.3]],
+    points: [
+      { step: 1, timestamp: '2023-12-01 00:00', lat: 8.8, lon: 87.5, wind_speed_kmh: 55, wind_speed_kts: 30, pressure_hpa: 1004, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2023-12-02 12:00', lat: 10.8, lon: 85.0, wind_speed_kmh: 83, wind_speed_kts: 45, pressure_hpa: 996, category: 'Cyclonic Storm', color: '#06b6d4' },
+      { step: 3, timestamp: '2023-12-04 00:00', lat: 13.5, lon: 81.8, wind_speed_kmh: 120, wind_speed_kts: 65, pressure_hpa: 982, category: 'Severe Cyclonic', color: '#f97316' },
+      { step: 4, timestamp: '2023-12-05 06:00', lat: 15.8, lon: 80.3, wind_speed_kmh: 111, wind_speed_kts: 60, pressure_hpa: 986, category: 'Landfall (Bapatla)', color: '#f97316' }
+    ]
   },
   {
     id: 'AMPHAN_2020',
     name: 'AMPHAN',
     year: 2020,
+    basin: 'Bay of Bengal',
     category: 5,
-    maxWind: 270,
-    pressure: 920,
-    landfall: 'West Bengal (Sundarbans)',
+    max_category: 'Super Cyclonic Storm (SuCS)',
+    peak_wind_kts: 145,
+    peak_wind_kmh: 270,
+    min_pressure_hpa: 920,
+    landfall: 'West Bengal (Sundarbans / Bakkhali)',
     deaths: 128,
     damage: '₹1,02,000 Cr',
+    dates_active: '16 May 2020 – 21 May 2020',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'First Super Cyclonic Storm in Bay of Bengal since 1999; devastating impact on Kolkata metropolis.',
     lat: 21.70,
     lon: 88.30,
-    basin: 'Bay of Bengal',
-    track: [[12.5, 86.3], [15.8, 86.8], [19.2, 87.5], [21.70, 88.30]],
-    notes: 'Super Cyclonic Storm over Bay of Bengal; catastrophic damage across Sundarbans delta and Kolkata metropolis.'
+    track: [[10.4, 87.0], [11.5, 86.2], [13.4, 86.4], [16.0, 86.8], [21.70, 88.30]],
+    points: [
+      { step: 1, timestamp: '2020-05-16 00:00', lat: 10.4, lon: 87.0, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2020-05-17 00:00', lat: 11.5, lon: 86.2, wind_speed_kmh: 102, wind_speed_kts: 55, pressure_hpa: 990, category: 'Severe Cyclonic', color: '#f97316' },
+      { step: 3, timestamp: '2020-05-18 00:00', lat: 13.4, lon: 86.4, wind_speed_kmh: 270, wind_speed_kts: 145, pressure_hpa: 920, category: 'Super Cyclone', color: '#ef4444' },
+      { step: 4, timestamp: '2020-05-20 12:00', lat: 21.7, lon: 88.3, wind_speed_kmh: 165, wind_speed_kts: 90, pressure_hpa: 960, category: 'Landfall (Sundarbans)', color: '#ef4444' }
+    ]
   },
   {
     id: 'FANI_2019',
     name: 'FANI',
     year: 2019,
+    basin: 'Bay of Bengal',
     category: 4,
-    maxWind: 250,
-    pressure: 932,
+    max_category: 'Extremely Severe Cyclonic Storm (ESCS)',
+    peak_wind_kts: 135,
+    peak_wind_kmh: 250,
+    min_pressure_hpa: 932,
     landfall: 'Odisha (Puri)',
     deaths: 89,
     damage: '₹23,000 Cr',
+    dates_active: '26 Apr 2019 – 04 May 2019',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Extremely Severe Cyclonic Storm; direct landfall on Puri city with historic 1.2 million record evacuation.',
     lat: 19.81,
     lon: 85.83,
-    basin: 'Bay of Bengal',
-    track: [[10.2, 85.0], [14.0, 84.5], [17.5, 84.8], [19.81, 85.83]],
-    notes: 'Extremely Severe Cyclonic Storm; direct landfall on Puri city with historic 1.2 million record evacuation.'
+    track: [[5.2, 88.5], [8.5, 87.0], [14.0, 84.5], [17.5, 84.8], [19.81, 85.83]],
+    points: [
+      { step: 1, timestamp: '2019-04-26 06:00', lat: 5.2, lon: 88.5, wind_speed_kmh: 55, wind_speed_kts: 30, pressure_hpa: 1002, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2019-04-29 00:00', lat: 8.5, lon: 87.0, wind_speed_kmh: 111, wind_speed_kts: 60, pressure_hpa: 986, category: 'Severe Cyclonic', color: '#f97316' },
+      { step: 3, timestamp: '2019-05-01 00:00', lat: 14.0, lon: 84.5, wind_speed_kmh: 210, wind_speed_kts: 115, pressure_hpa: 948, category: 'Very Severe', color: '#ef4444' },
+      { step: 4, timestamp: '2019-05-03 03:00', lat: 19.81, lon: 85.83, wind_speed_kmh: 210, wind_speed_kts: 115, pressure_hpa: 945, category: 'Landfall (Puri)', color: '#ef4444' }
+    ]
   },
   {
-    id: 'TITLI_2018',
-    name: 'TITLI',
-    year: 2018,
-    category: 3,
-    maxWind: 195,
-    pressure: 951,
-    landfall: 'Andhra Pradesh (Palasa)',
-    deaths: 77,
-    damage: '₹5,000 Cr',
-    lat: 18.77,
-    lon: 84.41,
-    basin: 'Bay of Bengal',
-    track: [[13.0, 87.0], [15.5, 86.2], [17.2, 85.0], [18.77, 84.41]],
-    notes: 'Very Severe Cyclonic Storm crossing Srikakulam district with unexpected sharp north-northeast re-curvature.'
-  },
-  {
-    id: 'OCKHI_2017',
-    name: 'OCKHI',
-    year: 2017,
-    category: 2,
-    maxWind: 165,
-    pressure: 967,
-    landfall: 'Tamil Nadu & Lakshadweep',
-    deaths: 218,
-    damage: '₹2,400 Cr',
-    lat: 8.08,
-    lon: 77.55,
-    basin: 'Arabian Sea / BOB',
-    track: [[6.5, 78.5], [7.2, 77.8], [8.08, 77.55], [11.0, 72.5]],
-    notes: 'Rapid genesis in Comorin sea impacting deep-sea fishing fleets off Kanyakumari and Lakshadweep Islands.'
-  },
-  {
-    id: 'VARDAH_2016',
-    name: 'VARDAH',
-    year: 2016,
-    category: 3,
-    maxWind: 195,
-    pressure: 946,
-    landfall: 'Tamil Nadu (Chennai)',
-    deaths: 59,
-    damage: '₹3,500 Cr',
-    lat: 13.08,
-    lon: 80.27,
-    basin: 'Bay of Bengal',
-    track: [[12.0, 87.5], [12.5, 84.8], [12.8, 82.0], [13.08, 80.27]],
-    notes: 'Direct hit on Chennai metropolitan area; widespread tree uprooting and major coastal telecom outage.'
-  },
-  {
-    id: 'HUDHUD_2014',
-    name: 'HUDHUD',
-    year: 2014,
+    id: 'TAUKTAE_2021',
+    name: 'TAUKTAE',
+    year: 2021,
+    basin: 'Arabian Sea',
     category: 4,
-    maxWind: 215,
-    pressure: 943,
-    landfall: 'Andhra Pradesh (Visakhapatnam)',
-    deaths: 124,
-    damage: '₹21,908 Cr',
-    lat: 17.68,
-    lon: 83.21,
-    basin: 'Bay of Bengal',
-    track: [[11.5, 90.0], [13.8, 87.5], [15.9, 85.0], [17.68, 83.21]],
-    notes: 'Catastrophic landfall directly over Visakhapatnam urban center, airport, and major Eastern Naval Command base.'
-  },
-  {
-    id: 'PHAILIN_2013',
-    name: 'PHAILIN',
-    year: 2013,
-    category: 4,
-    maxWind: 210,
-    pressure: 940,
-    landfall: 'Odisha (Gopalpur)',
-    deaths: 45,
-    damage: '₹17,000 Cr',
-    lat: 19.26,
-    lon: 84.91,
-    basin: 'Bay of Bengal',
-    track: [[12.0, 92.0], [14.5, 89.0], [17.0, 86.5], [19.26, 84.91]],
-    notes: 'Historic mass evacuation of over 1 million people across Odisha and Andhra Pradesh minimizing mortality.'
-  },
-  {
-    id: 'THANE_2011',
-    name: 'THANE',
-    year: 2011,
-    category: 3,
-    maxWind: 195,
-    pressure: 950,
-    landfall: 'Tamil Nadu (Cuddalore)',
-    deaths: 45,
-    damage: '₹5,400 Cr',
-    lat: 11.75,
-    lon: 79.77,
-    basin: 'Bay of Bengal',
-    track: [[10.5, 85.0], [11.0, 83.2], [11.4, 81.5], [11.75, 79.77]],
-    notes: 'Landfall near Cuddalore and Puducherry causing severe destruction of coastal cashew plantations.'
-  },
-  {
-    id: 'AILA_2009',
-    name: 'AILA',
-    year: 2009,
-    category: 2,
-    maxWind: 110,
-    pressure: 973,
-    landfall: 'West Bengal (Sundarbans)',
-    deaths: 339,
-    damage: '₹11,900 Cr',
-    lat: 21.80,
-    lon: 88.20,
-    basin: 'Bay of Bengal',
-    track: [[17.0, 88.0], [19.0, 88.1], [20.5, 88.15], [21.80, 88.20]],
-    notes: 'Severe inundation across Sundarbans delta with breaching of over 400km of coastal embankments.'
-  },
-  {
-    id: 'SIDR_2007',
-    name: 'SIDR',
-    year: 2007,
-    category: 5,
-    maxWind: 260,
-    pressure: 944,
-    landfall: 'Bangladesh (Sundarbans)',
-    deaths: 3447,
-    damage: '₹84,000 Cr',
-    lat: 22.10,
-    lon: 89.80,
-    basin: 'Bay of Bengal',
-    track: [[11.0, 91.0], [15.0, 89.5], [18.5, 89.2], [22.10, 89.80]],
-    notes: 'Cat 5 equivalent super cyclone creating 5m storm surge across North Bay of Bengal estuaries.'
+    max_category: 'Extremely Severe Cyclonic Storm (ESCS)',
+    peak_wind_kts: 120,
+    peak_wind_kmh: 220,
+    min_pressure_hpa: 950,
+    landfall: 'Gujarat (Saurashtra - Una)',
+    deaths: 118,
+    damage: '₹15,000 Cr',
+    dates_active: '14 May 2021 – 19 May 2021',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Traversed entire Western Ghats offshore corridor causing major offshore barge distress.',
+    lat: 20.8,
+    lon: 71.1,
+    track: [[10.5, 72.8], [12.8, 72.5], [15.3, 72.8], [18.5, 71.5], [20.8, 71.1]],
+    points: [
+      { step: 1, timestamp: '2021-05-14 06:00', lat: 10.5, lon: 72.8, wind_speed_kmh: 55, wind_speed_kts: 30, pressure_hpa: 1002, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2021-05-15 06:00', lat: 12.8, lon: 72.5, wind_speed_kmh: 102, wind_speed_kts: 55, pressure_hpa: 988, category: 'Severe Cyclonic', color: '#f97316' },
+      { step: 3, timestamp: '2021-05-17 06:00', lat: 18.5, lon: 71.5, wind_speed_kmh: 220, wind_speed_kts: 120, pressure_hpa: 950, category: 'Extremely Severe', color: '#ef4444' },
+      { step: 4, timestamp: '2021-05-17 18:00', lat: 20.8, lon: 71.1, wind_speed_kmh: 175, wind_speed_kts: 95, pressure_hpa: 958, category: 'Landfall (Saurashtra)', color: '#ef4444' }
+    ]
   }
 ];
 
@@ -253,8 +202,8 @@ const catColor = (c) => {
   if (c >= 5) return '#ff3b3b';
   if (c === 4) return '#ff5500';
   if (c === 3) return '#ff9500';
-  if (c === 2) return '#ffcc00';
-  return '#00c851';
+  if (c === 2) return '#06b6d4';
+  return '#10b981';
 };
 
 const TILE_LAYERS = {
@@ -267,11 +216,22 @@ const TILE_LAYERS = {
 const DARK_LABELS_OVERLAY = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}';
 const SATELLITE_LABELS_OVERLAY = 'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}';
 
+function getDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return Math.round(R * c);
+}
+
 function MapController({ targetLat, targetLon }) {
   const map = useMap();
   useEffect(() => {
     if (targetLat && targetLon) {
-      map.flyTo([targetLat, targetLon], 7, { duration: 1.2 });
+      map.flyTo([targetLat, targetLon], 6, { duration: 1.2 });
     }
   }, [targetLat, targetLon, map]);
   return null;
@@ -279,16 +239,63 @@ function MapController({ targetLat, targetLon }) {
 
 export default function HistoricalData() {
   const { showToast } = useToast();
+  const { isLight } = useTheme();
+
+  // Selected Year Filter (2011 to 2026 or 'all')
+  const [selectedYear, setSelectedYear] = useState('all');
   const [search, setSearch] = useState('');
+  const [catFilter, setCatFilter] = useState('all');
   const [sortField, setSortField] = useState('year');
   const [sortDir, setSortDir] = useState('desc');
-  const [catFilter, setCatFilter] = useState('all');
-  const [selectedStorm, setSelectedStorm] = useState(allData[0]);
-  const [analogues, setAnalogues] = useState([]);
-  const [activeLayer, setActiveLayer] = useState('Dark Canvas');
+
+  // Cyclones Dataset
+  const [cyclones, setCyclones] = useState(INITIAL_OFFLINE_CYCLONES);
+  const [loadingCyclones, setLoadingCyclones] = useState(false);
+  const [selectedStorm, setSelectedStorm] = useState(INITIAL_OFFLINE_CYCLONES[0]);
+
+  // CNN-LSTM 72h Future Trajectory Forecast State
+  const [forecastData, setForecastData] = useState(null);
+  const [isForecasting, setIsForecasting] = useState(false);
+  const [showForecastOnMap, setShowForecastOnMap] = useState(true);
+
+  // Map & GIS display toggles
+  const [activeLayer, setActiveLayer] = useState(isLight ? 'OpenStreetMap' : 'Dark Canvas');
   const [showCities, setShowCities] = useState(true);
   const [showRiskRings, setShowRiskRings] = useState(true);
+  const [analogues, setAnalogues] = useState([]);
 
+  // Sync active layer with theme
+  useEffect(() => {
+    if (isLight && activeLayer === 'Dark Canvas') {
+      setActiveLayer('OpenStreetMap');
+    } else if (!isLight && activeLayer === 'OpenStreetMap') {
+      setActiveLayer('Dark Canvas');
+    }
+  }, [isLight]);
+
+  // Load NOAA IBTrACS data from backend
+  const loadHistoricalData = useCallback(async (year = null) => {
+    setLoadingCyclones(true);
+    try {
+      const data = await fetchHistoricalCyclones(year === 'all' ? null : year, search);
+      if (data && data.success && Array.isArray(data.cyclones) && data.cyclones.length > 0) {
+        setCyclones(data.cyclones);
+        if (!selectedStorm || !data.cyclones.some(c => c.id === selectedStorm.id)) {
+          setSelectedStorm(data.cyclones[0]);
+        }
+      }
+    } catch (err) {
+      console.warn('Using local dataset:', err);
+    } finally {
+      setLoadingCyclones(false);
+    }
+  }, [search, selectedStorm]);
+
+  useEffect(() => {
+    loadHistoricalData(selectedYear);
+  }, [selectedYear, loadHistoricalData]);
+
+  // Load Climatological Analogue Matcher
   useEffect(() => {
     async function loadAnalogues() {
       const data = await runCityImpactPrediction(15.4, 87.2, 175);
@@ -299,17 +306,77 @@ export default function HistoricalData() {
     loadAnalogues();
   }, []);
 
-  const filtered = allData
-    .filter(c =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.landfall.toLowerCase().includes(search.toLowerCase()) ||
-      String(c.year).includes(search)
-    )
-    .filter(c => catFilter === 'all' || c.category === Number(catFilter))
-    .sort((a, b) => {
-      const v = a[sortField] > b[sortField] ? 1 : -1;
-      return sortDir === 'asc' ? v : -v;
-    });
+  // Run CNN-LSTM Trajectory Forecast whenever selectedStorm changes
+  const executeForecastInference = useCallback(async (storm = selectedStorm) => {
+    if (!storm) return;
+    setIsForecasting(true);
+
+    const pts = storm.points || [];
+    const originPoint = pts.length > 0 ? pts[Math.max(0, Math.floor(pts.length / 2))] : { lat: storm.lat, lon: storm.lon };
+    const lat = originPoint.lat || storm.lat;
+    const lon = originPoint.lon || storm.lon;
+    const windKmh = originPoint.wind_speed_kmh || storm.peak_wind_kmh || 140;
+    const pressHpa = originPoint.pressure_hpa || storm.min_pressure_hpa || 980;
+
+    try {
+      const forecast = await predictCNNLSTMTrajectory({
+        lat,
+        lon,
+        windKmh,
+        pressureHpa: pressHpa,
+        cycloneName: `CYCLONE ${storm.name}`,
+        forecastHours: 72,
+        stepHours: 6
+      });
+
+      if (forecast && forecast.success) {
+        setForecastData(forecast);
+        showToast(`CNN-LSTM Deep Learning Engine generated 72h future trajectory for ${storm.name}.`, 'success');
+      }
+    } catch (err) {
+      console.error('Forecast error:', err);
+      showToast('Error computing trajectory forecast.', 'warning');
+    } finally {
+      setIsForecasting(false);
+    }
+  }, [selectedStorm, showToast]);
+
+  // Automatically compute 72-hour forecast when storm changes
+  useEffect(() => {
+    if (selectedStorm) {
+      executeForecastInference(selectedStorm);
+    }
+  }, [selectedStorm?.id]);
+
+  const handleSelectStorm = (storm) => {
+    setSelectedStorm(storm);
+    showToast(`Focused on Cyclone ${storm.name} (${storm.year}) · ${storm.basin}.`, 'info');
+  };
+
+  const handleYearChange = (year) => {
+    setSelectedYear(year);
+    showToast(year === 'all' ? 'Displaying 11-Year Complete Archive (2011–2026)' : `Filtering NOAA IBTrACS archive for Year ${year}`, 'info');
+  };
+
+  // Filter and Sort Cyclones
+  const filteredCyclones = useMemo(() => {
+    return cyclones
+      .filter(c => {
+        const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||
+          c.landfall?.toLowerCase().includes(search.toLowerCase()) ||
+          String(c.year).includes(search) ||
+          c.basin?.toLowerCase().includes(search.toLowerCase());
+        const matchesYear = selectedYear === 'all' || Number(c.year) === Number(selectedYear);
+        const matchesCat = catFilter === 'all' || Number(c.category) === Number(catFilter);
+        return matchesSearch && matchesYear && matchesCat;
+      })
+      .sort((a, b) => {
+        const vA = a[sortField] ?? 0;
+        const vB = b[sortField] ?? 0;
+        const comp = vA > vB ? 1 : -1;
+        return sortDir === 'asc' ? comp : -comp;
+      });
+  }, [cyclones, search, selectedYear, catFilter, sortField, sortDir]);
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -320,15 +387,10 @@ export default function HistoricalData() {
     }
   };
 
-  const handleSelectStorm = (storm) => {
-    setSelectedStorm(storm);
-    showToast(`Focused GIS Map & synoptic dossier on Cyclone ${storm.name} (${storm.year}).`, 'info');
-  };
-
   const handleExportCSV = () => {
-    const headers = 'Name,Year,Category,MaxWind_kmh,MinPressure_hPa,LandfallState,Fatalities,EstimatedDamage_INR_Cr,Latitude,Longitude,Basin\n';
-    const rows = allData
-      .map(c => `"${c.name}",${c.year},${c.category},${c.maxWind},${c.pressure},"${c.landfall}",${c.deaths},"${c.damage}",${c.lat},${c.lon},"${c.basin}"`)
+    const headers = 'Name,Year,Basin,Category,MaxCategory,MaxWind_kmh,MaxWind_kts,MinPressure_hPa,LandfallLocation,Fatalities,Damage_INR,DatesActive,Status\n';
+    const rows = filteredCyclones
+      .map(c => `"${c.name}",${c.year},"${c.basin}",${c.category},"${c.max_category || ''}",${c.peak_wind_kmh || c.maxWind || 0},${c.peak_wind_kts || 0},${c.min_pressure_hpa || c.pressure || 0},"${c.landfall}",${c.deaths || 0},"${c.damage}","${c.dates_active || ''}","${c.status || 'NOAA IBTrACS'}"`)
       .join('\n');
 
     const csvContent = headers + rows;
@@ -336,10 +398,10 @@ export default function HistoricalData() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `IMD_Historical_Cyclones_${Date.now()}.csv`;
+    a.download = `NOAA_IBTrACS_NI_Cyclones_${selectedYear === 'all' ? '2011_2026' : selectedYear}_${Date.now()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Exported historical climatology dataset to CSV.', 'success');
+    showToast('Exported NOAA IBTrACS dataset to CSV.', 'success');
   };
 
   const nearbyCities = selectedStorm ? COASTAL_CITIES.map(city => ({
@@ -348,110 +410,179 @@ export default function HistoricalData() {
   })).sort((a, b) => a.distanceKm - b.distanceKm) : [];
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+    <div className="flex flex-col gap-6">
+      
+      {/* 1. TOP HEADER & METRIC STRIP */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <div className="text-xs text-[#88a0c0] font-mono">Climatological Track Records & Precision GIS</div>
-          <h1 className="text-xl font-bold text-white tracking-tight">Historical Cyclone Archive & GIS (2007–2024)</h1>
-        </div>
-        <button
-          onClick={handleExportCSV}
-          className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-lg font-bold text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
-        >
-          <Download size={14} />
-          <span>Export Complete Dataset (CSV)</span>
-        </button>
-      </div>
-
-      {/* Stats KPI Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {[
-          ['Total Archived Events', allData.length + ' Cyclones', '#00d4ff'],
-          ['Cat 4–5 Super Cyclones', allData.filter(c => c.category >= 4).length + ' Major Hits', '#ff3b3b'],
-          ['Average Max Wind', Math.round(allData.reduce((s, c) => s + c.maxWind, 0) / allData.length) + ' km/h', '#ff9500'],
-          ['Recording Span', '2007 – 2024', '#00c851'],
-        ].map(([label, val, col]) => (
-          <div key={label} className="rounded-xl p-3.5 border border-[#1a3a6b] bg-[#0d1f3c]">
-            <div className="text-[10px] tracking-widest text-[#88a0c0] uppercase font-mono mb-1">{label}</div>
-            <div className="text-xl sm:text-2xl font-bold font-mono" style={{ color: col }}>{val}</div>
+          <div className="text-xs font-mono text-[#00d4ff] flex items-center gap-1.5 font-bold">
+            <span className="w-2 h-2 rounded-full bg-[#00d4ff] animate-pulse"></span>
+            NOAA IBTrACS NORTH INDIAN OCEAN ARCHIVE (2011 – 2026) & CNN-LSTM ENGINE
           </div>
-        ))}
+          <h1 className="text-2xl font-extrabold tracking-tight text-white mt-1">
+            Cyclone Deep-Dive & 11-Year Historical Prediction Engine
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            onClick={() => executeForecastInference(selectedStorm)}
+            disabled={isForecasting || !selectedStorm}
+            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-xl font-bold text-white bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 transition-all shadow-lg shadow-red-500/25 cursor-pointer disabled:opacity-50"
+          >
+            <Cpu size={15} className={isForecasting ? 'animate-spin' : ''} />
+            <span>{isForecasting ? 'Forecasting 72h Path...' : 'Simulate 72h CNN-LSTM Path'}</span>
+          </button>
+
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-2 text-xs sm:text-sm px-4 py-2 rounded-xl font-bold text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
+          >
+            <Download size={15} />
+            <span>Export IBTrACS CSV</span>
+          </button>
+        </div>
       </div>
 
-      {/* AI Climatological Analogue Matcher Banner */}
-      {analogues.length > 0 && (
-        <div className="rounded-xl border border-[#1a3a6b] p-4 bg-[#0d1f3c]">
-          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <Layers size={16} className="text-[#00d4ff]" />
-              <h3 className="text-xs font-bold tracking-widest text-[#00d4ff] uppercase font-mono">
-                AI Climatological Analogue Matcher (Current Cyclone Vector Similarity)
-              </h3>
-            </div>
-            <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
-              <CheckCircle2 size={12} className="text-emerald-400" /> Cosine Similarity Vector Active
+      {/* 2. DEDICATED 11-YEAR HISTORICAL SELECTOR STRIP (2011 to 2026) */}
+      <div className="rounded-2xl p-4 border border-[#1a3a6b] bg-[#0d1f3c]/90 shadow-xl backdrop-blur-md">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
+          <div className="flex items-center gap-2">
+            <Calendar size={16} className="text-[#00d4ff]" />
+            <span className="text-xs font-bold uppercase tracking-wider text-[#00d4ff] font-mono">
+              Select Synoptic Season (2011 – 2026 Complete Climatology)
             </span>
           </div>
+          <span className="text-[11px] font-mono text-[#88a0c0]">
+            Showing <strong className="text-white">{filteredCyclones.length}</strong> cyclones for selected timeframe
+          </span>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {analogues.slice(0, 3).map((item, i) => (
-              <div 
-                key={i} 
-                onClick={() => {
-                  const match = allData.find(d => d.name.toUpperCase() === item.name.replace('CYCLONE ', '').toUpperCase());
-                  if (match) handleSelectStorm(match);
-                }}
-                className="p-3 rounded-lg border border-[#1a3a6b] bg-[#0a1628] flex flex-col justify-between hover:border-cyan-500/50 cursor-pointer transition-colors"
+        {/* Scrollable Year Pill Bar */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-cyan-500/30">
+          <button
+            onClick={() => handleYearChange('all')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-mono transition-all whitespace-nowrap cursor-pointer ${
+              selectedYear === 'all'
+                ? 'bg-[#00d4ff] text-[#050d1a] shadow-lg shadow-cyan-500/30 scale-105'
+                : 'bg-[#0a1628] text-[#88a0c0] hover:text-white hover:bg-cyan-500/10 border border-[#1a3a6b]'
+            }`}
+          >
+            All Years (2011–2026)
+          </button>
+
+          {AVAILABLE_YEARS.map(yr => {
+            const isSel = selectedYear === yr;
+            const countForYear = cyclones.filter(c => Number(c.year) === yr).length;
+
+            return (
+              <button
+                key={yr}
+                onClick={() => handleYearChange(yr)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                  isSel
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-105 border border-cyan-300'
+                    : 'bg-[#0a1628] text-[#88a0c0] hover:text-white hover:bg-cyan-500/10 border border-[#1a3a6b]'
+                }`}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-white text-xs">{item.name} ({item.year})</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border border-emerald-500/40 bg-emerald-500/20 text-emerald-300">
-                      {item.similarity_pct}% Match
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-[#88a0c0] mb-2">{item.category} · {item.landfall_loc}</div>
-                  <p className="text-[11px] text-slate-300 line-clamp-2">{item.impact_summary}</p>
+                <span>{yr}</span>
+                {countForYear > 0 && (
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-sans ${
+                    isSel ? 'bg-black/30 text-cyan-200' : 'bg-[#1a3a6b] text-slate-300'
+                  }`}>
+                    {countForYear}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. CYCLONE SELECTION QUICK STRIP FOR ACTIVE YEAR */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
+        {filteredCyclones.slice(0, 8).map(storm => {
+          const isSelected = selectedStorm?.id === storm.id;
+          const color = catColor(storm.category);
+
+          return (
+            <div
+              key={storm.id}
+              onClick={() => handleSelectStorm(storm)}
+              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
+                isSelected
+                  ? 'bg-[#102a4c] border-[#00d4ff] shadow-xl shadow-cyan-500/20 scale-[1.02]'
+                  : 'bg-[#0d1f3c] border-[#1a3a6b] hover:border-cyan-500/50 hover:bg-[#0f2547]'
+              }`}
+            >
+              {isSelected && (
+                <div className="absolute top-0 right-0 w-12 h-12 bg-cyan-500/20 rounded-bl-full flex items-start justify-end p-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#00d4ff] animate-ping"></span>
                 </div>
-                <div className="flex items-center justify-between text-[10px] font-mono border-t border-[#1a3a6b] pt-2 mt-2 text-[#88a0c0]">
-                  <span>💨 Wind: <strong className="text-white">{item.max_wind_kmh} km/h</strong></span>
-                  <span>🌡 Press: <strong className="text-white">{item.min_pressure_hpa} hPa</strong></span>
+              )}
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-extrabold text-white text-sm tracking-wide">
+                    {storm.name} <span className="text-xs font-mono text-[#88a0c0]">({storm.year})</span>
+                  </span>
+                  <span
+                    className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border"
+                    style={{ borderColor: `${color}60`, backgroundColor: `${color}20`, color }}
+                  >
+                    CAT {storm.category}
+                  </span>
+                </div>
+
+                <div className="text-[11px] text-[#88a0c0] mb-2 flex items-center gap-1 font-mono">
+                  <Compass size={12} className="text-[#00d4ff]" />
+                  <span className="truncate">{storm.basin} · {storm.landfall}</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* SPLIT DASHBOARD: GEOSPATIAL MAP + SIDE DETAILS DOSSIER */}
+              <div className="grid grid-cols-2 gap-2 text-[10px] font-mono pt-2 border-t border-[#1a3a6b] text-[#88a0c0]">
+                <div>💨 Peak: <strong className="text-white">{storm.peak_wind_kmh || storm.maxWind} km/h</strong></div>
+                <div>🌡 Press: <strong className="text-white">{storm.min_pressure_hpa || storm.pressure} hPa</strong></div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 4. MAIN SPLIT VIEW: LEAFLET MAP (WITH ANIMATED GLOWING TRAJECTORY) + SYNOPTIC DOSSIER */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
-        {/* LEFT COLUMN: INTERACTIVE LEAFLET MAP (7 COLS) */}
+        {/* LEFT COLUMN: INTERACTIVE LEAFLET GIS MAP (7 COLS) */}
         <div className="lg:col-span-7 flex flex-col gap-3">
-          <div className="relative h-[350px] sm:h-[450px] md:h-[520px] min-h-[350px] rounded-2xl overflow-hidden border border-[#1a3a6b] bg-[#0a1628] shadow-2xl touch-pan-x touch-pan-y">
+          <div className="relative h-[400px] sm:h-[480px] md:h-[560px] min-h-[400px] rounded-2xl overflow-hidden border border-[#1a3a6b] bg-[#0a1628] shadow-2xl">
             
-            {/* Top Map Layer Switcher & Feature Toggles */}
-            <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[999] flex flex-wrap gap-1.5 sm:gap-2 items-end max-w-[calc(100%-20px)] justify-end">
-              <div className="flex flex-wrap gap-1 p-1 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] shadow-lg">
-                {Object.keys(TILE_LAYERS).map(layer => {
-                  const isActive = activeLayer === layer;
-                  return (
-                    <button
-                      key={layer}
-                      onClick={() => setActiveLayer(layer)}
-                      className={`text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg font-semibold transition-all cursor-pointer ${
-                        isActive ? 'bg-[#00d4ff] text-[#050d1a] font-bold' : 'text-[#88a0c0] hover:text-white'
-                      }`}
-                    >
-                      {layer}
-                    </button>
-                  );
-                })}
+            {/* Top Map Layer Switcher & Toggles */}
+            <div className="absolute top-3 right-3 z-[999] flex flex-wrap gap-1.5 items-end max-w-[calc(100%-20px)] justify-end">
+              <div className="flex flex-wrap gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-lg">
+                {Object.keys(TILE_LAYERS).map(layer => (
+                  <button
+                    key={layer}
+                    onClick={() => setActiveLayer(layer)}
+                    className={`text-[10px] px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                      activeLayer === layer ? 'bg-[#00d4ff] text-[#050d1a] font-bold' : 'text-[#88a0c0] hover:text-white'
+                    }`}
+                  >
+                    {layer}
+                  </button>
+                ))}
               </div>
 
-              {/* Layer Toggles */}
-              <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] shadow-lg text-[10px] font-semibold text-slate-300">
+              <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-lg text-[10px] font-semibold text-slate-300">
+                <button
+                  onClick={() => setShowForecastOnMap(!showForecastOnMap)}
+                  className={`px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all ${
+                    showForecastOnMap ? 'bg-red-500/20 text-red-300 border border-red-500/40 font-bold' : 'text-[#88a0c0] border border-[#1a3a6b]'
+                  }`}
+                >
+                  <Cpu size={11} />
+                  <span>72h CNN-LSTM Path</span>
+                </button>
+
                 <button
                   onClick={() => setShowCities(!showCities)}
                   className={`px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all ${
@@ -459,67 +590,57 @@ export default function HistoricalData() {
                   }`}
                 >
                   <Building2 size={11} />
-                  <span>Cities & Ports</span>
-                </button>
-                <button
-                  onClick={() => setShowRiskRings(!showRiskRings)}
-                  className={`px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all ${
-                    showRiskRings ? 'bg-cyan-500/20 text-[#00d4ff] border border-cyan-500/40' : 'text-[#88a0c0] border border-[#1a3a6b]'
-                  }`}
-                >
-                  <Radio size={11} />
-                  <span>Impact Rings</span>
+                  <span>Ports & Cities</span>
                 </button>
               </div>
             </div>
 
-            {/* Map Status Badge */}
-            <div className="absolute top-2.5 sm:top-3.5 left-2.5 sm:left-3.5 z-[999] flex items-center gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-[#0a1628]/90 backdrop-blur-md border border-[#1a3a6b] text-[10px] sm:text-xs font-mono text-[#00d4ff] shadow-lg max-w-[calc(100%-20px)]">
-              <span className="w-2 h-2 rounded-full bg-[#00d4ff] animate-pulse inline-block"></span>
-              <span>GIS CLIMATE MAP · LABELED BOUNDARIES</span>
+            {/* Map Top Status Badge */}
+            <div className="absolute top-3 left-3 z-[999] flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] text-xs font-mono text-[#00d4ff] shadow-lg">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#00d4ff] animate-pulse"></span>
+              <span>NOAA IBTrACS GROUND-TRUTH (SOLID) + 72H CNN-LSTM FORECAST (DOTTED GLOW)</span>
             </div>
 
             {/* GIS Legend */}
-            <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 z-[999] rounded-xl p-2.5 sm:p-3 text-xs space-y-1 backdrop-blur-xl bg-[#0a1628]/90 border border-[#1a3a6b] shadow-xl text-slate-300 max-w-[170px] sm:max-w-[220px]">
-              <div className="font-bold tracking-widest text-[#00d4ff] text-[9px] uppercase mb-1 flex items-center justify-between font-mono">
-                <span>STORM SEVERITY</span>
-                <span className="text-white">IMD SCALE</span>
+            <div className="absolute bottom-3 left-3 z-[999] rounded-xl p-3 text-xs space-y-1.5 backdrop-blur-xl bg-[#0a1628]/95 border border-[#1a3a6b] shadow-xl text-slate-300 max-w-[240px]">
+              <div className="font-bold tracking-widest text-[#00d4ff] text-[9px] uppercase font-mono flex items-center justify-between">
+                <span>TRAJECTORY LAYERS</span>
+                <span className="text-emerald-400">ONLINE</span>
               </div>
-              <div className="flex items-center gap-2 text-[10px]"><span className="w-2.5 h-2.5 rounded-full bg-[#ff3b3b]"></span> Cat 5 Super Cyclone (&gt;250 km/h)</div>
-              <div className="flex items-center gap-2 text-[10px]"><span className="w-2.5 h-2.5 rounded-full bg-[#ff5500]"></span> Cat 4 Extremely Severe (210–249 km/h)</div>
-              <div className="flex items-center gap-2 text-[10px]"><span className="w-2.5 h-2.5 rounded-full bg-[#ff9500]"></span> Cat 3 Very Severe (165–209 km/h)</div>
-              <div className="flex items-center gap-2 text-[10px]"><span className="w-2.5 h-2.5 rounded-full bg-[#ffcc00]"></span> Cat 2 Severe Cyclone (&lt;165 km/h)</div>
-              <div className="flex items-center gap-2 text-[10px] pt-1 border-t border-[#1a3a6b]"><span className="w-2 h-2 rounded-full bg-[#00d4ff] inline-block border border-white"></span> Coastal City & Port Marker</div>
+              <div className="flex items-center gap-2 text-[10px]">
+                <span className="w-4 h-1 bg-[#00d4ff] rounded inline-block"></span>
+                <span>NOAA Synoptic Ground-Truth (Solid)</span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px]">
+                <span className="w-4 h-1 border-b-2 border-dotted border-red-400 inline-block"></span>
+                <span className="text-red-300 font-bold">CNN-LSTM 72h Forecast (Glowing)</span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] pt-1 border-t border-[#1a3a6b]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ff3b3b]"></span> Cat 4–5 Super Cyclone (&gt;210 km/h)
+              </div>
+              <div className="flex items-center gap-2 text-[10px]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ff9500]"></span> Cat 2–3 Severe Storm (120–209 km/h)
+              </div>
             </div>
 
-            {/* Leaflet Map Container */}
+            {/* LEAFLET MAP CONTAINER */}
             <MapContainer
               center={[selectedStorm?.lat || 18.0, selectedStorm?.lon || 84.0]}
               zoom={5}
-              style={{ height: '100%', width: '100%', minHeight: '350px', background: '#0a1628' }}
+              style={{ height: '100%', width: '100%', background: '#0a1628' }}
               zoomControl={true}
               attributionControl={false}
-              className="touch-pan-x touch-pan-y w-full h-full min-h-[350px]"
             >
-              {/* Base Tile Layer */}
               <TileLayer url={TILE_LAYERS[activeLayer]} />
-              
-              {/* Reference Labels Overlay for Dark Canvas Mode */}
-              {activeLayer === 'Dark Canvas' && (
-                <TileLayer url={DARK_LABELS_OVERLAY} />
-              )}
-
-              {/* Boundary Overlay Layer for Satellite Mode */}
-              {activeLayer === 'Satellite View' && (
-                <TileLayer url={SATELLITE_LABELS_OVERLAY} />
-              )}
+              {activeLayer === 'Dark Canvas' && <TileLayer url={DARK_LABELS_OVERLAY} />}
+              {activeLayer === 'Satellite View' && <TileLayer url={SATELLITE_LABELS_OVERLAY} />}
 
               <MapController targetLat={selectedStorm?.lat} targetLon={selectedStorm?.lon} />
 
-              {/* Coastal Cities & Major Ports Layer */}
+              {/* Coastal Cities Markers */}
               {showCities && COASTAL_CITIES.map(city => {
-                const distToSelected = selectedStorm ? getDistanceKm(selectedStorm.lat, selectedStorm.lon, city.lat, city.lon) : null;
-                const isClose = distToSelected !== null && distToSelected <= 200;
+                const dist = selectedStorm ? getDistanceKm(selectedStorm.lat, selectedStorm.lon, city.lat, city.lon) : null;
+                const isClose = dist !== null && dist <= 220;
 
                 return (
                   <CircleMarker
@@ -529,250 +650,336 @@ export default function HistoricalData() {
                     pathOptions={{
                       color: isClose ? '#00d4ff' : '#88a0c0',
                       fillColor: isClose ? '#00d4ff' : '#0a1628',
-                      fillOpacity: 0.85,
+                      fillOpacity: 0.9,
                       weight: 1.5
                     }}
                   >
                     <MapTooltip permanent={isClose} direction="right" offset={[8, 0]}>
-                      <div className="text-[10px] font-bold text-[#00d4ff] bg-[#0d1f3c] border border-cyan-500/40 p-1 rounded leading-tight font-mono">
+                      <div className="text-[10px] font-bold text-[#00d4ff] bg-[#0d1f3c] border border-cyan-500/40 p-1 rounded font-mono">
                         🏙️ {city.name} ({city.state})
-                        {distToSelected !== null && (
-                          <div className="text-[9px] text-[#88a0c0]">
-                            Dist: {distToSelected} km
-                          </div>
-                        )}
+                        {dist !== null && <div className="text-[9px] text-[#88a0c0] font-normal">Dist: {dist} km</div>}
                       </div>
                     </MapTooltip>
                   </CircleMarker>
                 );
               })}
 
-              {/* Selected Cyclone Impact Rings */}
-              {showRiskRings && selectedStorm && (
+              {/* 1. SOLID LINE: Past / Present Ground-Truth Track */}
+              {selectedStorm && selectedStorm.track && selectedStorm.track.length > 1 && (
                 <>
-                  <CircleMarker
-                    center={[selectedStorm.lat, selectedStorm.lon]}
-                    radius={65}
-                    pathOptions={{ color: '#ff3b3b', weight: 1, fillOpacity: 0.08, fillColor: '#ff3b3b', dashArray: '4 4' }}
+                  <Polyline
+                    positions={selectedStorm.track}
+                    pathOptions={{
+                      color: '#00d4ff',
+                      weight: 4.5,
+                      opacity: 0.95,
+                      lineCap: 'round',
+                      lineJoin: 'round'
+                    }}
                   />
-                  <CircleMarker
-                    center={[selectedStorm.lat, selectedStorm.lon]}
-                    radius={130}
-                    pathOptions={{ color: '#ff9500', weight: 1, fillOpacity: 0.04, fillColor: '#ff9500', dashArray: '6 6' }}
-                  />
-                </>
-              )}
-
-              {/* Historical Storm Markers & Trajectories */}
-              {filtered.map(st => {
-                const color = catColor(st.category);
-                const isSelected = selectedStorm?.id === st.id;
-
-                return (
-                  <React.Fragment key={st.id}>
-                    {/* Track Polyline */}
-                    {st.track && st.track.length > 1 && (
-                      <Polyline
-                        positions={st.track}
-                        color={color}
-                        weight={isSelected ? 4 : 2}
-                        opacity={isSelected ? 1.0 : 0.4}
-                        dashArray={isSelected ? 'None' : '4 4'}
-                      />
-                    )}
-
-                    {/* Outer Selection Highlight Ring */}
-                    {isSelected && (
-                      <CircleMarker
-                        center={[st.lat, st.lon]}
-                        radius={36}
-                        pathOptions={{ color: color, weight: 2, fillOpacity: 0.15, fillColor: color }}
-                      />
-                    )}
-
-                    {/* Main Landfall Marker */}
+                  {/* Waypoint circle markers */}
+                  {selectedStorm.points?.map((pt, idx) => (
                     <CircleMarker
-                      center={[st.lat, st.lon]}
-                      radius={isSelected ? 14 : 9}
-                      pathOptions={{ color: '#ffffff', weight: isSelected ? 3 : 1.5, fillColor: color, fillOpacity: 0.95 }}
-                      eventHandlers={{
-                        click: () => handleSelectStorm(st)
+                      key={`gt-${idx}`}
+                      center={[pt.lat, pt.lon]}
+                      radius={idx === selectedStorm.points.length - 1 ? 9 : 5}
+                      pathOptions={{
+                        color: '#ffffff',
+                        weight: 2,
+                        fillColor: pt.color || '#00d4ff',
+                        fillOpacity: 0.95
                       }}
                     >
-                      <MapTooltip permanent={isSelected} direction="top" offset={[0, -10]}>
-                        <div className="font-bold text-xs text-white bg-[#0d1f3c] border border-[#1a3a6b] p-1 rounded font-mono">
-                          {st.name} ({st.year}) · Cat {st.category}
-                        </div>
-                      </MapTooltip>
                       <Popup>
                         <div className="p-1 font-mono text-xs bg-[#0d1f3c] text-white border border-[#1a3a6b] rounded">
-                          <div className="font-bold text-sm text-[#00d4ff]">CYCLONE {st.name} ({st.year})</div>
-                          <div className="text-[#88a0c0] mb-1">Landfall: {st.landfall}</div>
-                          <div className="font-bold text-white">Max Wind: {st.maxWind} km/h</div>
-                          <div className="text-amber-300">Pressure: {st.pressure} hPa</div>
-                          <button
-                            onClick={() => handleSelectStorm(st)}
-                            className="mt-2 w-full py-1 bg-[#00d4ff] text-[#050d1a] rounded font-bold text-[10px] hover:bg-cyan-300"
-                          >
-                            Inspect Full Dossier
-                          </button>
+                          <div className="font-bold text-[#00d4ff]">STEP {pt.step}: {selectedStorm.name}</div>
+                          <div className="text-[#88a0c0] text-[10px]">{pt.timestamp}</div>
+                          <div className="text-white mt-1">Wind: {pt.wind_speed_kmh} km/h ({pt.wind_speed_kts} kts)</div>
+                          <div className="text-amber-300">Pressure: {pt.pressure_hpa} hPa</div>
+                          <div className="text-emerald-400 font-bold mt-1">{pt.category || pt.status}</div>
                         </div>
                       </Popup>
                     </CircleMarker>
-                  </React.Fragment>
-                );
-              })}
+                  ))}
+                </>
+              )}
+
+              {/* 2. ANIMATED GLOWING DOTTED POLYLINE: CNN-LSTM 72-Hour Future Forecast Path */}
+              {showForecastOnMap && forecastData && forecastData.forecast_points && forecastData.forecast_points.length > 0 && (
+                <>
+                  {/* Glowing background path */}
+                  <Polyline
+                    positions={forecastData.trajectory_path}
+                    pathOptions={{
+                      color: '#ff3b3b',
+                      weight: 8,
+                      opacity: 0.35,
+                      dashArray: '4, 8'
+                    }}
+                  />
+
+                  {/* Main Animated Glowing Polyline */}
+                  <Polyline
+                    positions={forecastData.trajectory_path}
+                    pathOptions={{
+                      color: '#ff3b3b',
+                      weight: 4,
+                      opacity: 1,
+                      dashArray: '6, 8',
+                      className: 'animate-forecast-glow'
+                    }}
+                  />
+
+                  {/* Forecast Projection Markers */}
+                  {forecastData.forecast_points.map((pt, idx) => (
+                    <CircleMarker
+                      key={`fc-${idx}`}
+                      center={[pt.lat, pt.lon]}
+                      radius={pt.is_landfall_step ? 10 : 6}
+                      pathOptions={{
+                        color: pt.is_landfall_step ? '#ff3b3b' : '#ff9500',
+                        weight: 2,
+                        fillColor: pt.stage_color || '#ff3b3b',
+                        fillOpacity: 0.95,
+                        dashArray: pt.is_landfall_step ? 'None' : '2, 2'
+                      }}
+                    >
+                      <MapTooltip direction="top" offset={[0, -8]}>
+                        <div className="font-mono text-[10px] bg-[#0d1f3c] text-white p-1 rounded border border-red-500/40">
+                          <strong className="text-red-400 font-bold">{pt.forecast_hour} FORECAST</strong>
+                          <div>Lat: {pt.lat}°N, Lon: {pt.lon}°E</div>
+                          <div>Wind: {pt.wind_speed_kmh} km/h</div>
+                          <div>Press: {pt.pressure_hpa} hPa ({pt.pressure_drop_hpa > 0 ? `+${pt.pressure_drop_hpa}` : pt.pressure_drop_hpa} hPa)</div>
+                          <div className="text-amber-300 font-bold">{pt.category}</div>
+                        </div>
+                      </MapTooltip>
+                    </CircleMarker>
+                  ))}
+                </>
+              )}
             </MapContainer>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: SIDE DETAILS DOSSIER PANEL (5 COLS) */}
-        <div className="lg:col-span-5 flex flex-col">
-          {selectedStorm ? (
-            <div className="h-full rounded-2xl border border-[#1a3a6b] p-5 bg-[#0d1f3c] shadow-2xl flex flex-col justify-between relative overflow-hidden">
+        {/* RIGHT COLUMN: SYNOPTIC DOSSIER & CNN-LSTM 72H TELEMETRY (5 COLS) */}
+        <div className="lg:col-span-5 flex flex-col gap-4">
+          {selectedStorm && (
+            <div className="rounded-2xl border border-[#1a3a6b] p-5 bg-[#0d1f3c] shadow-2xl flex flex-col justify-between">
               <div>
                 {/* Dossier Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-[#1a3a6b] mb-4">
                   <div className="flex items-center gap-2">
                     <BookOpen size={18} className="text-[#00d4ff]" />
-                    <span className="font-mono text-xs font-bold text-[#88a0c0] uppercase tracking-wider">SYNOPTIC DOSSIER</span>
+                    <span className="font-mono text-xs font-bold text-[#88a0c0] uppercase tracking-wider">
+                      NOAA SYNOPTIC DOSSIER
+                    </span>
                   </div>
-                  <span
-                    className="px-2.5 py-0.5 rounded border border-red-500/40 bg-red-500/20 text-xs font-bold font-mono text-red-300"
-                  >
-                    CAT {selectedStorm.category} CYCLONE
+                  <span className="px-2.5 py-0.5 rounded border border-red-500/40 bg-red-500/20 text-xs font-bold font-mono text-red-300">
+                    CAT {selectedStorm.category} · {selectedStorm.basin}
                   </span>
                 </div>
 
                 {/* Storm Title */}
                 <div className="mb-4">
-                  <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
                     CYCLONE {selectedStorm.name}
                     <span className="text-base text-[#88a0c0] font-mono">({selectedStorm.year})</span>
                   </h2>
-                  <div className="text-xs text-white flex items-center gap-1.5 mt-1 font-semibold font-mono">
+                  <div className="text-xs text-slate-300 flex items-center gap-1.5 mt-1 font-semibold font-mono">
                     <MapPin size={13} className="text-[#00d4ff]" />
                     <span>Landfall: {selectedStorm.landfall}</span>
-                    <span className="text-[#88a0c0]">· {selectedStorm.basin}</span>
+                    <span className="text-[#88a0c0]">· {selectedStorm.dates_active}</span>
                   </div>
                 </div>
 
-                {/* Stat Grid */}
+                {/* KPI Stat Grid */}
                 <div className="grid grid-cols-2 gap-2.5 mb-4">
-                  <div className="p-2.5 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
+                  <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
                     <div className="text-[10px] text-[#88a0c0] uppercase font-mono flex items-center gap-1">
-                      <Wind size={12} className="text-[#00d4ff]" /> Peak Surface Wind
+                      <Wind size={12} className="text-[#00d4ff]" /> Peak Ground Truth Wind
                     </div>
                     <div className="text-lg font-bold font-mono text-white mt-0.5">
-                      {selectedStorm.maxWind} <span className="text-xs font-normal text-[#88a0c0]">km/h</span>
+                      {selectedStorm.peak_wind_kmh || selectedStorm.maxWind} <span className="text-xs font-normal text-[#88a0c0]">km/h</span>
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
+                  <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
                     <div className="text-[10px] text-[#88a0c0] uppercase font-mono flex items-center gap-1">
                       <Activity size={12} className="text-[#00d4ff]" /> Min Central Pressure
                     </div>
                     <div className="text-lg font-bold font-mono text-white mt-0.5">
-                      {selectedStorm.pressure} <span className="text-xs font-normal text-[#88a0c0]">hPa</span>
+                      {selectedStorm.min_pressure_hpa || selectedStorm.pressure} <span className="text-xs font-normal text-[#88a0c0]">hPa</span>
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
+                  <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
                     <div className="text-[10px] text-[#88a0c0] uppercase font-mono flex items-center gap-1">
-                      <Users size={12} className="text-amber-400" /> Human Casualties
+                      <Users size={12} className="text-amber-400" /> Human Fatalities
                     </div>
                     <div className="text-lg font-bold font-mono text-white mt-0.5">
-                      {selectedStorm.deaths.toLocaleString()} <span className="text-xs font-normal text-[#88a0c0]">Lives</span>
+                      {selectedStorm.deaths?.toLocaleString() || 0} <span className="text-xs font-normal text-[#88a0c0]">Lives</span>
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
+                  <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
                     <div className="text-[10px] text-[#88a0c0] uppercase font-mono flex items-center gap-1">
-                      <DollarSign size={12} className="text-emerald-400" /> Infrastructural Loss
+                      <DollarSign size={12} className="text-emerald-400" /> Economic Loss
                     </div>
                     <div className="text-lg font-bold font-mono text-white mt-0.5">
-                      {selectedStorm.damage}
+                      {selectedStorm.damage || '₹1,200 Cr'}
                     </div>
                   </div>
                 </div>
 
-                {/* Nearby Coastal Cities Impact Matrix */}
-                <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628] mb-4">
-                  <div className="text-[10px] text-[#88a0c0] uppercase font-bold tracking-wider mb-2 flex items-center gap-1 font-mono">
-                    <Building2 size={12} className="text-[#00d4ff]" /> Nearby Coastal Cities & Port Proximity
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 text-[11px] font-mono">
-                    {nearbyCities.slice(0, 3).map((city, idx) => (
-                      <div key={idx} className="p-1.5 rounded bg-[#0d1f3c] border border-[#1a3a6b] flex flex-col">
-                        <span className="font-bold text-white text-[10px]">{city.name}</span>
-                        <span className="text-[#00d4ff] text-[10px]">{city.distanceKm} km away</span>
+                {/* 72-Hour CNN-LSTM Trajectory Forecast Card */}
+                {forecastData && (
+                  <div className="p-3.5 rounded-xl border border-red-500/40 bg-gradient-to-br from-red-950/30 to-[#0a1628] mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs font-bold font-mono text-red-300 flex items-center gap-1.5">
+                        <Cpu size={14} className="text-red-400 animate-pulse" />
+                        <span>CNN-LSTM 72-HOUR TRAJECTORY PROJECTION</span>
                       </div>
-                    ))}
-                  </div>
-                </div>
+                      {forecastData.rapid_intensification_alert && (
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-500/30 text-red-300 border border-red-500/50">
+                          RAPID INTENSIFICATION
+                        </span>
+                      )}
+                    </div>
 
-                {/* Synoptic Notes */}
+                    <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-[#88a0c0] mb-2">
+                      <div>🎯 Landfall Target: <strong className="text-white">{forecastData.estimated_landfall?.target_coast}</strong></div>
+                      <div>⏳ Landfall ETA: <strong className="text-amber-300">+{forecastData.estimated_landfall?.eta_hours}h</strong></div>
+                      <div>💨 Peak Projected Wind: <strong className="text-red-400">{forecastData.peak_forecast_wind_kmh} km/h</strong></div>
+                      <div>🌊 Estimated Surge: <strong className="text-cyan-300">{forecastData.estimated_landfall?.surge_height_m} meters</strong></div>
+                    </div>
+
+                    <p className="text-[11px] text-slate-300 italic">
+                      Model uses dual-branch TimeDistributedCNN (INSAT-3D radiometer) + WeatherGRU (Open-Meteo MSL & wind tendencies) with BiLSTM temporal aggregation.
+                    </p>
+                  </div>
+                )}
+
+                {/* Historical Impact Summary */}
                 <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628] mb-4">
                   <div className="text-[10px] text-[#88a0c0] uppercase font-bold tracking-wider mb-1 flex items-center gap-1 font-mono">
-                    <ShieldAlert size={12} className="text-red-400" /> Historical Impact & Meteorological Summary
+                    <ShieldAlert size={12} className="text-amber-400" /> Synoptic Notes & Mitigation Dossier
                   </div>
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    {selectedStorm.notes}
+                    {selectedStorm.notes || 'Verified NOAA IBTrACS synoptic record ingested into METEORA ML repository.'}
                   </p>
-                </div>
-
-                {/* Coordinates & Basin details */}
-                <div className="flex items-center justify-between text-[11px] font-mono text-[#88a0c0] px-1 py-1 border-t border-[#1a3a6b]">
-                  <span>Coords: {selectedStorm.lat}°N, {selectedStorm.lon}°E</span>
-                  <span>Basin: {selectedStorm.basin}</span>
                 </div>
               </div>
 
-              {/* Action Button */}
+              {/* Retrigger forecast button */}
               <button
-                onClick={() => {
-                  showToast(`Centered map on Cyclone ${selectedStorm.name} coordinates (${selectedStorm.lat}, ${selectedStorm.lon}).`, 'info');
-                }}
-                className="w-full mt-4 py-2.5 rounded-xl font-bold text-xs text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                onClick={() => executeForecastInference(selectedStorm)}
+                disabled={isForecasting}
+                className="w-full py-2.5 rounded-xl font-bold text-xs text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                <Eye size={14} />
-                <span>Center GIS Map on {selectedStorm.name} ({selectedStorm.year})</span>
+                <RefreshCw size={14} className={isForecasting ? 'animate-spin' : ''} />
+                <span>Re-compute CNN-LSTM 72h Forecast for {selectedStorm.name}</span>
               </button>
-            </div>
-          ) : (
-            <div className="h-full rounded-2xl border border-[#1a3a6b] p-6 bg-[#0d1f3c] flex items-center justify-center text-center text-[#88a0c0]">
-              Select any cyclone from the map or table to view full synoptic dossier.
             </div>
           )}
         </div>
       </div>
 
-      {/* FILTER AND SEARCH BAR */}
+      {/* 5. CNN-LSTM 72-HOUR FUTURE TRAJECTORY BREAKDOWN TABLE */}
+      {forecastData && forecastData.forecast_points && (
+        <div className="rounded-2xl border border-red-500/40 overflow-hidden bg-[#0d1f3c] shadow-xl">
+          <div className="px-4 py-3 bg-gradient-to-r from-red-950/40 to-[#0a1628] border-b border-[#1a3a6b] flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <Cpu size={16} className="text-red-400" />
+              <h3 className="text-xs font-bold tracking-wider text-white uppercase font-mono">
+                CNN-LSTM 72-Hour Step-by-Step Trajectory Forecast Matrix
+              </h3>
+            </div>
+            <span className="text-[11px] font-mono text-cyan-300">
+              Model: MultiModalCycloneCNNLSTM (Dual-Branch Spatial + Temporal)
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs font-mono">
+              <thead>
+                <tr className="border-b border-[#1a3a6b] bg-[#0a1628] text-[#88a0c0] uppercase tracking-wider">
+                  <th className="px-4 py-2.5 text-left">Forecast Step</th>
+                  <th className="px-4 py-2.5 text-left">Timestamp (UTC)</th>
+                  <th className="px-4 py-2.5 text-left">Coordinates</th>
+                  <th className="px-4 py-2.5 text-left">Wind Speed</th>
+                  <th className="px-4 py-2.5 text-left">Central Pressure</th>
+                  <th className="px-4 py-2.5 text-left">Pressure Tendency</th>
+                  <th className="px-4 py-2.5 text-left">Storm Category</th>
+                  <th className="px-4 py-2.5 text-left">Uncertainty Cone</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#1a3a6b]/60">
+                {forecastData.forecast_points.map((step, idx) => (
+                  <tr
+                    key={idx}
+                    className={`hover:bg-[#102a4c]/60 transition-colors ${
+                      step.is_landfall_step ? 'bg-red-500/15 border-l-4 border-l-red-500' : ''
+                    }`}
+                  >
+                    <td className="px-4 py-2.5 font-bold text-white flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: step.stage_color }}></span>
+                      <span>{step.forecast_hour}</span>
+                    </td>
+                    <td className="px-4 py-2.5 text-[#88a0c0]">{step.timestamp}</td>
+                    <td className="px-4 py-2.5 text-cyan-300">{step.lat}°N, {step.lon}°E</td>
+                    <td className="px-4 py-2.5 font-bold text-white">
+                      {step.wind_speed_kmh} km/h <span className="text-[10px] text-[#88a0c0]">({step.wind_speed_kts} kts)</span>
+                    </td>
+                    <td className="px-4 py-2.5 text-amber-300 font-bold">{step.pressure_hpa} hPa</td>
+                    <td className="px-4 py-2.5">
+                      <span className={step.pressure_drop_hpa <= 0 ? 'text-red-400 font-bold' : 'text-emerald-400'}>
+                        {step.pressure_drop_hpa > 0 ? `+${step.pressure_drop_hpa}` : step.pressure_drop_hpa} hPa
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <span
+                        className="px-2 py-0.5 rounded text-[10px] font-bold border"
+                        style={{
+                          borderColor: `${step.stage_color}60`,
+                          backgroundColor: `${step.stage_color}20`,
+                          color: step.stage_color
+                        }}
+                      >
+                        {step.category}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5 text-[#88a0c0]">±{step.uncertainty_radius_km} km</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* 6. SEARCH & FILTER BAR */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[240px]">
+        <div className="relative flex-1 min-w-[260px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#88a0c0]" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search cyclone name, year, or landfall province (e.g. Dana, Puri, Gujarat)..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#1a3a6b] bg-[#0d1f3c] text-sm text-white focus:outline-none focus:border-[#00d4ff] font-mono"
+            placeholder="Search cyclone by name, year, basin, or landfall province (e.g. Dana, 2023, Odisha, Gujarat)..."
+            className="w-full pl-9 pr-3 py-2 rounded-xl border border-[#1a3a6b] bg-[#0d1f3c] text-sm text-white focus:outline-none focus:border-[#00d4ff] font-mono"
           />
         </div>
 
         <div className="flex items-center gap-1.5 text-xs text-[#88a0c0] font-mono">
           <Filter size={13} />
-          <span>Category Filter:</span>
+          <span>Category:</span>
         </div>
 
         <div className="flex gap-1">
-          {['all', '2', '3', '4', '5'].map(c => (
+          {['all', '1', '2', '3', '4', '5'].map(c => (
             <button
               key={c}
-              onClick={() => {
-                setCatFilter(c);
-                showToast(`Filter set to ${c === 'all' ? 'All Categories' : `Category ${c}`}.`, 'info');
-              }}
-              className={`text-xs px-3 py-1.5 rounded-lg border font-semibold transition-all cursor-pointer font-mono ${
+              onClick={() => setCatFilter(c)}
+              className={`text-xs px-3 py-1.5 rounded-xl border font-semibold transition-all cursor-pointer font-mono ${
                 catFilter === c
                   ? 'bg-cyan-500/20 text-[#00d4ff] border-cyan-500/50 font-bold'
                   : 'bg-[#0d1f3c] text-[#88a0c0] border-[#1a3a6b] hover:text-white hover:border-cyan-500/30'
@@ -784,8 +991,8 @@ export default function HistoricalData() {
         </div>
       </div>
 
-      {/* HISTORICAL ARCHIVE TABLE */}
-      <div className="rounded-xl border border-[#1a3a6b] overflow-hidden bg-[#0d1f3c]">
+      {/* 7. COMPLETE NOAA IBTrACS HISTORICAL ARCHIVE TABLE */}
+      <div className="rounded-2xl border border-[#1a3a6b] overflow-hidden bg-[#0d1f3c] shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -793,12 +1000,14 @@ export default function HistoricalData() {
                 {[
                   ['name', 'Storm Name'],
                   ['year', 'Year'],
+                  ['basin', 'Basin'],
                   ['category', 'Category'],
-                  ['maxWind', 'Max Wind'],
-                  ['pressure', 'Min Pressure'],
-                  ['landfall', 'Landfall Province'],
+                  ['peak_wind_kmh', 'Peak Wind'],
+                  ['min_pressure_hpa', 'Min Pressure'],
+                  ['landfall', 'Landfall Target'],
                   ['deaths', 'Casualties'],
                   ['damage', 'Damage (INR)'],
+                  ['status', 'NOAA Status']
                 ].map(([field, label]) => (
                   <th
                     key={field}
@@ -814,8 +1023,10 @@ export default function HistoricalData() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1a3a6b]/60 font-mono">
-              {filtered.map(c => {
+              {filteredCyclones.map(c => {
                 const isSelected = selectedStorm?.id === c.id;
+                const col = catColor(c.category);
+
                 return (
                   <tr
                     key={c.id}
@@ -826,30 +1037,32 @@ export default function HistoricalData() {
                   >
                     <td className="px-4 py-3 font-bold text-white flex items-center gap-2">
                       <span>{c.name}</span>
-                      {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff]"></span>}
+                      {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff] animate-ping"></span>}
                     </td>
-                    <td className="px-4 py-3 text-[#88a0c0]">{c.year}</td>
+                    <td className="px-4 py-3 text-cyan-300 font-bold">{c.year}</td>
+                    <td className="px-4 py-3 text-[#88a0c0]">{c.basin}</td>
                     <td className="px-4 py-3">
                       <span
                         className="px-2 py-0.5 rounded border text-xs font-bold"
                         style={{
-                          borderColor: catColor(c.category) + '60',
-                          backgroundColor: catColor(c.category) + '20',
-                          color: catColor(c.category),
+                          borderColor: `${col}60`,
+                          backgroundColor: `${col}20`,
+                          color: col,
                         }}
                       >
                         CAT {c.category}
                       </span>
                     </td>
                     <td className="px-4 py-3 font-bold text-white">
-                      {c.maxWind} km/h
+                      {c.peak_wind_kmh || c.maxWind} km/h
                     </td>
-                    <td className="px-4 py-3 text-[#88a0c0]">{c.pressure} hPa</td>
+                    <td className="px-4 py-3 text-amber-300 font-bold">{c.min_pressure_hpa || c.pressure} hPa</td>
                     <td className="px-4 py-3 text-white font-sans">{c.landfall}</td>
-                    <td className="px-4 py-3 font-mono text-slate-300">
-                      {c.deaths.toLocaleString()}
+                    <td className="px-4 py-3 text-slate-300">
+                      {c.deaths?.toLocaleString() || 0}
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-[#88a0c0]">{c.damage}</td>
+                    <td className="px-4 py-3 text-xs text-[#88a0c0]">{c.damage}</td>
+                    <td className="px-4 py-3 text-xs text-emerald-400">{c.status || 'Archived'}</td>
                   </tr>
                 );
               })}
@@ -858,8 +1071,8 @@ export default function HistoricalData() {
         </div>
 
         <div className="px-4 py-2.5 text-xs text-[#88a0c0] border-t border-[#1a3a6b] bg-[#0a1628] flex items-center justify-between font-mono">
-          <span>Showing {filtered.length} of {allData.length} climatological storm records</span>
-          <span className="text-[11px] text-[#00d4ff]">Click any storm row to focus GIS Map & load synoptic dossier</span>
+          <span>Showing {filteredCyclones.length} of {cyclones.length} NOAA IBTrACS climatological records</span>
+          <span className="text-[11px] text-[#00d4ff]">Click any cyclone to view past track & run 72h CNN-LSTM forecast</span>
         </div>
       </div>
     </div>

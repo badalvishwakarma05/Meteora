@@ -699,6 +699,93 @@ def api_historical_tracks_view(request):
     resp['Access-Control-Allow-Origin'] = '*'
     return resp
 
+@csrf_exempt
+def api_historical_cyclones_view(request):
+    """
+    NOAA IBTrACS North Indian Ocean Cyclone Ingestion Endpoint (2011 to 2026).
+    """
+    year_param = request.GET.get('year', None)
+    search_param = request.GET.get('search', None)
+    cyclone_id = request.GET.get('cyclone_id', None) or request.GET.get('cyclone', None)
+
+    try:
+        from ml.historical_noaa_engine import get_historical_cyclones_by_year, get_cyclone_dossier_by_id
+    except ImportError:
+        get_historical_cyclones_by_year = None
+        get_cyclone_dossier_by_id = None
+
+    if cyclone_id and get_cyclone_dossier_by_id:
+        dossier = get_cyclone_dossier_by_id(cyclone_id)
+        resp = JsonResponse({
+            "success": True,
+            "cyclone": dossier
+        })
+        resp['Access-Control-Allow-Origin'] = '*'
+        return resp
+
+    year_val = int(year_param) if year_param and str(year_param).isdigit() else None
+
+    if get_historical_cyclones_by_year:
+        cyclones = get_historical_cyclones_by_year(year=year_val, query_search=search_param)
+    else:
+        cyclones = []
+
+    resp = JsonResponse({
+        "success": True,
+        "query_year": year_val,
+        "available_years": list(range(2011, 2027)),
+        "total_cyclones": len(cyclones),
+        "cyclones": cyclones
+    })
+    resp['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+@csrf_exempt
+def api_predict_trajectory_view(request):
+    """
+    CNN-LSTM 72-Hour Trajectory Prediction Engine endpoint.
+    """
+    import json
+    data = {}
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+        except Exception:
+            data = request.POST.dict()
+    else:
+        data = request.GET.dict()
+
+    current_lat = float(data.get("lat") or data.get("current_lat") or 18.5)
+    current_lon = float(data.get("lon") or data.get("current_lon") or 86.8)
+    current_wind = float(data.get("wind_kmh") or data.get("current_wind_kmh") or data.get("wind") or 140.0)
+    current_press = float(data.get("pressure_hpa") or data.get("current_pressure_hpa") or data.get("pressure") or 980.0)
+    cyclone_name = str(data.get("cyclone_name") or data.get("name") or "CYCLONE DANA")
+    forecast_hours = int(data.get("forecast_hours") or 72)
+    step_hours = int(data.get("step_hours") or 6)
+
+    try:
+        from ml.historical_noaa_engine import predict_cnn_lstm_trajectory
+        res = predict_cnn_lstm_trajectory(
+            current_lat=current_lat,
+            current_lon=current_lon,
+            current_wind_kmh=current_wind,
+            current_pressure_hpa=current_press,
+            cyclone_name=cyclone_name,
+            forecast_hours=forecast_hours,
+            step_hours=step_hours
+        )
+        resp = JsonResponse(res)
+    except Exception as e:
+        resp = JsonResponse({
+            "success": False,
+            "error": str(e)
+        }, status=500)
+
+    resp['Access-Control-Allow-Origin'] = '*'
+    resp['Access-Control-Allow-Headers'] = '*'
+    return resp
+
+
 
 
 

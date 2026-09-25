@@ -801,6 +801,92 @@ if HAS_FLASK:
             "points": points
         })
 
+    # ==========================================================================
+    # NOAA IBTrACS 11-Year Historical Ingestion & Yearly Deep-Dive (2011 - 2026)
+    # ==========================================================================
+    @app.route("/api/historical-cyclones", methods=["GET"])
+    @app.route("/historical-cyclones", methods=["GET"])
+    def get_historical_cyclones():
+        """
+        NOAA IBTrACS North Indian Ocean Cyclone Ingestion Endpoint.
+        Accepts ?year=<YYYY> (2011 to 2026), ?search=<query>, or ?cyclone_id=<ID>.
+        """
+        year_param = request.args.get("year", None)
+        search_param = request.args.get("search", None)
+        cyclone_id = request.args.get("cyclone_id", None) or request.args.get("cyclone", None)
+
+        try:
+            from ml.historical_noaa_engine import get_historical_cyclones_by_year, get_cyclone_dossier_by_id
+        except ImportError:
+            get_historical_cyclones_by_year = None
+            get_cyclone_dossier_by_id = None
+
+        if cyclone_id and get_cyclone_dossier_by_id:
+            dossier = get_cyclone_dossier_by_id(cyclone_id)
+            return jsonify({
+                "success": True,
+                "cyclone": dossier
+            })
+
+        year_val = int(year_param) if year_param and str(year_param).isdigit() else None
+
+        if get_historical_cyclones_by_year:
+            cyclones = get_historical_cyclones_by_year(year=year_val, query_search=search_param)
+        else:
+            cyclones = []
+
+        return jsonify({
+            "success": True,
+            "query_year": year_val,
+            "available_years": list(range(2011, 2027)),
+            "total_cyclones": len(cyclones),
+            "cyclones": cyclones
+        })
+
+    # ==========================================================================
+    # CNN-LSTM 72-Hour Deep Learning Trajectory Prediction Engine
+    # ==========================================================================
+    @app.route("/api/predict-trajectory", methods=["POST", "GET"])
+    @app.route("/predict-trajectory", methods=["POST", "GET"])
+    def predict_trajectory_endpoint():
+        """
+        CNN-LSTM Trajectory Prediction Endpoint:
+        Accepts current storm coordinates and outputs a 72-hour future forecast path
+        (lat/lon coordinates, estimated wind speed, pressure drop, uncertainty cone).
+        """
+        data = {}
+        if request.method == "POST":
+            data = request.get_json(silent=True) or request.form.to_dict() or {}
+        else:
+            data = request.args.to_dict()
+
+        current_lat = float(data.get("lat") or data.get("current_lat") or 18.5)
+        current_lon = float(data.get("lon") or data.get("current_lon") or 86.8)
+        current_wind = float(data.get("wind_kmh") or data.get("current_wind_kmh") or data.get("wind") or 140.0)
+        current_press = float(data.get("pressure_hpa") or data.get("current_pressure_hpa") or data.get("pressure") or 980.0)
+        cyclone_name = str(data.get("cyclone_name") or data.get("name") or "CYCLONE DANA")
+        forecast_hours = int(data.get("forecast_hours") or 72)
+        step_hours = int(data.get("step_hours") or 6)
+
+        try:
+            from ml.historical_noaa_engine import predict_cnn_lstm_trajectory
+            res = predict_cnn_lstm_trajectory(
+                current_lat=current_lat,
+                current_lon=current_lon,
+                current_wind_kmh=current_wind,
+                current_pressure_hpa=current_press,
+                cyclone_name=cyclone_name,
+                forecast_hours=forecast_hours,
+                step_hours=step_hours
+            )
+            return jsonify(res)
+        except Exception as e:
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+
 # ==============================================================================
 # Standalone Runner
 # ==============================================================================

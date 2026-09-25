@@ -619,3 +619,34 @@ html.light ::-webkit-scrollbar-thumb:hover {
 .lamp-ripple-trigger {
   animation: lamp-ripple 1.4s ease-out 2;
 }
+
+/* =========================================================================
+   CNN-LSTM 72-HOUR TRAJECTORY ANIMATED GLOWING POLYLINE
+   ========================================================================= */
+@keyframes dash-pulse {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px #ff3b3b) drop-shadow(0 0 10px rgba(255, 59, 59, 0.6));
+    opacity: 0.9;
+  }
+  50% {
+    filter: drop-shadow(0 0 8px #ff7b00) drop-shadow(0 0 18px rgba(255, 123, 0, 0.9));
+    opacity: 1;
+  }
+}
+
+.leaflet-pane .animate-forecast-glow path,
+path.animate-forecast-glow {
+  stroke-dasharray: 6, 8;
+  animation: dash-pulse 1.2s linear infinite, glow-pulse 2.2s ease-in-out infinite;
+}
+
+.forecast-beacon-pulse {
+  animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+

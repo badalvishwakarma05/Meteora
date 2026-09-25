@@ -9,7 +9,9 @@ from .views import (
     api_spatial_risk_view,
     api_multimodal_status_view,
     api_live_intensification_view,
-    api_historical_tracks_view
+    api_historical_tracks_view,
+    api_historical_cyclones_view,
+    api_predict_trajectory_view
 )
 
 urlpatterns = [
@@ -24,6 +26,8 @@ urlpatterns = [
     path('api/ml/intensification/', api_live_intensification_view, name='api_live_intensification'),
     path('api/live-prediction/', api_live_intensification_view, name='api_live_prediction_alias'),
     path('api/historical-tracks/', api_historical_tracks_view, name='api_historical_tracks'),
+    path('api/historical-cyclones/', api_historical_cyclones_view, name='api_historical_cyclones'),
+    path('api/predict-trajectory/', api_predict_trajectory_view, name='api_predict_trajectory'),
 ]
 
 
