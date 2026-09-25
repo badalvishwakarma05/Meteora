@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Polyline, Popup, Tooltip, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { Building2, Anchor } from 'lucide-react';
 import { activeCyclones } from '../data/mockData';
+import { COASTAL_PORTS, getDistanceKm } from '../data/coastalPorts';
 import { useToast } from '../context/ToastContext';
 import { useDisasterAlert } from '../context/DisasterAlertContext';
 
@@ -107,6 +109,7 @@ function MapController({ selectedRegion }) {
 
 export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) {
   const [activeLayer, setActiveLayer] = useState('Satellite View');
+  const [showPorts, setShowPorts] = useState(true);
   const { showToast } = useToast();
   const { selectedRegion } = useDisasterAlert();
 
@@ -123,47 +126,65 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
 
   return (
     <div className="relative h-[350px] md:h-full min-h-[350px] w-full rounded-2xl overflow-hidden border border-[#1a3a6b]/60 shadow-2xl bg-[#0a1628] touch-pan-x touch-pan-y">
-      {/* Basemap Switcher (Top Right) */}
-      <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[999] flex items-center gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl max-w-[calc(100%-20px)]">
-        {Object.keys(TILE_LAYERS).map(layer => {
-          const isActive = activeLayer === layer;
-          return (
-            <button
-              key={layer}
-              type="button"
-              onClick={() => handleLayerChange(layer)}
-              className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border select-none ${
-                isActive
-                  ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-md shadow-cyan-500/30'
-                  : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
-              }`}
-            >
-              {layer}
-            </button>
-          );
-        })}
+      {/* Top Map Controls: Basemap Switcher + Ports & Cities Toggle */}
+      <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[999] flex flex-wrap gap-2 items-center max-w-[calc(100%-20px)] justify-end">
+        {/* Basemap Switcher */}
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl">
+          {Object.keys(TILE_LAYERS).map(layer => {
+            const isActive = activeLayer === layer;
+            return (
+              <button
+                key={layer}
+                type="button"
+                onClick={() => handleLayerChange(layer)}
+                className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border select-none ${
+                  isActive
+                    ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-md shadow-cyan-500/30'
+                    : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
+                }`}
+              >
+                {layer}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Ports & Coastal Cities Layer Toggle */}
+        <div className="flex items-center p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl">
+          <button
+            type="button"
+            onClick={() => {
+              setShowPorts(!showPorts);
+              showToast(showPorts ? 'Hidden coastal ports layer.' : 'Enabled Indian coastal ports & cities layer.', 'info');
+            }}
+            className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border flex items-center gap-1.5 select-none ${
+              showPorts
+                ? 'bg-cyan-500/25 text-[#00d4ff] border-cyan-500/50 shadow-sm shadow-cyan-500/20'
+                : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Building2 size={12} />
+            <span>Ports & Cities</span>
+          </button>
+        </div>
       </div>
 
       {/* Floating Modern Legend (Bottom Left) */}
-      <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 z-[999] rounded-xl p-2.5 sm:p-3 text-[10px] sm:text-xs space-y-1 sm:space-y-1.5 backdrop-blur-xl bg-[#0a1628]/90 border border-[#1a3a6b] shadow-xl max-w-[180px] sm:max-w-none">
-        <div className="font-bold tracking-widest text-cyan-400 text-[9px] uppercase mb-1">
+      <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 z-[999] rounded-xl p-2.5 sm:p-3 text-[10px] sm:text-xs space-y-1 sm:space-y-1.5 backdrop-blur-xl bg-[#0a1628]/95 border border-[#1a3a6b] shadow-xl max-w-[200px] sm:max-w-none">
+        <div className="font-bold tracking-widest text-cyan-400 text-[9px] uppercase mb-1 font-mono">
           GIS MAP LEGEND
         </div>
         <div className="flex items-center gap-2">
           <span className="w-3 border-t-2 border-[#00d4ff] inline-block"></span>
-          <span className="text-[#88a0c0] text-[11px]">Observed Path</span>
+          <span className="text-slate-300 text-[11px]">Observed Track (Solid)</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 border-t-2 border-dashed border-[#ff9500] inline-block"></span>
-          <span className="text-amber-300 text-[11px]">AI Forecast (72h)</span>
+          <span className="w-3 border-t-2 border-dotted border-red-400 inline-block"></span>
+          <span className="text-red-300 text-[11px] font-bold">72h AI Forecast (Glowing)</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 border-t-2 border-dotted border-slate-400 inline-block"></span>
-          <span className="text-slate-300 text-[11px]">Historical Tracks (Training)</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-slate-400 border border-slate-600 inline-block"></span>
-          <span className="text-slate-300 text-[11px]">LPA: Dissipating (Safe)</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-[#00d4ff] inline-block border border-white"></span>
+          <span className="text-cyan-300 text-[11px]">Major Port / Maritime City</span>
         </div>
         <div className="flex items-center gap-2 pt-1 border-t border-[#1a3a6b]">
           <span className="w-2.5 h-2.5 rounded-full bg-[#ff3b3b] inline-block"></span>
@@ -172,10 +193,6 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#ff9500] inline-block"></span>
           <span className="text-yellow-300 text-[11px]">Moderate (Cat 1-2)</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00c851] inline-block"></span>
-          <span className="text-emerald-300 text-[11px]">Depression (Low)</span>
         </div>
       </div>
 
@@ -407,6 +424,79 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
                 </Popup>
               </CircleMarker>
             </React.Fragment>
+          );
+        })}
+
+        {/* 4. COASTAL PORTS & MARITIME CITIES LAYER */}
+        {showPorts && COASTAL_PORTS.map(port => {
+          let minDistance = 9999;
+          let closestStormName = '';
+          activeCyclones.forEach(ac => {
+            const d = getDistanceKm(ac.lat, ac.lon, port.lat, port.lon);
+            if (d < minDistance) {
+              minDistance = d;
+              closestStormName = ac.name;
+            }
+          });
+
+          const isNear = minDistance <= 250;
+          const isCritical = minDistance <= 120;
+
+          return (
+            <CircleMarker
+              key={port.id}
+              center={[port.lat, port.lon]}
+              radius={isCritical ? 6.5 : (isNear ? 5 : 3.5)}
+              pathOptions={{
+                color: isCritical ? '#ff3b3b' : (isNear ? '#00d4ff' : '#94a3b8'),
+                fillColor: isCritical ? '#ff3b3b' : (isNear ? '#00d4ff' : '#0a1628'),
+                fillOpacity: isNear ? 0.95 : 0.75,
+                weight: isCritical ? 2.5 : 1.5
+              }}
+            >
+              <Tooltip permanent={isNear} direction="right" offset={[8, 0]}>
+                <div className="text-[10px] font-bold text-[#00d4ff] bg-[#0d1f3c] border border-cyan-500/40 p-1 rounded font-mono shadow-xl">
+                  🏙️ {port.name} ({port.state})
+                  <div className="text-[9px] text-[#88a0c0] font-normal">
+                    {minDistance < 9999 ? `Dist: ${minDistance} km to ${closestStormName}` : port.type}
+                  </div>
+                </div>
+              </Tooltip>
+              <Popup>
+                <div className="p-1 font-mono text-xs bg-[#0d1f3c] text-white border border-[#1a3a6b] rounded-xl shadow-2xl min-w-[220px]">
+                  <div className="flex items-center justify-between gap-2 pb-1 border-b border-[#1a3a6b]">
+                    <span className="font-extrabold text-sm text-[#00d4ff]">{port.name}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
+                      {port.type}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-300 mt-1.5">
+                    📍 {port.state} · <span className="text-[#88a0c0]">{port.basin}</span>
+                  </div>
+                  {port.berths > 0 && (
+                    <div className="text-[10px] text-[#88a0c0] mt-0.5">
+                      ⚓ Berths / Docks: <strong className="text-white">{port.berths}</strong>
+                    </div>
+                  )}
+                  <div className="mt-2 pt-1.5 border-t border-[#1a3a6b]">
+                    <div className="text-[10px] font-bold uppercase text-[#88a0c0] mb-1">Active Cyclone Proximity:</div>
+                    {activeCyclones.map(ac => {
+                      const dist = getDistanceKm(ac.lat, ac.lon, port.lat, port.lon);
+                      const alertColor = dist < 120 ? 'text-red-400 font-bold' : (dist < 250 ? 'text-amber-300 font-bold' : 'text-slate-300');
+                      return (
+                        <div key={ac.id} className="flex items-center justify-between text-[10px] py-0.5">
+                          <span className="text-white">{ac.name}:</span>
+                          <span className={alertColor}>{dist} km</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-2 italic leading-tight">
+                    {port.description}
+                  </p>
+                </div>
+              </Popup>
+            </CircleMarker>
           );
         })}
       </MapContainer>

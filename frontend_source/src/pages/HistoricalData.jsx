@@ -10,29 +10,7 @@ import {
 import { useToast } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
 import { runCityImpactPrediction, fetchHistoricalCyclones, predictCNNLSTMTrajectory } from '../services/api';
-
-const COASTAL_CITIES = [
-  { name: 'Puri', lat: 19.8135, lon: 85.8312, state: 'Odisha' },
-  { name: 'Paradip', lat: 20.3164, lon: 86.6114, state: 'Odisha' },
-  { name: 'Dhamra Port', lat: 20.7842, lon: 86.9214, state: 'Odisha' },
-  { name: 'Balasore', lat: 21.4942, lon: 86.9317, state: 'Odisha' },
-  { name: 'Gopalpur', lat: 19.2647, lon: 84.9144, state: 'Odisha' },
-  { name: 'Digha', lat: 21.6266, lon: 87.5074, state: 'West Bengal' },
-  { name: 'Kolkata', lat: 22.5726, lon: 88.3639, state: 'West Bengal' },
-  { name: 'Visakhapatnam', lat: 17.6868, lon: 83.2185, state: 'Andhra Pradesh' },
-  { name: 'Kakinada', lat: 16.9891, lon: 82.2475, state: 'Andhra Pradesh' },
-  { name: 'Bapatla', lat: 15.9042, lon: 80.4674, state: 'Andhra Pradesh' },
-  { name: 'Chennai', lat: 13.0827, lon: 80.2707, state: 'Tamil Nadu' },
-  { name: 'Cuddalore', lat: 11.7480, lon: 79.7714, state: 'Tamil Nadu' },
-  { name: 'Nagapattinam', lat: 10.7672, lon: 79.8449, state: 'Tamil Nadu' },
-  { name: 'Kanyakumari', lat: 8.0883, lon: 77.5385, state: 'Tamil Nadu' },
-  { name: 'Jakhau Port', lat: 23.2382, lon: 68.6186, state: 'Gujarat' },
-  { name: 'Porbandar', lat: 21.6417, lon: 69.6293, state: 'Gujarat' },
-  { name: 'Veraval', lat: 20.9000, lon: 70.3667, state: 'Gujarat' },
-  { name: 'Mumbai', lat: 18.9220, lon: 72.8347, state: 'Maharashtra' },
-  { name: 'Alibaug', lat: 18.6414, lon: 72.8722, state: 'Maharashtra' },
-  { name: 'Chittagong', lat: 22.3569, lon: 91.7832, state: 'Bangladesh' }
-];
+import { COASTAL_PORTS, getDistanceKm, getClosestPorts } from '../data/coastalPorts';
 
 const AVAILABLE_YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011];
 
@@ -404,7 +382,7 @@ export default function HistoricalData() {
     showToast('Exported NOAA IBTrACS dataset to CSV.', 'success');
   };
 
-  const nearbyCities = selectedStorm ? COASTAL_CITIES.map(city => ({
+  const nearbyCities = selectedStorm ? COASTAL_PORTS.map(city => ({
     ...city,
     distanceKm: getDistanceKm(selectedStorm.lat, selectedStorm.lon, city.lat, city.lon),
   })).sort((a, b) => a.distanceKm - b.distanceKm) : [];
@@ -675,29 +653,63 @@ export default function HistoricalData() {
 
               <MapController targetLat={selectedStorm?.lat} targetLon={selectedStorm?.lon} />
 
-              {/* Coastal Cities Markers */}
-              {showCities && COASTAL_CITIES.map(city => {
-                const dist = selectedStorm ? getDistanceKm(selectedStorm.lat, selectedStorm.lon, city.lat, city.lon) : null;
+              {/* Coastal Ports & Maritime Cities Layer */}
+              {showCities && COASTAL_PORTS.map(port => {
+                const dist = selectedStorm ? getDistanceKm(selectedStorm.lat, selectedStorm.lon, port.lat, port.lon) : null;
                 const isClose = dist !== null && dist <= 220;
+                const isCritical = dist !== null && dist <= 120;
 
                 return (
                   <CircleMarker
-                    key={city.name}
-                    center={[city.lat, city.lon]}
-                    radius={isClose ? 6 : 4}
+                    key={port.id}
+                    center={[port.lat, port.lon]}
+                    radius={isCritical ? 6.5 : (isClose ? 5.5 : 4)}
                     pathOptions={{
-                      color: isClose ? '#00d4ff' : '#88a0c0',
-                      fillColor: isClose ? '#00d4ff' : '#0a1628',
-                      fillOpacity: 0.9,
-                      weight: 1.5
+                      color: isCritical ? '#ff3b3b' : (isClose ? '#00d4ff' : '#94a3b8'),
+                      fillColor: isCritical ? '#ff3b3b' : (isClose ? '#00d4ff' : '#0a1628'),
+                      fillOpacity: isClose ? 0.95 : 0.75,
+                      weight: isCritical ? 2.5 : 1.5
                     }}
                   >
                     <MapTooltip permanent={isClose} direction="right" offset={[8, 0]}>
-                      <div className="text-[10px] font-bold text-[#00d4ff] bg-[#0d1f3c] border border-cyan-500/40 p-1 rounded font-mono">
-                        🏙️ {city.name} ({city.state})
-                        {dist !== null && <div className="text-[9px] text-[#88a0c0] font-normal">Dist: {dist} km</div>}
+                      <div className="text-[10px] font-bold text-[#00d4ff] bg-[#0d1f3c] border border-cyan-500/40 p-1.5 rounded-lg font-mono shadow-xl">
+                        🏙️ {port.name} ({port.state})
+                        {dist !== null && (
+                          <div className={`text-[9px] font-normal ${isCritical ? 'text-red-400 font-bold' : 'text-[#88a0c0]'}`}>
+                            Dist: {dist} km to {selectedStorm.name}
+                          </div>
+                        )}
                       </div>
                     </MapTooltip>
+                    <Popup>
+                      <div className="p-1 font-mono text-xs bg-[#0d1f3c] text-white border border-[#1a3a6b] rounded-xl shadow-2xl min-w-[220px]">
+                        <div className="flex items-center justify-between gap-2 pb-1 border-b border-[#1a3a6b]">
+                          <span className="font-extrabold text-sm text-[#00d4ff]">{port.name}</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
+                            {port.type}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-slate-300 mt-1.5">
+                          📍 {port.state} · <span className="text-[#88a0c0]">{port.basin}</span>
+                        </div>
+                        {port.berths > 0 && (
+                          <div className="text-[10px] text-[#88a0c0] mt-0.5">
+                            ⚓ Berths / Docks: <strong className="text-white">{port.berths}</strong>
+                          </div>
+                        )}
+                        {dist !== null && (
+                          <div className="mt-2 pt-1.5 border-t border-[#1a3a6b]">
+                            <div className="text-[10px] font-bold uppercase text-[#88a0c0] mb-0.5">Distance to {selectedStorm.name}:</div>
+                            <div className={`text-xs font-bold ${isCritical ? 'text-red-400' : (isClose ? 'text-amber-300' : 'text-emerald-400')}`}>
+                              {dist} km ({isCritical ? 'CRITICAL EVACUATION ZONE' : (isClose ? 'HIGH ALERT PROXIMITY' : 'SAFE DISTANCE')})
+                            </div>
+                          </div>
+                        )}
+                        <p className="text-[10px] text-slate-400 mt-2 italic leading-tight">
+                          {port.description}
+                        </p>
+                      </div>
+                    </Popup>
                   </CircleMarker>
                 );
               })}
