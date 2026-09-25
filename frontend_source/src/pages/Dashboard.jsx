@@ -661,6 +661,10 @@ export default function Dashboard() {
                 </button>
               </div>
             );
+          })}
+        </div>
+      </div>
+
       {/* BOTTOM ANALYTICS ROW: GRAPH & SATELLITE IMAGES */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
         {/* Dynamic Intensity Curve */}
