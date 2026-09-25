@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Polyline, Popup, Tooltip, useMap } from 'react-leaflet';
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, CircleMarker, Polyline, Popup, Tooltip, ZoomControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Building2, Anchor } from 'lucide-react';
 import { activeCyclones } from '../data/mockData';
 import { COASTAL_PORTS, getDistanceKm } from '../data/coastalPorts';
 import { useToast } from '../context/ToastContext';
 import { useDisasterAlert } from '../context/DisasterAlertContext';
+import { useTheme } from '../context/ThemeContext';
 
 const tracks = {
   DANA:  [[16.1,86.8],[15.4,87.2],[14.1,88.0],[12.8,89.0],[11.2,89.8]],
@@ -108,10 +109,20 @@ function MapController({ selectedRegion }) {
 }
 
 export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) {
-  const [activeLayer, setActiveLayer] = useState('Satellite View');
+  const { isLight } = useTheme();
+  const [activeLayer, setActiveLayer] = useState(isLight ? 'Street View' : 'Dark Canvas');
   const [showPorts, setShowPorts] = useState(true);
   const { showToast } = useToast();
   const { selectedRegion } = useDisasterAlert();
+
+  // Sync default layer with theme changes if user hasn't overridden
+  useEffect(() => {
+    if (isLight && activeLayer === 'Dark Canvas') {
+      setActiveLayer('Street View');
+    } else if (!isLight && activeLayer === 'Street View') {
+      setActiveLayer('Dark Canvas');
+    }
+  }, [isLight]);
 
   const handleLayerChange = (layer) => {
     setActiveLayer(layer);
@@ -126,10 +137,10 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
 
   return (
     <div className="relative h-[350px] md:h-full min-h-[350px] w-full rounded-2xl overflow-hidden border border-[#1a3a6b]/60 shadow-2xl bg-[#0a1628] touch-pan-x touch-pan-y">
-      {/* Top Map Controls: Basemap Switcher + Ports & Cities Toggle */}
-      <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[999] flex flex-wrap gap-2 items-center max-w-[calc(100%-20px)] justify-end">
+      {/* Top-Right Map Controls: Basemap Switcher + Ports & Cities Toggle */}
+      <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5 z-[1000] flex flex-wrap gap-2 items-center max-w-[calc(100%-20px)] justify-end pointer-events-auto">
         {/* Basemap Switcher */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl">
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-2xl">
           {Object.keys(TILE_LAYERS).map(layer => {
             const isActive = activeLayer === layer;
             return (
@@ -139,7 +150,7 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
                 onClick={() => handleLayerChange(layer)}
                 className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border select-none ${
                   isActive
-                    ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-md shadow-cyan-500/30'
+                    ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-md shadow-cyan-500/30 font-extrabold'
                     : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -150,7 +161,7 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
         </div>
 
         {/* Ports & Coastal Cities Layer Toggle */}
-        <div className="flex items-center p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl">
+        <div className="flex items-center p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-2xl">
           <button
             type="button"
             onClick={() => {
@@ -170,7 +181,7 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
       </div>
 
       {/* Floating Modern Legend (Bottom Left) */}
-      <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 z-[999] rounded-xl p-2.5 sm:p-3 text-[10px] sm:text-xs space-y-1 sm:space-y-1.5 backdrop-blur-xl bg-[#0a1628]/95 border border-[#1a3a6b] shadow-xl max-w-[200px] sm:max-w-none">
+      <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 z-[999] rounded-xl p-2.5 sm:p-3 text-[10px] sm:text-xs space-y-1 sm:space-y-1.5 backdrop-blur-xl bg-[#0a1628]/95 border border-[#1a3a6b] shadow-xl max-w-[200px] sm:max-w-none pointer-events-auto">
         <div className="font-bold tracking-widest text-cyan-400 text-[9px] uppercase mb-1 font-mono">
           GIS MAP LEGEND
         </div>
@@ -200,10 +211,11 @@ export default function CycloneMap({ onSelectCyclone, threatLevel = 'severe' }) 
         center={[15.5, 82.5]}
         zoom={4}
         style={{ height: '100%', width: '100%', minHeight: '350px', background: '#0a1628' }}
-        zoomControl={true}
+        zoomControl={false}
         attributionControl={false}
         className="touch-pan-x touch-pan-y w-full h-full min-h-[350px]"
       >
+        <ZoomControl position="bottomright" />
         <TileLayer
           key={activeLayer}
           url={TILE_LAYERS[activeLayer] || TILE_LAYERS['Satellite View']}

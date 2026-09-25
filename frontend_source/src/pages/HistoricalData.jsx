@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Polyline, Popup, Tooltip as MapTooltip, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, CircleMarker, Polyline, Popup, Tooltip as MapTooltip, ZoomControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { 
   Search, Filter, Download, ArrowUpDown, BookOpen, Layers, CheckCircle2,
@@ -523,10 +523,10 @@ export default function HistoricalData() {
         <div className="lg:col-span-7 flex flex-col gap-3">
           <div className="relative h-[400px] sm:h-[480px] md:h-[560px] min-h-[400px] rounded-2xl overflow-hidden border border-[#1a3a6b] bg-[#0a1628] shadow-2xl">
             
-            {/* Top Map Layer Switcher & Feature Toggles */}
-            <div className="absolute top-3 right-3 z-[999] flex flex-wrap gap-2 items-center max-w-[calc(100%-20px)] justify-end">
+            {/* Top Map Layer Switcher & Feature Toggles (Top Right Corner) */}
+            <div className="absolute top-3 right-3 z-[1000] flex flex-wrap gap-2 items-center max-w-[calc(100%-20px)] justify-end pointer-events-auto">
               {/* Basemap Switcher */}
-              <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl">
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-2xl">
                 {Object.keys(TILE_LAYERS).map(layer => {
                   const isActive = activeLayer === layer;
                   return (
@@ -534,9 +534,9 @@ export default function HistoricalData() {
                       key={layer}
                       type="button"
                       onClick={() => setActiveLayer(layer)}
-                      className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border ${
+                      className={`text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border select-none ${
                         isActive
-                          ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-md shadow-cyan-500/30'
+                          ? 'bg-[#00d4ff] text-[#050d1a] border-[#00d4ff] shadow-md shadow-cyan-500/30 font-extrabold'
                           : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
                       }`}
                     >
@@ -547,11 +547,11 @@ export default function HistoricalData() {
               </div>
 
               {/* Trajectory & City Toggles */}
-              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-xl text-[10px] font-semibold text-slate-300">
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] shadow-2xl text-[10px] font-semibold text-slate-300">
                 <button
                   type="button"
                   onClick={() => setShowForecastOnMap(!showForecastOnMap)}
-                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all border font-bold ${
+                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all border font-bold select-none ${
                     showForecastOnMap
                       ? 'bg-red-500/25 text-red-300 border-red-500/50 shadow-sm shadow-red-500/20'
                       : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
@@ -564,7 +564,7 @@ export default function HistoricalData() {
                 <button
                   type="button"
                   onClick={() => setShowCities(!showCities)}
-                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all border font-bold ${
+                  className={`px-2.5 py-1 rounded-lg flex items-center gap-1 cursor-pointer transition-all border font-bold select-none ${
                     showCities
                       ? 'bg-cyan-500/25 text-[#00d4ff] border-cyan-500/50 shadow-sm shadow-cyan-500/20'
                       : 'text-[#88a0c0] border-transparent hover:text-white hover:bg-white/10'
@@ -576,20 +576,20 @@ export default function HistoricalData() {
               </div>
             </div>
 
-            {/* Map Top Status & Trajectory Legend Pill Bar */}
-            <div className="absolute top-3 left-3 z-[999] flex items-center flex-wrap gap-2 max-w-[calc(100%-240px)]">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] text-xs font-mono text-[#00d4ff] shadow-xl">
+            {/* Map Top Status & Trajectory Legend Pill Bar (Top Left, no zoom collision) */}
+            <div className="absolute top-3 left-3 z-[999] flex items-center flex-wrap gap-2 max-w-[calc(100%-380px)] pointer-events-none">
+              <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a6b] text-xs font-mono text-[#00d4ff] shadow-xl">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#00d4ff] animate-pulse shrink-0"></span>
                 <span className="font-bold tracking-wide">NOAA IBTrACS & CNN-LSTM DUAL TRACK</span>
               </div>
 
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-cyan-500/40 text-[11px] font-mono shadow-xl text-slate-200">
+              <div className="pointer-events-auto hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-cyan-500/40 text-[11px] font-mono shadow-xl text-slate-200">
                 <span className="w-3.5 h-1 bg-[#00d4ff] rounded-full inline-block shrink-0 shadow-sm shadow-cyan-400"></span>
                 <span className="text-[#00d4ff] font-bold">Past Track</span>
                 <span className="text-slate-400">(Ground-Truth Solid)</span>
               </div>
 
-              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-red-500/40 text-[11px] font-mono shadow-xl text-slate-200">
+              <div className="pointer-events-auto hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0a1628]/95 backdrop-blur-md border border-red-500/40 text-[11px] font-mono shadow-xl text-slate-200">
                 <span className="w-3.5 h-1 border-b-2 border-dotted border-red-400 inline-block shrink-0"></span>
                 <span className="text-red-400 font-bold">72h AI Forecast</span>
                 <span className="text-slate-400">(Animated Dotted Glow)</span>
@@ -597,7 +597,7 @@ export default function HistoricalData() {
             </div>
 
             {/* GIS Legend */}
-            <div className="absolute bottom-3 left-3 z-[999] rounded-xl p-3 text-xs space-y-2 backdrop-blur-xl bg-[#0a1628]/95 border border-[#1a3a6b] shadow-xl text-slate-300 max-w-[260px]">
+            <div className="absolute bottom-3 left-3 z-[999] rounded-xl p-3 text-xs space-y-2 backdrop-blur-xl bg-[#0a1628]/95 border border-[#1a3a6b] shadow-xl text-slate-300 max-w-[260px] pointer-events-auto">
               <div className="font-bold tracking-widest text-[#00d4ff] text-[9px] uppercase font-mono flex items-center justify-between pb-1 border-b border-[#1a3a6b]">
                 <span>TRAJECTORY LAYERS</span>
                 <span className="text-emerald-400 font-semibold">● ACTIVE</span>
@@ -625,9 +625,10 @@ export default function HistoricalData() {
               center={[selectedStorm?.lat || 18.0, selectedStorm?.lon || 84.0]}
               zoom={5}
               style={{ height: '100%', width: '100%', background: '#0a1628' }}
-              zoomControl={true}
+              zoomControl={false}
               attributionControl={false}
             >
+              <ZoomControl position="bottomright" />
               {/* Dynamic Base Tile Layer with key for instantaneous layer swapping */}
               <TileLayer
                 key={activeLayer}

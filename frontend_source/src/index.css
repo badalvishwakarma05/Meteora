@@ -650,3 +650,54 @@ path.animate-forecast-glow {
   animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
+/* =========================================================================
+   CUSTOM LEAFLET ZOOM CONTROLS (HIGH CONTRAST & MODERN HUD)
+   ========================================================================= */
+.leaflet-control-zoom {
+  border: 1px solid #1a3a6b !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  background-color: rgba(10, 22, 40, 0.95) !important;
+  backdrop-filter: blur(8px) !important;
+  margin-right: 12px !important;
+  margin-bottom: 12px !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: rgba(10, 22, 40, 0.95) !important;
+  color: #00d4ff !important;
+  border-bottom: 1px solid #1a3a6b !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  transition: all 0.2s ease !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #00d4ff !important;
+  color: #050d1a !important;
+}
+
+.leaflet-control-zoom a:last-child {
+  border-bottom: none !important;
+}
+
+html.light .leaflet-control-zoom {
+  border: 1px solid #cbd5e1 !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+html.light .leaflet-control-zoom a {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #0f172a !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+html.light .leaflet-control-zoom a:hover {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
