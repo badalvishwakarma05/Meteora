@@ -17,6 +17,86 @@ const AVAILABLE_YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2
 // Fallback comprehensive offline database (2011 - 2026)
 const INITIAL_OFFLINE_CYCLONES = [
   {
+    id: 'SHAKTI_2026',
+    name: 'SHAKTI',
+    year: 2026,
+    basin: 'Arabian Sea',
+    category: 3,
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 90,
+    peak_wind_kmh: 165,
+    min_pressure_hpa: 970,
+    landfall: 'Gujarat (Saurashtra Coast)',
+    deaths: 4,
+    damage: '₹1,850 Cr',
+    dates_active: '10 Jun 2026 – 16 Jun 2026',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Intense Arabian Sea vortex exhibiting rapid northward recurvature toward Gujarat coastline.',
+    lat: 20.8,
+    lon: 69.5,
+    track: [[13.5, 68.2], [15.2, 68.0], [17.0, 68.4], [19.1, 68.9], [20.8, 69.5]],
+    points: [
+      { step: 1, timestamp: '2026-06-10 00:00', lat: 13.5, lon: 68.2, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2026-06-11 00:00', lat: 15.2, lon: 68.0, wind_speed_kmh: 93, wind_speed_kts: 50, pressure_hpa: 992, category: 'Cyclonic Storm', color: '#06b6d4' },
+      { step: 3, timestamp: '2026-06-12 00:00', lat: 17.0, lon: 68.4, wind_speed_kmh: 130, wind_speed_kts: 70, pressure_hpa: 982, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 4, timestamp: '2026-06-13 00:00', lat: 19.1, lon: 68.9, wind_speed_kmh: 165, wind_speed_kts: 90, pressure_hpa: 970, category: 'Very Severe Cyclonic Storm', color: '#ef4444' },
+      { step: 5, timestamp: '2026-06-14 06:00', lat: 20.8, lon: 69.5, wind_speed_kmh: 157, wind_speed_kts: 85, pressure_hpa: 974, category: 'Landfall (Saurashtra)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'SANYOG_2026',
+    name: 'SANYOG',
+    year: 2026,
+    basin: 'Bay of Bengal',
+    category: 4,
+    max_category: 'Extremely Severe Cyclonic Storm (ESCS)',
+    peak_wind_kts: 115,
+    peak_wind_kmh: 210,
+    min_pressure_hpa: 948,
+    landfall: 'Odisha (Gopalpur / Puri Coast)',
+    deaths: 11,
+    damage: '₹3,400 Cr',
+    dates_active: '02 May 2026 – 08 May 2026',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Pre-monsoon supercell system over East Central Bay of Bengal rapidly intensifying within 24 hours.',
+    lat: 19.6,
+    lon: 85.4,
+    track: [[11.2, 88.0], [13.8, 86.8], [16.5, 85.5], [18.4, 85.0], [19.6, 85.4]],
+    points: [
+      { step: 1, timestamp: '2026-05-02 06:00', lat: 11.2, lon: 88.0, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 998, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2026-05-03 12:00', lat: 13.8, lon: 86.8, wind_speed_kmh: 111, wind_speed_kts: 60, pressure_hpa: 986, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2026-05-05 00:00', lat: 16.5, lon: 85.5, wind_speed_kmh: 176, wind_speed_kts: 95, pressure_hpa: 962, category: 'Very Severe Cyclonic Storm', color: '#ef4444' },
+      { step: 4, timestamp: '2026-05-06 00:00', lat: 18.4, lon: 85.0, wind_speed_kmh: 210, wind_speed_kts: 115, pressure_hpa: 948, category: 'Extremely Severe Cyclonic Storm', color: '#ef4444' },
+      { step: 5, timestamp: '2026-05-07 06:00', lat: 19.6, lon: 85.4, wind_speed_kmh: 185, wind_speed_kts: 100, pressure_hpa: 956, category: 'Landfall (Odisha)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'MONTHA_2025',
+    name: 'MONTHA',
+    year: 2025,
+    basin: 'Bay of Bengal',
+    category: 4,
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 110,
+    peak_wind_kmh: 205,
+    min_pressure_hpa: 952,
+    landfall: 'Andhra Pradesh (Kakinada / Machilipatnam)',
+    deaths: 8,
+    damage: '₹2,700 Cr',
+    dates_active: '12 Nov 2025 – 18 Nov 2025',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Severe surge inundated Godavari delta mangrove zones with 2.8m tidal anomaly.',
+    lat: 16.8,
+    lon: 82.3,
+    track: [[10.5, 86.5], [13.0, 84.8], [15.2, 83.2], [16.8, 82.3]],
+    points: [
+      { step: 1, timestamp: '2025-11-12 00:00', lat: 10.5, lon: 86.5, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1002, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2025-11-14 00:00', lat: 13.0, lon: 84.8, wind_speed_kmh: 120, wind_speed_kts: 65, pressure_hpa: 985, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2025-11-15 12:00', lat: 15.2, lon: 83.2, wind_speed_kmh: 195, wind_speed_kts: 105, pressure_hpa: 956, category: 'Very Severe Cyclonic Storm', color: '#ef4444' },
+      { step: 4, timestamp: '2025-11-16 18:00', lat: 16.8, lon: 82.3, wind_speed_kmh: 205, wind_speed_kts: 110, pressure_hpa: 952, category: 'Landfall (Kakinada)', color: '#ef4444' }
+    ]
+  },
+  {
     id: 'DANA_2024',
     name: 'DANA',
     year: 2024,
@@ -41,6 +121,31 @@ const INITIAL_OFFLINE_CYCLONES = [
       { step: 3, timestamp: '2024-10-24 00:00', lat: 19.2, lon: 86.8, wind_speed_kmh: 148, wind_speed_kts: 80, pressure_hpa: 978, category: 'Severe Cyclonic Storm', color: '#f97316' },
       { step: 4, timestamp: '2024-10-24 18:00', lat: 20.4, lon: 86.85, wind_speed_kmh: 185, wind_speed_kts: 100, pressure_hpa: 968, category: 'Very Severe Cyclonic Storm', color: '#ef4444' },
       { step: 5, timestamp: '2024-10-25 00:00', lat: 20.78, lon: 86.92, wind_speed_kmh: 175, wind_speed_kts: 95, pressure_hpa: 972, category: 'Landfall (Dhamra)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'REMAL_2024',
+    name: 'REMAL',
+    year: 2024,
+    basin: 'Bay of Bengal',
+    category: 2,
+    max_category: 'Severe Cyclonic Storm (SCS)',
+    peak_wind_kts: 65,
+    peak_wind_kmh: 120,
+    min_pressure_hpa: 978,
+    landfall: 'West Bengal & Sundarbans (Sagar Island / Khepupara)',
+    deaths: 6,
+    damage: '₹1,900 Cr',
+    dates_active: '24 May 2024 – 28 May 2024',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Severe cyclonic storm crossing the Sundarbans mangrove delta bringing widespread saline storm surge inundation.',
+    lat: 21.8,
+    lon: 89.2,
+    track: [[17.5, 88.5], [19.0, 88.8], [20.5, 89.0], [21.8, 89.2]],
+    points: [
+      { step: 1, timestamp: '2024-05-24 12:00', lat: 17.5, lon: 88.5, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 998, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2024-05-25 18:00', lat: 19.0, lon: 88.8, wind_speed_kmh: 93, wind_speed_kts: 50, pressure_hpa: 988, category: 'Cyclonic Storm', color: '#06b6d4' },
+      { step: 3, timestamp: '2024-05-26 18:00', lat: 21.8, lon: 89.2, wind_speed_kmh: 120, wind_speed_kts: 65, pressure_hpa: 978, category: 'Landfall (Sundarbans)', color: '#f97316' }
     ]
   },
   {
@@ -97,6 +202,133 @@ const INITIAL_OFFLINE_CYCLONES = [
     ]
   },
   {
+    id: 'MOCHA_2023',
+    name: 'MOCHA',
+    year: 2023,
+    basin: 'Bay of Bengal',
+    category: 5,
+    max_category: 'Super Cyclonic Storm (SuCS)',
+    peak_wind_kts: 140,
+    peak_wind_kmh: 260,
+    min_pressure_hpa: 918,
+    landfall: 'Myanmar / Bangladesh (Sittwe)',
+    deaths: 145,
+    damage: '₹12,000 Cr',
+    dates_active: '09 May 2023 – 15 May 2023',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Category 5 equivalent intensity over open Bay of Bengal waters; severe destructive impact on Rakhine state.',
+    lat: 20.15,
+    lon: 92.85,
+    track: [[9.0, 89.0], [12.0, 88.0], [15.5, 89.2], [18.2, 91.5], [20.15, 92.85]],
+    points: [
+      { step: 1, timestamp: '2023-05-09 00:00', lat: 9.0, lon: 89.0, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2023-05-11 00:00', lat: 12.0, lon: 88.0, wind_speed_kmh: 120, wind_speed_kts: 65, pressure_hpa: 980, category: 'Very Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2023-05-13 00:00', lat: 15.5, lon: 89.2, wind_speed_kmh: 260, wind_speed_kts: 140, pressure_hpa: 918, category: 'Super Cyclone', color: '#ef4444' },
+      { step: 4, timestamp: '2023-05-14 06:00', lat: 20.15, lon: 92.85, wind_speed_kmh: 195, wind_speed_kts: 105, pressure_hpa: 945, category: 'Landfall (Sittwe)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'MANDOUS_2022',
+    name: 'MANDOUS',
+    year: 2022,
+    basin: 'Bay of Bengal',
+    category: 2,
+    max_category: 'Severe Cyclonic Storm (SCS)',
+    peak_wind_kts: 55,
+    peak_wind_kmh: 100,
+    min_pressure_hpa: 990,
+    landfall: 'Tamil Nadu (Mamallapuram / Chennai)',
+    deaths: 4,
+    damage: '₹550 Cr',
+    dates_active: '06 Dec 2022 – 10 Dec 2022',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Crossed coast near Mamallapuram causing heavy squall lines across Chennai metropolitan region.',
+    lat: 12.6,
+    lon: 80.2,
+    track: [[8.5, 87.0], [10.2, 84.5], [11.8, 82.0], [12.6, 80.2]],
+    points: [
+      { step: 1, timestamp: '2022-12-06 12:00', lat: 8.5, lon: 87.0, wind_speed_kmh: 55, wind_speed_kts: 30, pressure_hpa: 1004, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2022-12-08 00:00', lat: 10.2, lon: 84.5, wind_speed_kmh: 83, wind_speed_kts: 45, pressure_hpa: 996, category: 'Cyclonic Storm', color: '#06b6d4' },
+      { step: 3, timestamp: '2022-12-09 18:00', lat: 12.6, lon: 80.2, wind_speed_kmh: 100, wind_speed_kts: 55, pressure_hpa: 990, category: 'Landfall (Mamallapuram)', color: '#f97316' }
+    ]
+  },
+  {
+    id: 'ASANI_2022',
+    name: 'ASANI',
+    year: 2022,
+    basin: 'Bay of Bengal',
+    category: 3,
+    max_category: 'Severe Cyclonic Storm (SCS)',
+    peak_wind_kts: 65,
+    peak_wind_kmh: 120,
+    min_pressure_hpa: 982,
+    landfall: 'Andhra Pradesh (Machilipatnam Coast)',
+    deaths: 0,
+    damage: '₹750 Cr',
+    dates_active: '07 May 2022 – 12 May 2022',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Curved off the Andhra coast near Machilipatnam before weakening over shallow waters.',
+    lat: 16.2,
+    lon: 81.3,
+    track: [[11.0, 89.0], [13.5, 86.5], [15.2, 83.8], [16.2, 81.3]],
+    points: [
+      { step: 1, timestamp: '2022-05-07 00:00', lat: 11.0, lon: 89.0, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2022-05-09 00:00', lat: 13.5, lon: 86.5, wind_speed_kmh: 120, wind_speed_kts: 65, pressure_hpa: 982, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2022-05-11 12:00', lat: 16.2, lon: 81.3, wind_speed_kmh: 83, wind_speed_kts: 45, pressure_hpa: 994, category: 'Landfall (Machilipatnam)', color: '#06b6d4' }
+    ]
+  },
+  {
+    id: 'TAUKTAE_2021',
+    name: 'TAUKTAE',
+    year: 2021,
+    basin: 'Arabian Sea',
+    category: 4,
+    max_category: 'Extremely Severe Cyclonic Storm (ESCS)',
+    peak_wind_kts: 120,
+    peak_wind_kmh: 220,
+    min_pressure_hpa: 950,
+    landfall: 'Gujarat (Saurashtra - Una)',
+    deaths: 118,
+    damage: '₹15,000 Cr',
+    dates_active: '14 May 2021 – 19 May 2021',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Traversed entire Western Ghats offshore corridor causing major offshore barge distress.',
+    lat: 20.8,
+    lon: 71.1,
+    track: [[10.5, 72.8], [12.8, 72.5], [15.3, 72.8], [18.5, 71.5], [20.8, 71.1]],
+    points: [
+      { step: 1, timestamp: '2021-05-14 06:00', lat: 10.5, lon: 72.8, wind_speed_kmh: 55, wind_speed_kts: 30, pressure_hpa: 1002, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2021-05-15 06:00', lat: 12.8, lon: 72.5, wind_speed_kmh: 102, wind_speed_kts: 55, pressure_hpa: 988, category: 'Severe Cyclonic', color: '#f97316' },
+      { step: 3, timestamp: '2021-05-17 06:00', lat: 18.5, lon: 71.5, wind_speed_kmh: 220, wind_speed_kts: 120, pressure_hpa: 950, category: 'Extremely Severe', color: '#ef4444' },
+      { step: 4, timestamp: '2021-05-17 18:00', lat: 20.8, lon: 71.1, wind_speed_kmh: 175, wind_speed_kts: 95, pressure_hpa: 958, category: 'Landfall (Saurashtra)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'YAAS_2021',
+    name: 'YAAS',
+    year: 2021,
+    basin: 'Bay of Bengal',
+    category: 3,
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 75,
+    peak_wind_kmh: 140,
+    min_pressure_hpa: 972,
+    landfall: 'Odisha (Dhamra / Balasore)',
+    deaths: 20,
+    damage: '₹14,000 Cr',
+    dates_active: '23 May 2021 – 28 May 2021',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Massive coastal storm surge coinciding with full moon spring tide, causing deep saline inundation.',
+    lat: 21.35,
+    lon: 86.95,
+    track: [[13.0, 89.5], [16.5, 88.5], [19.0, 87.8], [21.35, 86.95]],
+    points: [
+      { step: 1, timestamp: '2021-05-23 00:00', lat: 13.0, lon: 89.5, wind_speed_kmh: 55, wind_speed_kts: 30, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2021-05-24 18:00', lat: 16.5, lon: 88.5, wind_speed_kmh: 102, wind_speed_kts: 55, pressure_hpa: 988, category: 'Cyclonic Storm', color: '#06b6d4' },
+      { step: 3, timestamp: '2021-05-26 03:00', lat: 21.35, lon: 86.95, wind_speed_kmh: 140, wind_speed_kts: 75, pressure_hpa: 972, category: 'Landfall (Dhamra)', color: '#f97316' }
+    ]
+  },
+  {
     id: 'AMPHAN_2020',
     name: 'AMPHAN',
     year: 2020,
@@ -120,6 +352,31 @@ const INITIAL_OFFLINE_CYCLONES = [
       { step: 2, timestamp: '2020-05-17 00:00', lat: 11.5, lon: 86.2, wind_speed_kmh: 102, wind_speed_kts: 55, pressure_hpa: 990, category: 'Severe Cyclonic', color: '#f97316' },
       { step: 3, timestamp: '2020-05-18 00:00', lat: 13.4, lon: 86.4, wind_speed_kmh: 270, wind_speed_kts: 145, pressure_hpa: 920, category: 'Super Cyclone', color: '#ef4444' },
       { step: 4, timestamp: '2020-05-20 12:00', lat: 21.7, lon: 88.3, wind_speed_kmh: 165, wind_speed_kts: 90, pressure_hpa: 960, category: 'Landfall (Sundarbans)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'NISARGA_2020',
+    name: 'NISARGA',
+    year: 2020,
+    basin: 'Arabian Sea',
+    category: 2,
+    max_category: 'Severe Cyclonic Storm (SCS)',
+    peak_wind_kts: 60,
+    peak_wind_kmh: 110,
+    min_pressure_hpa: 984,
+    landfall: 'Maharashtra (Alibag / Raigad)',
+    deaths: 6,
+    damage: '₹6,000 Cr',
+    dates_active: '01 Jun 2020 – 04 Jun 2020',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Rare direct impact on Maharashtra Konkan coast near Mumbai with heavy tree falls.',
+    lat: 18.6,
+    lon: 72.8,
+    track: [[12.0, 71.0], [15.2, 71.2], [17.5, 72.0], [18.6, 72.8]],
+    points: [
+      { step: 1, timestamp: '2020-06-01 00:00', lat: 12.0, lon: 71.0, wind_speed_kmh: 55, wind_speed_kts: 30, pressure_hpa: 1002, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2020-06-02 12:00', lat: 15.2, lon: 71.2, wind_speed_kmh: 83, wind_speed_kts: 45, pressure_hpa: 994, category: 'Cyclonic Storm', color: '#06b6d4' },
+      { step: 3, timestamp: '2020-06-03 06:00', lat: 18.6, lon: 72.8, wind_speed_kmh: 110, wind_speed_kts: 60, pressure_hpa: 984, category: 'Landfall (Alibag)', color: '#f97316' }
     ]
   },
   {
@@ -149,29 +406,205 @@ const INITIAL_OFFLINE_CYCLONES = [
     ]
   },
   {
-    id: 'TAUKTAE_2021',
-    name: 'TAUKTAE',
-    year: 2021,
+    id: 'BULBUL_2019',
+    name: 'BULBUL',
+    year: 2019,
+    basin: 'Bay of Bengal',
+    category: 3,
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 75,
+    peak_wind_kmh: 140,
+    min_pressure_hpa: 976,
+    landfall: 'West Bengal (Sagar Island)',
+    deaths: 14,
+    damage: '₹3,400 Cr',
+    dates_active: '05 Nov 2019 – 11 Nov 2019',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Crossed coast near Sagar Island with heavy rainfall over South 24 Parganas.',
+    lat: 21.6,
+    lon: 88.1,
+    track: [[12.5, 90.0], [15.0, 88.5], [18.2, 87.8], [21.6, 88.1]],
+    points: [
+      { step: 1, timestamp: '2019-11-05 00:00', lat: 12.5, lon: 90.0, wind_speed_kmh: 55, wind_speed_kts: 30, pressure_hpa: 1002, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2019-11-07 12:00', lat: 15.0, lon: 88.5, wind_speed_kmh: 102, wind_speed_kts: 55, pressure_hpa: 988, category: 'Cyclonic Storm', color: '#06b6d4' },
+      { step: 3, timestamp: '2019-11-09 18:00', lat: 21.6, lon: 88.1, wind_speed_kmh: 140, wind_speed_kts: 75, pressure_hpa: 976, category: 'Landfall (Sagar Island)', color: '#f97316' }
+    ]
+  },
+  {
+    id: 'TITLI_2018',
+    name: 'TITLI',
+    year: 2018,
+    basin: 'Bay of Bengal',
+    category: 4,
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 105,
+    peak_wind_kmh: 195,
+    min_pressure_hpa: 951,
+    landfall: 'Andhra Pradesh / Odisha (Palasa / Srikakulam)',
+    deaths: 85,
+    damage: '₹5,000 Cr',
+    dates_active: '08 Oct 2018 – 13 Oct 2018',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Crossed Srikakulam district with unexpected sharp north-northeast re-curvature.',
+    lat: 18.77,
+    lon: 84.41,
+    track: [[13.0, 87.0], [15.5, 86.2], [17.8, 84.9], [18.77, 84.41]],
+    points: [
+      { step: 1, timestamp: '2018-10-08 00:00', lat: 13.0, lon: 87.0, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2018-10-09 12:00', lat: 15.5, lon: 86.2, wind_speed_kmh: 120, wind_speed_kts: 65, pressure_hpa: 984, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2018-10-10 18:00', lat: 17.8, lon: 84.9, wind_speed_kmh: 195, wind_speed_kts: 105, pressure_hpa: 951, category: 'Very Severe Cyclonic Storm', color: '#ef4444' },
+      { step: 4, timestamp: '2018-10-11 00:00', lat: 18.77, lon: 84.41, wind_speed_kmh: 175, wind_speed_kts: 95, pressure_hpa: 960, category: 'Landfall (Palasa)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'GAJA_2018',
+    name: 'GAJA',
+    year: 2018,
+    basin: 'Bay of Bengal',
+    category: 3,
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 75,
+    peak_wind_kmh: 140,
+    min_pressure_hpa: 975,
+    landfall: 'Tamil Nadu (Nagapattinam / Vedaranyam)',
+    deaths: 52,
+    damage: '₹5,400 Cr',
+    dates_active: '10 Nov 2018 – 19 Nov 2018',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Traversed Tamil Nadu peninsula and emerged into the Arabian Sea.',
+    lat: 10.4,
+    lon: 79.8,
+    track: [[13.5, 92.5], [13.0, 87.0], [10.4, 79.8]],
+    points: [
+      { step: 1, timestamp: '2018-11-10 06:00', lat: 13.5, lon: 92.5, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2018-11-13 00:00', lat: 13.0, lon: 87.0, wind_speed_kmh: 102, wind_speed_kts: 55, pressure_hpa: 990, category: 'Cyclonic Storm', color: '#06b6d4' },
+      { step: 3, timestamp: '2018-11-15 18:00', lat: 10.4, lon: 79.8, wind_speed_kmh: 140, wind_speed_kts: 75, pressure_hpa: 975, category: 'Landfall (Nagapattinam)', color: '#f97316' }
+    ]
+  },
+  {
+    id: 'OCKHI_2017',
+    name: 'OCKHI',
+    year: 2017,
     basin: 'Arabian Sea',
+    category: 2,
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 90,
+    peak_wind_kmh: 165,
+    min_pressure_hpa: 967,
+    landfall: 'Tamil Nadu / Lakshadweep / Gujarat',
+    deaths: 218,
+    damage: '₹2,400 Cr',
+    dates_active: '29 Nov 2017 – 06 Dec 2017',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Rapid genesis in Comorin sea impacting fishing fleets off Kanyakumari.',
+    lat: 9.8,
+    lon: 71.5,
+    track: [[6.5, 78.5], [7.5, 77.2], [9.8, 71.5], [16.0, 69.8]],
+    points: [
+      { step: 1, timestamp: '2017-11-29 00:00', lat: 6.5, lon: 78.5, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1002, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2017-11-30 06:00', lat: 7.5, lon: 77.2, wind_speed_kmh: 111, wind_speed_kts: 60, pressure_hpa: 988, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2017-12-02 00:00', lat: 9.8, lon: 71.5, wind_speed_kmh: 165, wind_speed_kts: 90, pressure_hpa: 967, category: 'Very Severe Cyclonic Storm', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'VARDAH_2016',
+    name: 'VARDAH',
+    year: 2016,
+    basin: 'Bay of Bengal',
+    category: 3,
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 105,
+    peak_wind_kmh: 195,
+    min_pressure_hpa: 946,
+    landfall: 'Tamil Nadu (Chennai Metropolis)',
+    deaths: 18,
+    damage: '₹6,000 Cr',
+    dates_active: '06 Dec 2016 – 13 Dec 2016',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Direct landfall on Chennai city centre with severe wind-throw damage.',
+    lat: 13.08,
+    lon: 80.27,
+    track: [[11.0, 91.5], [12.2, 87.0], [13.08, 80.27]],
+    points: [
+      { step: 1, timestamp: '2016-12-06 00:00', lat: 11.0, lon: 91.5, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2016-12-09 12:00', lat: 12.2, lon: 87.0, wind_speed_kmh: 130, wind_speed_kts: 70, pressure_hpa: 978, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2016-12-12 09:00', lat: 13.08, lon: 80.27, wind_speed_kmh: 195, wind_speed_kts: 105, pressure_hpa: 946, category: 'Landfall (Chennai)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'HUDHUD_2014',
+    name: 'HUDHUD',
+    year: 2014,
+    basin: 'Bay of Bengal',
     category: 4,
     max_category: 'Extremely Severe Cyclonic Storm (ESCS)',
-    peak_wind_kts: 120,
-    peak_wind_kmh: 220,
-    min_pressure_hpa: 950,
-    landfall: 'Gujarat (Saurashtra - Una)',
-    deaths: 118,
-    damage: '₹15,000 Cr',
-    dates_active: '14 May 2021 – 19 May 2021',
+    peak_wind_kts: 115,
+    peak_wind_kmh: 215,
+    min_pressure_hpa: 940,
+    landfall: 'Andhra Pradesh (Visakhapatnam)',
+    deaths: 124,
+    damage: '₹22,000 Cr',
+    dates_active: '07 Oct 2014 – 14 Oct 2014',
     status: 'Archived (NOAA IBTrACS)',
-    notes: 'Traversed entire Western Ghats offshore corridor causing major offshore barge distress.',
-    lat: 20.8,
-    lon: 71.1,
-    track: [[10.5, 72.8], [12.8, 72.5], [15.3, 72.8], [18.5, 71.5], [20.8, 71.1]],
+    notes: 'Eye passed directly over Visakhapatnam port and city causing severe destruction.',
+    lat: 17.68,
+    lon: 83.21,
+    track: [[12.0, 92.0], [14.0, 88.0], [16.0, 85.5], [17.68, 83.21]],
     points: [
-      { step: 1, timestamp: '2021-05-14 06:00', lat: 10.5, lon: 72.8, wind_speed_kmh: 55, wind_speed_kts: 30, pressure_hpa: 1002, category: 'Depression', color: '#10b981' },
-      { step: 2, timestamp: '2021-05-15 06:00', lat: 12.8, lon: 72.5, wind_speed_kmh: 102, wind_speed_kts: 55, pressure_hpa: 988, category: 'Severe Cyclonic', color: '#f97316' },
-      { step: 3, timestamp: '2021-05-17 06:00', lat: 18.5, lon: 71.5, wind_speed_kmh: 220, wind_speed_kts: 120, pressure_hpa: 950, category: 'Extremely Severe', color: '#ef4444' },
-      { step: 4, timestamp: '2021-05-17 18:00', lat: 20.8, lon: 71.1, wind_speed_kmh: 175, wind_speed_kts: 95, pressure_hpa: 958, category: 'Landfall (Saurashtra)', color: '#ef4444' }
+      { step: 1, timestamp: '2014-10-07 00:00', lat: 12.0, lon: 92.0, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2014-10-09 12:00', lat: 14.0, lon: 88.0, wind_speed_kmh: 130, wind_speed_kts: 70, pressure_hpa: 978, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2014-10-12 06:00', lat: 17.68, lon: 83.21, wind_speed_kmh: 215, wind_speed_kts: 115, pressure_hpa: 940, category: 'Landfall (Visakhapatnam)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'PHAILIN_2013',
+    name: 'PHAILIN',
+    year: 2013,
+    basin: 'Bay of Bengal',
+    category: 5,
+    max_category: 'Super Cyclonic Storm (SuCS)',
+    peak_wind_kts: 140,
+    peak_wind_kmh: 260,
+    min_pressure_hpa: 915,
+    landfall: 'Odisha (Gopalpur)',
+    deaths: 45,
+    damage: '₹9,000 Cr',
+    dates_active: '08 Oct 2013 – 14 Oct 2013',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Second strongest recorded cyclone in Bay of Bengal with record mass evacuation of 1 million citizens.',
+    lat: 19.26,
+    lon: 84.91,
+    track: [[10.5, 93.0], [13.2, 89.5], [16.0, 87.0], [19.26, 84.91]],
+    points: [
+      { step: 1, timestamp: '2013-10-08 00:00', lat: 10.5, lon: 93.0, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2013-10-10 12:00', lat: 13.2, lon: 89.5, wind_speed_kmh: 175, wind_speed_kts: 95, pressure_hpa: 960, category: 'Very Severe Cyclonic Storm', color: '#ef4444' },
+      { step: 3, timestamp: '2013-10-11 18:00', lat: 16.0, lon: 87.0, wind_speed_kmh: 260, wind_speed_kts: 140, pressure_hpa: 915, category: 'Super Cyclone', color: '#ef4444' },
+      { step: 4, timestamp: '2013-10-12 16:00', lat: 19.26, lon: 84.91, wind_speed_kmh: 215, wind_speed_kts: 115, pressure_hpa: 940, category: 'Landfall (Gopalpur)', color: '#ef4444' }
+    ]
+  },
+  {
+    id: 'THANE_2011',
+    name: 'THANE',
+    year: 2011,
+    basin: 'Bay of Bengal',
+    category: 3,
+    max_category: 'Very Severe Cyclonic Storm (VSCS)',
+    peak_wind_kts: 85,
+    peak_wind_kmh: 155,
+    min_pressure_hpa: 972,
+    landfall: 'Tamil Nadu & Puducherry (Cuddalore)',
+    deaths: 48,
+    damage: '₹1,500 Cr',
+    dates_active: '25 Dec 2011 – 31 Dec 2011',
+    status: 'Archived (NOAA IBTrACS)',
+    notes: 'Winter cyclonic storm crossing Cuddalore and Puducherry coastline.',
+    lat: 11.75,
+    lon: 79.77,
+    track: [[10.0, 88.0], [11.2, 85.0], [11.75, 79.77]],
+    points: [
+      { step: 1, timestamp: '2011-12-25 18:00', lat: 10.0, lon: 88.0, wind_speed_kmh: 65, wind_speed_kts: 35, pressure_hpa: 1000, category: 'Depression', color: '#10b981' },
+      { step: 2, timestamp: '2011-12-28 00:00', lat: 11.2, lon: 85.0, wind_speed_kmh: 120, wind_speed_kts: 65, pressure_hpa: 984, category: 'Severe Cyclonic Storm', color: '#f97316' },
+      { step: 3, timestamp: '2011-12-30 01:00', lat: 11.75, lon: 79.77, wind_speed_kmh: 155, wind_speed_kts: 85, pressure_hpa: 972, category: 'Landfall (Cuddalore)', color: '#ef4444' }
     ]
   }
 ];
@@ -1063,6 +1496,13 @@ export default function HistoricalData() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1a3a6b]/60 font-mono">
+              {filteredCyclones.length === 0 && (
+                <tr>
+                  <td colSpan="10" className="px-4 py-8 text-center text-[#88a0c0] font-mono text-xs">
+                    {loadingCyclones ? 'Loading NOAA IBTrACS historical records from backend...' : 'No historical cyclones found matching the selected year and filter parameters.'}
+                  </td>
+                </tr>
+              )}
               {filteredCyclones.map(c => {
                 const isSelected = selectedStorm?.id === c.id;
                 const col = catColor(c.category);

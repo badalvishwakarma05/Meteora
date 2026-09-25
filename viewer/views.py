@@ -1,7 +1,7 @@
 import os
 import sys
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .forms import CyclonePatchForm
@@ -714,6 +714,13 @@ def api_historical_cyclones_view(request):
         get_historical_cyclones_by_year = None
         get_cyclone_dossier_by_id = None
 
+    if request.method == "OPTIONS":
+        resp = HttpResponse()
+        resp['Access-Control-Allow-Origin'] = '*'
+        resp['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
+        resp['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+        return resp
+
     if cyclone_id and get_cyclone_dossier_by_id:
         dossier = get_cyclone_dossier_by_id(cyclone_id)
         resp = JsonResponse({
@@ -721,6 +728,8 @@ def api_historical_cyclones_view(request):
             "cyclone": dossier
         })
         resp['Access-Control-Allow-Origin'] = '*'
+        resp['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        resp['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
         return resp
 
     year_val = int(year_param) if year_param and str(year_param).isdigit() else None
@@ -738,6 +747,8 @@ def api_historical_cyclones_view(request):
         "cyclones": cyclones
     })
     resp['Access-Control-Allow-Origin'] = '*'
+    resp['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    resp['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
     return resp
 
 @csrf_exempt
@@ -745,6 +756,13 @@ def api_predict_trajectory_view(request):
     """
     CNN-LSTM 72-Hour Trajectory Prediction Engine endpoint.
     """
+    if request.method == "OPTIONS":
+        resp = HttpResponse()
+        resp['Access-Control-Allow-Origin'] = '*'
+        resp['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
+        resp['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+        return resp
+
     import json
     data = {}
     if request.method == "POST":
@@ -782,7 +800,8 @@ def api_predict_trajectory_view(request):
         }, status=500)
 
     resp['Access-Control-Allow-Origin'] = '*'
-    resp['Access-Control-Allow-Headers'] = '*'
+    resp['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    resp['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
     return resp
 
 @csrf_exempt
@@ -792,6 +811,13 @@ def api_live_weather_view(request):
     Fetches real-time temperature, wind speed, wind direction, surface pressure,
     relative humidity, and 3-hour barometric tendencies for given coordinates.
     """
+    if request.method == "OPTIONS":
+        resp = HttpResponse()
+        resp['Access-Control-Allow-Origin'] = '*'
+        resp['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
+        resp['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+        return resp
+
     import json
     lat_param = request.GET.get('lat') or request.GET.get('latitude')
     lon_param = request.GET.get('lon') or request.GET.get('longitude')
@@ -822,7 +848,8 @@ def api_live_weather_view(request):
         }, status=500)
 
     resp['Access-Control-Allow-Origin'] = '*'
-    resp['Access-Control-Allow-Headers'] = '*'
+    resp['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    resp['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
     return resp
 
 

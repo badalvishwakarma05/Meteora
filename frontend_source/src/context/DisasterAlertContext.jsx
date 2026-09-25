@@ -284,19 +284,20 @@ export function DisasterAlertProvider({ children }) {
     setLiveWeatherLoading(true);
     try {
       const data = await fetchLiveWeather(targetLat, targetLon);
-      if (data && data.success && data.current) {
+      if (data && data.success) {
         setLiveWeatherData(data);
+        const curr = data.current || data;
         setLiveTelemetry(prev => ({
           ...prev,
-          surfaceWind: data.current.wind_speed_kmh,
-          gusts: data.current.wind_gusts_kmh,
-          pressure: data.current.surface_pressure_hpa,
-          temperature: data.current.temperature_c,
-          humidity: data.current.relative_humidity_pct,
-          windDirection: data.current.wind_direction_cardinal,
-          conditionText: data.current.condition_text,
-          pressureTendency: data.current.pressure_tendency_3h_hpa,
-          lastUpdate: `Open-Meteo Live · ${data.current.timestamp_utc}`,
+          surfaceWind: curr.wind_speed_kmh ?? data.wind_speed_kmh ?? prev.surfaceWind,
+          gusts: curr.wind_gusts_kmh ?? data.wind_gusts_kmh ?? prev.gusts,
+          pressure: curr.surface_pressure_hpa ?? data.surface_pressure_hpa ?? prev.pressure,
+          temperature: curr.temperature_c ?? data.temperature_c ?? prev.temperature,
+          humidity: curr.relative_humidity_pct ?? data.relative_humidity_pct ?? prev.humidity,
+          windDirection: curr.wind_direction_cardinal ?? data.wind_cardinal_direction ?? prev.windDirection,
+          conditionText: curr.condition_text ?? data.weather_description ?? prev.conditionText,
+          pressureTendency: curr.pressure_tendency_3h_hpa ?? data.pressure_tendency_3h_hpa ?? prev.pressureTendency,
+          lastUpdate: `Open-Meteo Live · ${curr.timestamp_utc || data.timestamp || 'Real-Time'}`,
         }));
       }
     } catch (err) {
