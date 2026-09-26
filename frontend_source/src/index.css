@@ -749,3 +749,64 @@ html.light .leaflet-control-zoom a:hover {
   color: #ffffff !important;
 }
 
+/* =========================================================================
+   METEOROLOGICAL ANIMATIONS: CYCLONE RADAR SWIRL & DOPPLER SWEEP
+   ========================================================================= */
+@keyframes cyclone-rotate-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes cyclone-rotate-cw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes vortex-pulse-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.4)) drop-shadow(0 0 35px rgba(0, 119, 182, 0.2));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 28px rgba(0, 212, 255, 0.7)) drop-shadow(0 0 55px rgba(0, 119, 182, 0.45));
+    transform: scale(1.02);
+  }
+}
+
+.animate-cyclone-ccw {
+  animation: cyclone-rotate-ccw 14s linear infinite;
+  will-change: transform;
+}
+
+.animate-cyclone-cw {
+  animation: cyclone-rotate-cw 18s linear infinite;
+  will-change: transform;
+}
+
+.animate-radar-sweep {
+  animation: radar-sweep 4s linear infinite;
+  will-change: transform;
+}
+
+.animate-vortex-glow {
+  animation: vortex-pulse-glow 4s ease-in-out infinite;
+  will-change: filter, transform;
+}
+

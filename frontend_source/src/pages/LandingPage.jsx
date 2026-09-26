@@ -8,6 +8,8 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
+import MeteorologicalCanvas from '../components/MeteorologicalCanvas';
+import CycloneRadarVortex from '../components/CycloneRadarVortex';
 
 export default function LandingPage() {
   const { isAuthenticated, currentUser, login, signup, loginAsDemo, loginAsCitizen } = useAuth();
@@ -244,11 +246,26 @@ export default function LandingPage() {
 
       {/* HERO SECTION: ICON, TITLE, AND THE TWO PORTAL OPTIONS */}
       <section className="relative pt-16 sm:pt-20 pb-14 px-4 sm:px-6 border-b border-slate-200 dark:border-[#1a3a6b]/60 overflow-hidden bg-gradient-to-b from-slate-100 via-white to-slate-100 dark:from-[#0a1628] dark:via-[#0d1f3c] dark:to-[#0a1628]">
+        {/* Meteorological Atmospheric Canvas (Subtle Falling Rain & Wind Streaks) */}
+        <MeteorologicalCanvas mode="combo" density="medium" opacity={0.65} />
+
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          {/* Prominent App Icon */}
+          {/* Prominent App Icon with Rotating Cyclone Radar Vortex Behind It */}
           <div className="inline-flex items-center justify-center mb-5 relative">
+            {/* Animated Rotating Cyclone Radar Vortex graphic behind the METEORA logo */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 pointer-events-none opacity-50 dark:opacity-75 animate-vortex-glow scale-90 sm:scale-100">
+              <CycloneRadarVortex
+                size={340}
+                status="cyan"
+                showScanline={true}
+                showLabels={true}
+                showRings={true}
+                speed="normal"
+              />
+            </div>
+
             <div
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center shadow-2xl border border-cyan-500/40 bg-gradient-to-br from-[#00d4ff] to-[#0066cc] text-[#050d1a] relative shadow-[0_0_30px_rgba(0,212,255,0.35)]"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center shadow-2xl border border-cyan-500/40 bg-gradient-to-br from-[#00d4ff] to-[#0066cc] text-[#050d1a] relative shadow-[0_0_35px_rgba(0,212,255,0.45)] backdrop-blur-sm"
             >
               <Zap size={44} className="text-[#050d1a]" />
               <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4">

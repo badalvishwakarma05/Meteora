@@ -9,6 +9,7 @@ import { useToast } from '../context/ToastContext';
 import { useDisasterAlert } from '../context/DisasterAlertContext';
 import { useTheme } from '../context/ThemeContext';
 import UserProfileModal from './UserProfileModal';
+import CycloneRadarVortex from './CycloneRadarVortex';
 
 export default function TopNav() {
   const { currentUser, logout } = useAuth();
@@ -89,6 +90,17 @@ export default function TopNav() {
         {/* Left: Meteorological Authority & Live Sync (METEORA) */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap shrink-0">
           <div className="flex items-center gap-2 text-xs">
+            {/* Live Radar Vortex Badge */}
+            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-[#0a1628] border border-cyan-500/30 flex items-center justify-center overflow-hidden shrink-0 shadow-sm" title="Live Synoptic Radar Swirl">
+              <CycloneRadarVortex
+                size={26}
+                status={condition || 'cyan'}
+                showScanline={true}
+                showRings={true}
+                speed={condition === 'severe' ? 'fast' : 'normal'}
+              />
+            </div>
+
             <span className="px-2 py-0.5 rounded-md font-bold text-[10px] bg-cyan-50 dark:bg-gradient-to-r dark:from-blue-500/20 dark:to-cyan-500/20 text-cyan-700 dark:text-[#00d4ff] border border-cyan-300 dark:border-[#00d4ff]/30">
               MoES · IMD
             </span>

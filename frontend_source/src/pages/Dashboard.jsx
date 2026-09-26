@@ -17,6 +17,8 @@ import MultiModalEngineWidget from '../components/MultiModalEngineWidget';
 import { activeCyclones, intensityHistory } from '../data/mockData';
 import { useToast } from '../context/ToastContext';
 import { useDisasterAlert } from '../context/DisasterAlertContext';
+import MeteorologicalCanvas from '../components/MeteorologicalCanvas';
+import CycloneRadarVortex from '../components/CycloneRadarVortex';
 
 function Countdown() {
   const [secs, setSecs] = useState(211);
@@ -141,11 +143,21 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-4 pb-6 relative">
       {/* SYNCHRONIZED FORECAST RECORDING & CITIZEN BROADCAST BAR */}
-      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-slate-200 dark:border-[#1a3a6b]/70 bg-white dark:bg-[#0d1f3c]/90 shadow-xl backdrop-blur-md transition-all duration-500">
-        {/* Left: Forecast Assessment Information */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] flex items-center justify-center flex-shrink-0">
-            <BannerIcon size={18} className={condition === 'severe' ? 'text-red-500 dark:text-red-400' : condition === 'intermediate' ? 'text-amber-500 dark:text-yellow-400' : 'text-emerald-500 dark:text-emerald-400'} />
+      <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-slate-200 dark:border-[#1a3a6b]/70 bg-white dark:bg-[#0d1f3c]/90 shadow-xl backdrop-blur-md transition-all duration-500 relative overflow-hidden">
+        {/* Subtle Background Meteorological Streamlines and Rain */}
+        <MeteorologicalCanvas mode="combo" density="low" opacity={0.25} />
+
+        {/* Left: Forecast Assessment Information with Live Cyclone Radar Vortex */}
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-[#0a1628] border border-slate-200 dark:border-[#1a3a6b] flex items-center justify-center flex-shrink-0 relative overflow-hidden shadow-inner group">
+            {/* Live Cyclone Radar Swirl Graphic */}
+            <CycloneRadarVortex
+              size={54}
+              status={condition}
+              showScanline={true}
+              showRings={true}
+              speed={condition === 'severe' ? 'fast' : condition === 'intermediate' ? 'normal' : 'slow'}
+            />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">

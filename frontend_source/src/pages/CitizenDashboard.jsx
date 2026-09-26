@@ -9,6 +9,8 @@ import { useAuth } from '../context/AuthContext';
 import { useDisasterAlert } from '../context/DisasterAlertContext';
 import { useToast } from '../context/ToastContext';
 import { CITIZEN_TRANSLATIONS } from '../data/citizenTranslations';
+import MeteorologicalCanvas from '../components/MeteorologicalCanvas';
+import CycloneRadarVortex from '../components/CycloneRadarVortex';
 
 export default function CitizenDashboard() {
   const { currentUser, updateProfile } = useAuth();
@@ -458,7 +460,21 @@ export default function CitizenDashboard() {
             <div
               className="w-full p-6 sm:p-8 lg:p-10 rounded-3xl border border-[#1a3a6b] bg-gradient-to-br from-[#0d1f3c] via-[#102a4c] to-[#0a1628] shadow-2xl relative overflow-hidden transition-all duration-700"
             >
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              {/* Meteorological Canvas Background (Subtle Rain & Wind Particles) */}
+              <MeteorologicalCanvas mode="combo" density="low" opacity={0.3} />
+
+              {/* Ambient Rotating Cyclone Radar Vortex graphic in background */}
+              <div className="absolute -right-12 sm:right-10 top-1/2 -translate-y-1/2 pointer-events-none opacity-20 sm:opacity-35 -z-0">
+                <CycloneRadarVortex
+                  size={320}
+                  status={condition}
+                  showScanline={true}
+                  showRings={true}
+                  speed={condition === 'severe' ? 'fast' : condition === 'intermediate' ? 'normal' : 'slow'}
+                />
+              </div>
+
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
                 {/* Left Side: Glowing Lamp + Condition Details */}
                 <div className="flex items-start sm:items-center gap-5">
                   <div className="relative flex items-center justify-center flex-shrink-0 pt-1 sm:pt-0">
