@@ -851,3 +851,17 @@ html.light .leaflet-control-zoom a:hover {
   will-change: filter, transform;
 }
 
+@keyframes cyber-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.25), inset 0 0 15px rgba(0, 212, 255, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 45px rgba(0, 212, 255, 0.45), inset 0 0 25px rgba(0, 212, 255, 0.15);
+  }
+}
+
+.animate-cyber-glow {
+  animation: cyber-glow-pulse 4s ease-in-out infinite;
+}
+
+

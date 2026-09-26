@@ -11,6 +11,7 @@ import { useTheme } from '../context/ThemeContext';
 import MeteorologicalCanvas from '../components/MeteorologicalCanvas';
 import CycloneRadarVortex from '../components/CycloneRadarVortex';
 import AuthModal from '../components/AuthModal';
+import CycloneSatelliteCarousel from '../components/CycloneSatelliteCarousel';
 
 export default function LandingPage() {
   const { isAuthenticated, currentUser, login, loginAsDemo, loginAsCitizen } = useAuth();
@@ -334,6 +335,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* AUTOMATED CYCLONE & SATELLITE RADAR TELEMETRY CAROUSEL */}
+      <CycloneSatelliteCarousel />
 
       {/* CORE SYSTEM CAPABILITIES */}
       <section className="py-14 px-4 sm:px-6 bg-slate-100/70 dark:bg-[#0d1f3c] border-b border-slate-200 dark:border-[#1a3a6b]/60">
