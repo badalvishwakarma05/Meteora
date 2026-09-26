@@ -423,30 +423,30 @@ export default function CitizenDashboard() {
         {activeTab === 'situation' && (
           <div className="space-y-6 w-full">
             {/* ATMOSPHERIC TELEMETRY BANNER */}
-            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-[#0d1f3c] border border-[#1a3a6b] shadow-lg font-mono">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#0d1f3c] border border-slate-200 dark:border-[#1a3a6b] shadow-lg font-mono transition-colors">
               <div className="flex items-center gap-2.5">
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00d4ff]"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500 dark:bg-[#00d4ff]"></span>
                 </span>
-                <span className="text-[11px] font-bold tracking-wider text-[#00d4ff] uppercase">
+                <span className="text-[11px] font-bold tracking-wider text-cyan-700 dark:text-[#00d4ff] uppercase">
                   {isLiveWeatherActive ? 'LIVE ATMOSPHERIC TELEMETRY STREAM' : 'SYNOPTIC STREAM PAUSED'}
                 </span>
-                <span className="hidden sm:inline text-slate-600">|</span>
-                <span className="hidden md:inline text-[11px] text-[#7090b0]">
-                  IMD Doppler Radar & INSAT-3DR Continuous Telemetry
+                <span className="hidden sm:inline text-slate-400 dark:text-slate-600">|</span>
+                <span className="hidden md:inline text-[11px] text-slate-500 dark:text-[#7090b0]">
+                  IMD Doppler Radar &amp; INSAT-3DR Continuous Telemetry
                 </span>
               </div>
 
               <div className="flex items-center gap-3 text-[11px]">
-                <span className="text-slate-300">
-                  Wind: <strong className="text-white font-bold">{activeCyclone?.wind || 185} km/h</strong>
+                <span className="text-slate-600 dark:text-slate-300">
+                  Wind: <strong className="text-slate-900 dark:text-white font-bold">{activeCyclone?.wind || 185} km/h</strong>
                 </span>
-                <span className="text-slate-300 hidden sm:inline">
-                  Pressure: <strong className="text-white font-bold">{activeCyclone?.pressure || 948} hPa</strong>
+                <span className="text-slate-600 dark:text-slate-300 hidden sm:inline">
+                  Pressure: <strong className="text-slate-900 dark:text-white font-bold">{activeCyclone?.pressure || 948} hPa</strong>
                 </span>
-                <span className="text-slate-300 hidden md:inline">
-                  Surge: <strong className="text-white font-bold">{activeCyclone?.surge || '3.5m'}</strong>
+                <span className="text-slate-600 dark:text-slate-300 hidden md:inline">
+                  Surge: <strong className="text-slate-900 dark:text-white font-bold">{activeCyclone?.surge || '3.5m'}</strong>
                 </span>
                 <span
                   className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${lampConfig.badgeBg}`}
@@ -458,7 +458,7 @@ export default function CitizenDashboard() {
 
             {/* 1. HERO SITUATION & GLOWING LAMP CARD */}
             <div
-              className="w-full p-6 sm:p-8 lg:p-10 rounded-3xl border border-[#1a3a6b] bg-gradient-to-br from-[#0d1f3c] via-[#102a4c] to-[#0a1628] shadow-2xl relative overflow-hidden transition-all duration-700"
+              className="w-full p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-gradient-to-br dark:from-[#0d1f3c] dark:via-[#102a4c] dark:to-[#0a1628] shadow-2xl relative overflow-hidden transition-all duration-700"
             >
               {/* Meteorological Canvas Background (Subtle Rain & Wind Particles) */}
               <MeteorologicalCanvas mode="combo" density="low" opacity={0.3} />
@@ -479,7 +479,7 @@ export default function CitizenDashboard() {
                 <div className="flex items-start sm:items-center gap-5">
                   <div className="relative flex items-center justify-center flex-shrink-0 pt-1 sm:pt-0">
                     <div
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center p-2 shadow-2xl border-2 border-white/20 bg-[#0a1628]"
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center p-2 shadow-2xl border-2 border-slate-300 dark:border-white/20 bg-slate-100 dark:bg-[#0a1628]"
                     >
                       <div
                         className="w-10 h-10 sm:w-12 sm:h-12 rounded-full lamp-active relative flex items-center justify-center transition-all duration-700"
@@ -499,16 +499,16 @@ export default function CitizenDashboard() {
                       <span className={`text-xs px-3 py-1 rounded-lg font-bold font-mono tracking-wider uppercase border ${lampConfig.badgeBg}`}>
                         {lampConfig.label}
                       </span>
-                      <span className="text-xs text-[#7090b0] font-mono">
+                      <span className="text-xs text-slate-500 dark:text-[#7090b0] font-mono">
                         {activeCyclone?.name || 'CYCLONE DANA (BOB-02)'}
                       </span>
                     </div>
 
-                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-wide">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white tracking-wide">
                       {lampConfig.desc}
                     </h1>
 
-                    <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-2xl leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 max-w-2xl leading-relaxed">
                       {activeBulletin?.headline || "Very Severe Cyclonic Storm 'DANA' approaching Odisha & Bengal coast. Move to nearest cyclone shelter immediately."}
                     </p>
                   </div>
@@ -517,12 +517,12 @@ export default function CitizenDashboard() {
                 {/* Right Side: Landfall ETA Countdown & Audible Speech Button */}
                 <div className="flex flex-col sm:flex-row lg:flex-col gap-3 flex-shrink-0 font-mono">
                   {/* Landfall ETA Badge */}
-                  <div className="px-4 py-3 rounded-2xl bg-[#0a1628]/80 border border-[#1a3a6b] text-center backdrop-blur">
-                    <span className="text-[10px] text-[#7090b0] uppercase font-bold tracking-wider block">
+                  <div className="px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#0a1628]/80 border border-slate-200 dark:border-[#1a3a6b] text-center backdrop-blur shadow-sm">
+                    <span className="text-[10px] text-slate-500 dark:text-[#7090b0] uppercase font-bold tracking-wider block">
                       {t.landfallEta}
                     </span>
                     <span
-                      className="text-lg sm:text-xl font-black text-[#00d4ff] mt-0.5 block"
+                      className="text-lg sm:text-xl font-black text-cyan-700 dark:text-[#00d4ff] mt-0.5 block"
                     >
                       {activeCyclone?.etaHours || '5h 30m'}
                     </span>

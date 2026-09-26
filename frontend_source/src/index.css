@@ -149,6 +149,10 @@ html.light [class*="border-\[\#1a3a6b\]"],
 html.light [class*="dark:border-\[\#1a3a6b\]"] {
   border-color: #cbd5e1 !important;
 }
+/* 3. Text Contrast & Color re-mappings in Light Mode */
+html.light .text-\[\#00d4ff\],
+html.light .text-\[\#00d4ff\]\/90,
+html.light .text-\[\#00d4ff\]\/80,
 html.light .text-cyan-300,
 html.light .text-cyan-400,
 html.light .text-sky-200,
@@ -160,6 +164,38 @@ html.light .text-sky-400 {
 html.light .text-cyan-500,
 html.light .text-sky-500 {
   color: #0369a1 !important;
+}
+
+html.light .text-\[\#88a0c0\],
+html.light .text-\[\#8892a4\],
+html.light .text-\[\#7090b0\],
+html.light .text-\[\#88a0c0\]\/80,
+html.light .text-\[\#88a0c0\]\/70,
+html.light .text-\[\#88a0c0\]\/60,
+html.light .text-\[\#8892a4\]\/80,
+html.light .text-\[\#8892a4\]\/70,
+html.light .text-\[\#8892a4\]\/60 {
+  color: #475569 !important;
+}
+
+html.light .text-slate-100,
+html.light .text-slate-200,
+html.light .text-slate-300,
+html.light .text-gray-100,
+html.light .text-gray-200,
+html.light .text-gray-300 {
+  color: #1e293b !important;
+}
+
+html.light .text-slate-400,
+html.light .text-gray-400,
+html.light .text-zinc-400 {
+  color: #475569 !important;
+}
+
+html.light .text-slate-500,
+html.light .text-gray-500 {
+  color: #64748b !important;
 }
 
 html.light .text-\[\#00c851\],
@@ -195,6 +231,11 @@ html.light .text-rose-200,
 html.light .text-rose-300,
 html.light .text-rose-400 {
   color: #dc2626 !important;
+}
+
+/* Light mode text-white override on light surfaces (excluding solid colored buttons and pills) */
+html.light .text-white:not(button.bg-red-600 *):not(button.bg-rose-700 *):not(button.bg-emerald-500 *):not(button.bg-emerald-600 *):not(button.bg-teal-600 *):not(button.bg-blue-600 *):not(button.bg-cyan-600 *):not(.bg-gradient-to-r.from-emerald-500 *):not(.bg-gradient-to-r.from-red-600 *):not(.bg-gradient-to-r.from-blue-600 *):not(.bg-gradient-to-r.from-cyan-500 *):not(.bg-blue-600 *):not(.bg-emerald-600 *):not(.bg-red-600 *):not(.bg-red-600):not(.bg-emerald-600):not(.bg-blue-600):not(.bg-cyan-500):not(.bg-teal-600):not(.bg-teal-600 *):not([class*="bg-red-600"] *):not([class*="bg-emerald-600"] *):not([class*="bg-blue-600"] *) {
+  color: #0f172a !important;
 }
 
 /* 4. Background & Gradient re-mappings for Cards, Drawers, Sidebars */

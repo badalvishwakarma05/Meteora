@@ -845,16 +845,16 @@ export default function HistoricalData() {
       </div>
 
       {/* 2. DEDICATED 11-YEAR HISTORICAL SELECTOR STRIP (2011 to 2026) */}
-      <div className="rounded-2xl p-4 border border-[#1a3a6b] bg-[#0d1f3c]/90 shadow-xl backdrop-blur-md">
+      <div className="rounded-2xl p-4 border border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c]/90 shadow-xl backdrop-blur-md transition-colors">
         <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
           <div className="flex items-center gap-2">
-            <Calendar size={16} className="text-[#00d4ff]" />
-            <span className="text-xs font-bold uppercase tracking-wider text-[#00d4ff] font-mono">
+            <Calendar size={16} className="text-cyan-600 dark:text-[#00d4ff]" />
+            <span className="text-xs font-bold uppercase tracking-wider text-cyan-700 dark:text-[#00d4ff] font-mono">
               Select Synoptic Season (2011 – 2026 Complete Climatology)
             </span>
           </div>
-          <span className="text-[11px] font-mono text-[#88a0c0]">
-            Showing <strong className="text-white">{filteredCyclones.length}</strong> cyclones for selected timeframe
+          <span className="text-[11px] font-mono text-slate-500 dark:text-[#88a0c0]">
+            Showing <strong className="text-slate-900 dark:text-white">{filteredCyclones.length}</strong> cyclones for selected timeframe
           </span>
         </div>
 
@@ -864,8 +864,8 @@ export default function HistoricalData() {
             onClick={() => handleYearChange('all')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-mono transition-all whitespace-nowrap cursor-pointer ${
               selectedYear === 'all'
-                ? 'bg-[#00d4ff] text-[#050d1a] shadow-lg shadow-cyan-500/30 scale-105'
-                : 'bg-[#0a1628] text-[#88a0c0] hover:text-white hover:bg-cyan-500/10 border border-[#1a3a6b]'
+                ? 'bg-cyan-500 dark:bg-[#00d4ff] text-slate-950 shadow-lg shadow-cyan-500/30 scale-105 font-extrabold'
+                : 'bg-slate-100 dark:bg-[#0a1628] text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:bg-cyan-50 dark:hover:bg-cyan-500/10 border border-slate-200 dark:border-[#1a3a6b]'
             }`}
           >
             All Years (2011–2026)
@@ -882,13 +882,13 @@ export default function HistoricalData() {
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
                   isSel
                     ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-105 border border-cyan-300'
-                    : 'bg-[#0a1628] text-[#88a0c0] hover:text-white hover:bg-cyan-500/10 border border-[#1a3a6b]'
+                    : 'bg-slate-100 dark:bg-[#0a1628] text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:bg-cyan-50 dark:hover:bg-cyan-500/10 border border-slate-200 dark:border-[#1a3a6b]'
                 }`}
               >
                 <span>{yr}</span>
                 {countForYear > 0 && (
                   <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-sans ${
-                    isSel ? 'bg-black/30 text-cyan-200' : 'bg-[#1a3a6b] text-slate-300'
+                    isSel ? 'bg-black/30 text-cyan-200' : 'bg-slate-200 dark:bg-[#1a3a6b] text-slate-700 dark:text-slate-300 font-bold'
                   }`}>
                     {countForYear}
                   </span>
@@ -909,22 +909,22 @@ export default function HistoricalData() {
             <div
               key={storm.id}
               onClick={() => handleSelectStorm(storm)}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
+              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden shadow-sm ${
                 isSelected
-                  ? 'bg-[#102a4c] border-[#00d4ff] shadow-xl shadow-cyan-500/20 scale-[1.02]'
-                  : 'bg-[#0d1f3c] border-[#1a3a6b] hover:border-cyan-500/50 hover:bg-[#0f2547]'
+                  ? 'bg-cyan-50/80 dark:bg-[#102a4c] border-cyan-500 dark:border-[#00d4ff] shadow-xl shadow-cyan-500/20 scale-[1.02]'
+                  : 'bg-white dark:bg-[#0d1f3c] border-slate-200 dark:border-[#1a3a6b] hover:border-cyan-500/50 hover:bg-slate-50 dark:hover:bg-[#0f2547]'
               }`}
             >
               {isSelected && (
                 <div className="absolute top-0 right-0 w-12 h-12 bg-cyan-500/20 rounded-bl-full flex items-start justify-end p-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#00d4ff] animate-ping"></span>
+                  <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-[#00d4ff] animate-ping"></span>
                 </div>
               )}
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="font-extrabold text-white text-sm tracking-wide">
-                    {storm.name} <span className="text-xs font-mono text-[#88a0c0]">({storm.year})</span>
+                  <span className="font-extrabold text-slate-900 dark:text-white text-sm tracking-wide">
+                    {storm.name} <span className="text-xs font-mono text-slate-500 dark:text-[#88a0c0]">({storm.year})</span>
                   </span>
                   <span
                     className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border"
@@ -934,15 +934,15 @@ export default function HistoricalData() {
                   </span>
                 </div>
 
-                <div className="text-[11px] text-[#88a0c0] mb-2 flex items-center gap-1 font-mono">
-                  <Compass size={12} className="text-[#00d4ff]" />
+                <div className="text-[11px] text-slate-600 dark:text-[#88a0c0] mb-2 flex items-center gap-1 font-mono">
+                  <Compass size={12} className="text-cyan-600 dark:text-[#00d4ff]" />
                   <span className="truncate">{storm.basin} · {storm.landfall}</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-[10px] font-mono pt-2 border-t border-[#1a3a6b] text-[#88a0c0]">
-                <div>💨 Peak: <strong className="text-white">{storm.peak_wind_kmh || storm.maxWind} km/h</strong></div>
-                <div>🌡 Press: <strong className="text-white">{storm.min_pressure_hpa || storm.pressure} hPa</strong></div>
+              <div className="grid grid-cols-2 gap-2 text-[10px] font-mono pt-2 border-t border-slate-100 dark:border-[#1a3a6b] text-slate-600 dark:text-[#88a0c0]">
+                <div>💨 Peak: <strong className="text-slate-900 dark:text-white">{storm.peak_wind_kmh || storm.maxWind} km/h</strong></div>
+                <div>🌡 Press: <strong className="text-slate-900 dark:text-white">{storm.min_pressure_hpa || storm.pressure} hPa</strong></div>
               </div>
             </div>
           );
@@ -1237,68 +1237,68 @@ export default function HistoricalData() {
         {/* RIGHT COLUMN: SYNOPTIC DOSSIER & CNN-LSTM 72H TELEMETRY (5 COLS) */}
         <div className="lg:col-span-5 flex flex-col gap-4">
           {selectedStorm && (
-            <div className="rounded-2xl border border-[#1a3a6b] p-5 bg-[#0d1f3c] shadow-2xl flex flex-col justify-between">
+            <div className="rounded-2xl border border-slate-200 dark:border-[#1a3a6b] p-5 bg-white dark:bg-[#0d1f3c] shadow-2xl flex flex-col justify-between transition-colors">
               <div>
                 {/* Dossier Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-[#1a3a6b] mb-4">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#1a3a6b] mb-4">
                   <div className="flex items-center gap-2">
-                    <BookOpen size={18} className="text-[#00d4ff]" />
-                    <span className="font-mono text-xs font-bold text-[#88a0c0] uppercase tracking-wider">
+                    <BookOpen size={18} className="text-cyan-600 dark:text-[#00d4ff]" />
+                    <span className="font-mono text-xs font-bold text-slate-600 dark:text-[#88a0c0] uppercase tracking-wider">
                       NOAA SYNOPTIC DOSSIER
                     </span>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded border border-red-500/40 bg-red-500/20 text-xs font-bold font-mono text-red-300">
+                  <span className="px-2.5 py-0.5 rounded border border-red-300 dark:border-red-500/40 bg-red-50 dark:bg-red-500/20 text-xs font-bold font-mono text-red-700 dark:text-red-300">
                     CAT {selectedStorm.category} · {selectedStorm.basin}
                   </span>
                 </div>
 
                 {/* Storm Title */}
                 <div className="mb-4">
-                  <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
+                  <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                     CYCLONE {selectedStorm.name}
-                    <span className="text-base text-[#88a0c0] font-mono">({selectedStorm.year})</span>
+                    <span className="text-base text-slate-500 dark:text-[#88a0c0] font-mono">({selectedStorm.year})</span>
                   </h2>
-                  <div className="text-xs text-slate-300 flex items-center gap-1.5 mt-1 font-semibold font-mono">
-                    <MapPin size={13} className="text-[#00d4ff]" />
+                  <div className="text-xs text-slate-700 dark:text-slate-300 flex items-center gap-1.5 mt-1 font-semibold font-mono">
+                    <MapPin size={13} className="text-cyan-600 dark:text-[#00d4ff]" />
                     <span>Landfall: {selectedStorm.landfall}</span>
-                    <span className="text-[#88a0c0]">· {selectedStorm.dates_active}</span>
+                    <span className="text-slate-500 dark:text-[#88a0c0]">· {selectedStorm.dates_active}</span>
                   </div>
                 </div>
 
                 {/* KPI Stat Grid */}
                 <div className="grid grid-cols-2 gap-2.5 mb-4">
-                  <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
-                    <div className="text-[10px] text-[#88a0c0] uppercase font-mono flex items-center gap-1">
-                      <Wind size={12} className="text-[#00d4ff]" /> Peak Ground Truth Wind
+                  <div className="p-3 rounded-xl border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
+                    <div className="text-[10px] text-slate-500 dark:text-[#88a0c0] uppercase font-mono flex items-center gap-1">
+                      <Wind size={12} className="text-cyan-600 dark:text-[#00d4ff]" /> Peak Ground Truth Wind
                     </div>
-                    <div className="text-lg font-bold font-mono text-white mt-0.5">
-                      {selectedStorm.peak_wind_kmh || selectedStorm.maxWind} <span className="text-xs font-normal text-[#88a0c0]">km/h</span>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
-                    <div className="text-[10px] text-[#88a0c0] uppercase font-mono flex items-center gap-1">
-                      <Activity size={12} className="text-[#00d4ff]" /> Min Central Pressure
-                    </div>
-                    <div className="text-lg font-bold font-mono text-white mt-0.5">
-                      {selectedStorm.min_pressure_hpa || selectedStorm.pressure} <span className="text-xs font-normal text-[#88a0c0]">hPa</span>
+                    <div className="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">
+                      {selectedStorm.peak_wind_kmh || selectedStorm.maxWind} <span className="text-xs font-normal text-slate-500 dark:text-[#88a0c0]">km/h</span>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
-                    <div className="text-[10px] text-[#88a0c0] uppercase font-mono flex items-center gap-1">
-                      <Users size={12} className="text-amber-400" /> Human Fatalities
+                  <div className="p-3 rounded-xl border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
+                    <div className="text-[10px] text-slate-500 dark:text-[#88a0c0] uppercase font-mono flex items-center gap-1">
+                      <Activity size={12} className="text-cyan-600 dark:text-[#00d4ff]" /> Min Central Pressure
                     </div>
-                    <div className="text-lg font-bold font-mono text-white mt-0.5">
-                      {selectedStorm.deaths?.toLocaleString() || 0} <span className="text-xs font-normal text-[#88a0c0]">Lives</span>
+                    <div className="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">
+                      {selectedStorm.min_pressure_hpa || selectedStorm.pressure} <span className="text-xs font-normal text-slate-500 dark:text-[#88a0c0]">hPa</span>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628]">
-                    <div className="text-[10px] text-[#88a0c0] uppercase font-mono flex items-center gap-1">
-                      <DollarSign size={12} className="text-emerald-400" /> Economic Loss
+                  <div className="p-3 rounded-xl border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
+                    <div className="text-[10px] text-slate-500 dark:text-[#88a0c0] uppercase font-mono flex items-center gap-1">
+                      <Users size={12} className="text-amber-500 dark:text-amber-400" /> Human Fatalities
                     </div>
-                    <div className="text-lg font-bold font-mono text-white mt-0.5">
+                    <div className="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">
+                      {selectedStorm.deaths?.toLocaleString() || 0} <span className="text-xs font-normal text-slate-500 dark:text-[#88a0c0]">Lives</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
+                    <div className="text-[10px] text-slate-500 dark:text-[#88a0c0] uppercase font-mono flex items-center gap-1">
+                      <DollarSign size={12} className="text-emerald-600 dark:text-emerald-400" /> Economic Loss
+                    </div>
+                    <div className="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">
                       {selectedStorm.damage || '₹1,200 Cr'}
                     </div>
                   </div>
@@ -1306,38 +1306,38 @@ export default function HistoricalData() {
 
                 {/* 72-Hour CNN-LSTM Trajectory Forecast Card */}
                 {forecastData && (
-                  <div className="p-3.5 rounded-xl border border-red-500/40 bg-gradient-to-br from-red-950/30 to-[#0a1628] mb-4 shadow-sm">
+                  <div className="p-3.5 rounded-xl border border-red-300 dark:border-red-500/40 bg-gradient-to-br from-red-50 dark:from-red-950/30 to-white dark:to-[#0a1628] mb-4 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
-                      <div className="text-xs font-bold font-mono text-red-400 flex items-center gap-1.5">
-                        <Cpu size={14} className="text-red-500 animate-pulse" />
+                      <div className="text-xs font-bold font-mono text-red-700 dark:text-red-400 flex items-center gap-1.5">
+                        <Cpu size={14} className="text-red-600 dark:text-red-500 animate-pulse" />
                         <span className="tracking-wide">CNN-LSTM 72-HOUR TRAJECTORY PROJECTION</span>
                       </div>
                       {forecastData.rapid_intensification_alert && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/40">
                           RAPID INTENSIFICATION
                         </span>
                       )}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-[#88a0c0] mb-2">
-                      <div>🎯 Landfall Target: <strong className="text-white">{forecastData.estimated_landfall?.target_coast}</strong></div>
-                      <div>⏳ Landfall ETA: <strong className="text-amber-400">+{forecastData.estimated_landfall?.eta_hours}h</strong></div>
-                      <div>💨 Peak Projected Wind: <strong className="text-red-400 font-bold">{forecastData.peak_forecast_wind_kmh} km/h</strong></div>
-                      <div>🌊 Estimated Surge: <strong className="text-cyan-400 font-bold">{forecastData.estimated_landfall?.surge_height_m} meters</strong></div>
+                    <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-700 dark:text-[#88a0c0] mb-2">
+                      <div>🎯 Landfall Target: <strong className="text-slate-900 dark:text-white">{forecastData.estimated_landfall?.target_coast}</strong></div>
+                      <div>⏳ Landfall ETA: <strong className="text-amber-600 dark:text-amber-400">+{forecastData.estimated_landfall?.eta_hours}h</strong></div>
+                      <div>💨 Peak Projected Wind: <strong className="text-red-600 dark:text-red-400 font-bold">{forecastData.peak_forecast_wind_kmh} km/h</strong></div>
+                      <div>🌊 Estimated Surge: <strong className="text-cyan-700 dark:text-cyan-400 font-bold">{forecastData.estimated_landfall?.surge_height_m} meters</strong></div>
                     </div>
 
-                    <p className="text-[11px] text-slate-300 italic leading-relaxed">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300 italic leading-relaxed">
                       Model uses dual-branch TimeDistributedCNN (INSAT-3D radiometer) + WeatherGRU (Open-Meteo MSL & wind tendencies) with BiLSTM temporal aggregation.
                     </p>
                   </div>
                 )}
 
                 {/* Historical Impact Summary */}
-                <div className="p-3 rounded-xl border border-[#1a3a6b] bg-[#0a1628] mb-4">
-                  <div className="text-[10px] text-[#88a0c0] uppercase font-bold tracking-wider mb-1 flex items-center gap-1 font-mono">
-                    <ShieldAlert size={12} className="text-amber-400" /> Synoptic Notes & Mitigation Dossier
+                <div className="p-3 rounded-xl border border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] mb-4">
+                  <div className="text-[10px] text-slate-600 dark:text-[#88a0c0] uppercase font-bold tracking-wider mb-1 flex items-center gap-1 font-mono">
+                    <ShieldAlert size={12} className="text-amber-600 dark:text-amber-400" /> Synoptic Notes & Mitigation Dossier
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
                     {selectedStorm.notes || 'Verified NOAA IBTrACS synoptic record ingested into METEORA ML repository.'}
                   </p>
                 </div>
@@ -1347,7 +1347,7 @@ export default function HistoricalData() {
               <button
                 onClick={() => executeForecastInference(selectedStorm)}
                 disabled={isForecasting}
-                className="w-full py-2.5 rounded-xl font-bold text-xs text-[#050d1a] bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-2.5 rounded-xl font-bold text-xs text-slate-950 bg-cyan-400 dark:bg-[#00d4ff] hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 <RefreshCw size={14} className={isForecasting ? 'animate-spin' : ''} />
                 <span>Re-compute CNN-LSTM 72h Forecast for {selectedStorm.name}</span>
@@ -1433,16 +1433,16 @@ export default function HistoricalData() {
       {/* 6. SEARCH & FILTER BAR */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[260px]">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#88a0c0]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#88a0c0]" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search cyclone by name, year, basin, or landfall province (e.g. Dana, 2023, Odisha, Gujarat)..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl border border-[#1a3a6b] bg-[#0d1f3c] text-sm text-white focus:outline-none focus:border-[#00d4ff] font-mono"
+            className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] text-sm text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 font-mono shadow-sm"
           />
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs text-[#88a0c0] font-mono">
+        <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-[#88a0c0] font-mono">
           <Filter size={13} />
           <span>Category:</span>
         </div>
@@ -1454,8 +1454,8 @@ export default function HistoricalData() {
               onClick={() => setCatFilter(c)}
               className={`text-xs px-3 py-1.5 rounded-xl border font-semibold transition-all cursor-pointer font-mono ${
                 catFilter === c
-                  ? 'bg-cyan-500/20 text-[#00d4ff] border-cyan-500/50 font-bold'
-                  : 'bg-[#0d1f3c] text-[#88a0c0] border-[#1a3a6b] hover:text-white hover:border-cyan-500/30'
+                  ? 'bg-cyan-500/20 text-cyan-700 dark:text-[#00d4ff] border-cyan-500/50 font-bold'
+                  : 'bg-white dark:bg-[#0d1f3c] text-slate-600 dark:text-[#88a0c0] border-slate-300 dark:border-[#1a3a6b] hover:text-slate-900 dark:hover:text-white hover:border-cyan-500/30'
               }`}
             >
               {c === 'all' ? 'All' : `Cat ${c}`}
@@ -1465,11 +1465,11 @@ export default function HistoricalData() {
       </div>
 
       {/* 7. COMPLETE NOAA IBTrACS HISTORICAL ARCHIVE TABLE */}
-      <div className="rounded-2xl border border-[#1a3a6b] overflow-hidden bg-[#0d1f3c] shadow-xl">
+      <div className="rounded-2xl border border-slate-200 dark:border-[#1a3a6b] overflow-hidden bg-white dark:bg-[#0d1f3c] shadow-xl transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#1a3a6b] bg-[#0a1628] text-xs font-bold text-[#88a0c0] uppercase tracking-wider select-none font-mono">
+              <tr className="border-b border-slate-200 dark:border-[#1a3a6b] bg-slate-100 dark:bg-[#0a1628] text-xs font-bold text-slate-700 dark:text-[#88a0c0] uppercase tracking-wider select-none font-mono">
                 {[
                   ['name', 'Storm Name'],
                   ['year', 'Year'],
@@ -1485,20 +1485,20 @@ export default function HistoricalData() {
                   <th
                     key={field}
                     onClick={() => handleSort(field)}
-                    className="text-left px-4 py-3 cursor-pointer hover:text-white transition-colors"
+                    className="text-left px-4 py-3 cursor-pointer hover:text-slate-950 dark:hover:text-white transition-colors"
                   >
                     <div className="flex items-center gap-1">
                       <span>{label}</span>
-                      <ArrowUpDown size={11} className={sortField === field ? 'text-[#00d4ff]' : 'text-slate-600'} />
+                      <ArrowUpDown size={11} className={sortField === field ? 'text-cyan-600 dark:text-[#00d4ff]' : 'text-slate-400 dark:text-slate-600'} />
                     </div>
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1a3a6b]/60 font-mono">
+            <tbody className="divide-y divide-slate-100 dark:divide-[#1a3a6b]/60 font-mono">
               {filteredCyclones.length === 0 && (
                 <tr>
-                  <td colSpan="10" className="px-4 py-8 text-center text-[#88a0c0] font-mono text-xs">
+                  <td colSpan="10" className="px-4 py-8 text-center text-slate-500 dark:text-[#88a0c0] font-mono text-xs">
                     {loadingCyclones ? 'Loading NOAA IBTrACS historical records from backend...' : 'No historical cyclones found matching the selected year and filter parameters.'}
                   </td>
                 </tr>
@@ -1512,15 +1512,15 @@ export default function HistoricalData() {
                     key={c.id}
                     onClick={() => handleSelectStorm(c)}
                     className={`transition-colors cursor-pointer ${
-                      isSelected ? 'bg-[#102a4c] border-l-4 border-l-[#00d4ff]' : 'hover:bg-[#102a4c]/50'
+                      isSelected ? 'bg-cyan-50 dark:bg-[#102a4c] border-l-4 border-l-cyan-500 dark:border-l-[#00d4ff]' : 'hover:bg-slate-50 dark:hover:bg-[#102a4c]/50'
                     }`}
                   >
-                    <td className="px-4 py-3 font-bold text-white flex items-center gap-2">
+                    <td className="px-4 py-3 font-bold text-slate-900 dark:text-white flex items-center gap-2">
                       <span>{c.name}</span>
-                      {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff] animate-ping"></span>}
+                      {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-[#00d4ff] animate-ping"></span>}
                     </td>
-                    <td className="px-4 py-3 text-cyan-300 font-bold">{c.year}</td>
-                    <td className="px-4 py-3 text-[#88a0c0]">{c.basin}</td>
+                    <td className="px-4 py-3 text-cyan-700 dark:text-cyan-300 font-bold">{c.year}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-[#88a0c0]">{c.basin}</td>
                     <td className="px-4 py-3">
                       <span
                         className="px-2 py-0.5 rounded border text-xs font-bold"
@@ -1533,16 +1533,16 @@ export default function HistoricalData() {
                         CAT {c.category}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-bold text-white">
+                    <td className="px-4 py-3 font-bold text-slate-900 dark:text-white">
                       {c.peak_wind_kmh || c.maxWind} km/h
                     </td>
-                    <td className="px-4 py-3 text-amber-300 font-bold">{c.min_pressure_hpa || c.pressure} hPa</td>
-                    <td className="px-4 py-3 text-white font-sans">{c.landfall}</td>
-                    <td className="px-4 py-3 text-slate-300">
+                    <td className="px-4 py-3 text-amber-600 dark:text-amber-300 font-bold">{c.min_pressure_hpa || c.pressure} hPa</td>
+                    <td className="px-4 py-3 text-slate-800 dark:text-white font-sans">{c.landfall}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
                       {c.deaths?.toLocaleString() || 0}
                     </td>
-                    <td className="px-4 py-3 text-xs text-[#88a0c0]">{c.damage}</td>
-                    <td className="px-4 py-3 text-xs text-emerald-400">{c.status || 'Archived'}</td>
+                    <td className="px-4 py-3 text-xs text-slate-600 dark:text-[#88a0c0]">{c.damage}</td>
+                    <td className="px-4 py-3 text-xs text-emerald-600 dark:text-emerald-400 font-bold">{c.status || 'Archived'}</td>
                   </tr>
                 );
               })}
@@ -1550,9 +1550,9 @@ export default function HistoricalData() {
           </table>
         </div>
 
-        <div className="px-4 py-2.5 text-xs text-[#88a0c0] border-t border-[#1a3a6b] bg-[#0a1628] flex items-center justify-between font-mono">
+        <div className="px-4 py-2.5 text-xs text-slate-600 dark:text-[#88a0c0] border-t border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628] flex items-center justify-between font-mono">
           <span>Showing {filteredCyclones.length} of {cyclones.length} NOAA IBTrACS climatological records</span>
-          <span className="text-[11px] text-[#00d4ff]">Click any cyclone to view past track & run 72h CNN-LSTM forecast</span>
+          <span className="text-[11px] text-cyan-700 dark:text-[#00d4ff] font-bold">Click any cyclone to view past track & run 72h CNN-LSTM forecast</span>
         </div>
       </div>
     </div>
