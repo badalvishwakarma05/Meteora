@@ -1,64 +1,56 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Zap, Shield, Activity, Satellite, ScanLine,
-  Tags, Route, FileText, ArrowRight, CheckCircle2, Lock, Mail, User, X,
-  Users, LifeBuoy, Phone, Radio, Sun, Moon
+  Tags, Route, FileText, ArrowRight, CheckCircle2, Lock, Mail, User,
+  Users, LifeBuoy, Phone, Radio, Sun, Moon, LogIn
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
 import MeteorologicalCanvas from '../components/MeteorologicalCanvas';
 import CycloneRadarVortex from '../components/CycloneRadarVortex';
+import AuthModal from '../components/AuthModal';
 
 export default function LandingPage() {
-  const { isAuthenticated, currentUser, login, signup, loginAsDemo, loginAsCitizen } = useAuth();
+  const { isAuthenticated, currentUser, login, loginAsDemo, loginAsCitizen } = useAuth();
   const { showToast } = useToast();
   const { theme, toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
-
-  // If already logged in, navigate straight to role-appropriate dashboard
-  useEffect(() => {
-    if (isAuthenticated) {
-      if (currentUser?.role === 'Citizen') {
-        navigate('/citizen/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
-    }
-  }, [isAuthenticated, currentUser, navigate]);
+  const location = useLocation();
 
   // Modal state for manual register/login if requested
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState('citizen_signup'); // 'citizen_signup' | 'forecaster_signup' | 'login'
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'citizen_signup' | 'forecaster_signup'
 
-  // Empty credentials state - displaying informative placeholders
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  // If visiting /login directly or requested via state, open the auth modal
+  useEffect(() => {
+    if (location.pathname === '/login') {
+      setAuthModalOpen(true);
+    }
+  }, [location.pathname]);
 
-  // Forecaster Signup form state
-  const [forecasterSignupData, setForecasterSignupData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'Operational Forecaster',
-    department: 'India Meteorological Department (IMD)',
-    station: 'New Delhi HQ',
-  });
-
-  // Citizen Signup form state
-  const [citizenSignupData, setCitizenSignupData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    district: 'Puri',
-    password: '',
-    confirmPassword: '',
-  });
-
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  // If already logged in, navigate straight to role-appropriate dashboard or original redirect target
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname;
+      if (from && from !== '/login' && from !== '/') {
+        if (currentUser?.role === 'Citizen' && from.startsWith('/citizen')) {
+          navigate(from, { replace: true });
+          return;
+        }
+        if (currentUser?.role !== 'Citizen' && !from.startsWith('/citizen')) {
+          navigate(from, { replace: true });
+          return;
+        }
+      }
+      if (currentUser?.role === 'Citizen') {
+        navigate('/citizen/dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [isAuthenticated, currentUser, navigate, location.state]);
 
   // AUTOMATIC 1-CLICK ACCESS FOR CITIZEN PORTAL
   const handleCitizenAccess = () => {
@@ -82,100 +74,6 @@ export default function LandingPage() {
       const user = loginAsDemo('kumar');
       showToast(`Welcome, ${user.name}! Administrator Command Center unlocked.`, 'success');
       navigate('/dashboard');
-    }
-  };
-
-  const handleManualLogin = (e) => {
-    e.preventDefault();
-    setError('');
-    const email = loginEmail.trim() || 'dr.kumar@imd.gov.in';
-    const pass = loginPassword.trim() || 'password123';
-
-    setLoading(true);
-    try {
-      const user = login(email, pass);
-      if (user.role === 'Citizen') {
-        showToast(`Welcome back, ${user.name}! Citizen Safety Portal accessed.`, 'success');
-        setAuthModalOpen(false);
-        navigate('/citizen/dashboard');
-      } else {
-        showToast(`Welcome back, ${user.name}! Administrator Command Center unlocked.`, 'success');
-        setAuthModalOpen(false);
-        navigate('/dashboard');
-      }
-    } catch (err) {
-      setError(err.message || 'Authentication failed. Please verify credentials.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCitizenSignup = (e) => {
-    e.preventDefault();
-    setError('');
-
-    if (!citizenSignupData.name || !citizenSignupData.phone || !citizenSignupData.password) {
-      setError('Please fill in Name, Phone, and Password.');
-      return;
-    }
-    if (citizenSignupData.password.length < 6) {
-      setError('Password must be at least 6 characters long.');
-      return;
-    }
-    if (citizenSignupData.password !== citizenSignupData.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const user = signup({
-        name: citizenSignupData.name,
-        email: citizenSignupData.email || `${citizenSignupData.name.toLowerCase().replace(/\s+/g, '')}@citizen.in`,
-        phone: citizenSignupData.phone,
-        district: citizenSignupData.district,
-        password: citizenSignupData.password,
-        role: 'Citizen',
-        department: 'Civilian / Coastal Resident',
-        station: `${citizenSignupData.district} Sector`,
-      });
-      showToast(`Welcome, ${user.name}! Registered as Coastal Resident.`, 'success');
-      setAuthModalOpen(false);
-      navigate('/citizen/dashboard');
-    } catch (err) {
-      setError(err.message || 'Registration failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleForecasterSignup = (e) => {
-    e.preventDefault();
-    setError('');
-
-    if (!forecasterSignupData.name || !forecasterSignupData.email || !forecasterSignupData.password) {
-      setError('Please fill in all mandatory fields.');
-      return;
-    }
-    if (forecasterSignupData.password.length < 6) {
-      setError('Password must be at least 6 characters long.');
-      return;
-    }
-    if (forecasterSignupData.password !== forecasterSignupData.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const user = signup(forecasterSignupData);
-      showToast(`Forecaster account registered for ${user.name}! Accessing Command Center.`, 'success');
-      setAuthModalOpen(false);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message || 'Registration failed.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -220,32 +118,62 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0a1628] text-slate-900 dark:text-white selection:bg-[#00d4ff] selection:text-[#050d1a] relative transition-colors duration-200">
-      {/* Theme Toggle Button (Top Right) */}
-      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
-        <button
-          onClick={() => {
-            toggleTheme();
-            showToast(`Switched to ${theme === 'dark' ? 'Light' : 'Dark'} Theme`, 'info');
-          }}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-300 dark:border-[#1a3a6b] bg-white/90 dark:bg-[#0d1f3c]/90 backdrop-blur-md hover:border-[#00d4ff] text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer shadow-lg text-xs font-mono font-bold"
-          title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-        >
-          {isDark ? (
-            <>
-              <Sun size={15} className="text-amber-400 animate-spin-slow" />
-              <span className="text-amber-300 text-[11px]">Light Mode</span>
-            </>
-          ) : (
-            <>
-              <Moon size={15} className="text-blue-600" />
-              <span className="text-blue-700 text-[11px]">Dark Mode</span>
-            </>
-          )}
-        </button>
-      </div>
+      {/* TOP HEADER / ACTION BAR */}
+      <header className="w-full bg-white/85 dark:bg-[#0a1628]/85 backdrop-blur-md border-b border-slate-200 dark:border-[#1a3a6b] px-4 sm:px-8 py-3 flex items-center justify-between sticky top-0 z-50 transition-colors">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs bg-gradient-to-br from-[#00d4ff] to-[#0066cc] text-[#050d1a] shadow-md">
+            IMD
+          </div>
+          <div>
+            <div className="text-xs sm:text-sm font-black tracking-wider text-slate-900 dark:text-white font-mono flex items-center gap-1.5">
+              <span>METEORA</span>
+              <span className="text-[10px] text-cyan-600 dark:text-[#00d4ff]">EARLY WARNING</span>
+            </div>
+            <div className="text-[10px] text-slate-500 dark:text-[#88a0c0] font-mono hidden sm:block">
+              Ministry of Earth Sciences · MoES / IMD / RSMC
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Sign In / Gateway Button */}
+          <button
+            onClick={() => {
+              setAuthMode('login');
+              setAuthModalOpen(true);
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-700 dark:text-[#00d4ff] hover:border-cyan-400 text-xs font-mono font-bold transition-all cursor-pointer shadow-sm"
+          >
+            <LogIn size={14} />
+            <span>Sign In / Gateway</span>
+          </button>
+
+          {/* Theme Toggle Button */}
+          <button
+            onClick={() => {
+              toggleTheme();
+              showToast(`Switched to ${theme === 'dark' ? 'Light' : 'Dark'} Theme`, 'info');
+            }}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-300 dark:border-[#1a3a6b] bg-white/90 dark:bg-[#0d1f3c]/90 backdrop-blur-md hover:border-[#00d4ff] text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer shadow-sm text-xs font-mono font-bold"
+            title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+          >
+            {isDark ? (
+              <>
+                <Sun size={14} className="text-amber-400 animate-spin-slow" />
+                <span className="hidden sm:inline text-amber-300 text-[11px]">Light</span>
+              </>
+            ) : (
+              <>
+                <Moon size={14} className="text-blue-600" />
+                <span className="hidden sm:inline text-blue-700 text-[11px]">Dark</span>
+              </>
+            )}
+          </button>
+        </div>
+      </header>
 
       {/* HERO SECTION: ICON, TITLE, AND THE TWO PORTAL OPTIONS */}
-      <section className="relative pt-16 sm:pt-20 pb-14 px-4 sm:px-6 border-b border-slate-200 dark:border-[#1a3a6b]/60 overflow-hidden bg-gradient-to-b from-slate-100 via-white to-slate-100 dark:from-[#0a1628] dark:via-[#0d1f3c] dark:to-[#0a1628]">
+      <section className="relative pt-12 sm:pt-16 pb-14 px-4 sm:px-6 border-b border-slate-200 dark:border-[#1a3a6b]/60 overflow-hidden bg-gradient-to-b from-slate-100 via-white to-slate-100 dark:from-[#0a1628] dark:via-[#0d1f3c] dark:to-[#0a1628]">
         {/* Meteorological Atmospheric Canvas (Subtle Falling Rain & Wind Streaks) */}
         <MeteorologicalCanvas mode="combo" density="medium" opacity={0.65} />
 
@@ -325,13 +253,15 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              <button
-                onClick={handleCitizenAccess}
-                className="mt-6 w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-emerald-500 to-teal-600 text-white dark:text-slate-950 flex items-center justify-center gap-2 hover:from-emerald-400 hover:to-teal-500 cursor-pointer transition-all shadow-lg shadow-emerald-500/20"
-              >
-                <span>Enter Citizen Safety Portal</span>
-                <ArrowRight size={14} />
-              </button>
+              <div className="mt-6 space-y-2">
+                <button
+                  onClick={handleCitizenAccess}
+                  className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-emerald-500 to-teal-600 text-white dark:text-slate-950 flex items-center justify-center gap-2 hover:from-emerald-400 hover:to-teal-500 cursor-pointer transition-all shadow-lg shadow-emerald-500/20"
+                >
+                  <span>Enter Citizen Safety Portal (1-Click)</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
             </div>
 
             {/* OPTION 2: ADMINISTRATOR COMMAND CENTER */}
@@ -366,19 +296,28 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              <button
-                onClick={handleAdminAccess}
-                className="mt-6 w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-cyan-500 to-blue-600 text-white dark:text-[#050d1a] flex items-center justify-center gap-2 hover:from-cyan-400 hover:to-blue-500 cursor-pointer transition-all shadow-lg shadow-cyan-500/25"
-              >
-                <span>Login to Command Center</span>
-                <ArrowRight size={14} />
-              </button>
+              <div className="mt-6 space-y-2">
+                <button
+                  onClick={handleAdminAccess}
+                  className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-cyan-500 to-blue-600 text-white dark:text-[#050d1a] flex items-center justify-center gap-2 hover:from-cyan-400 hover:to-blue-500 cursor-pointer transition-all shadow-lg shadow-cyan-500/25"
+                >
+                  <span>Login to Command Center (1-Click)</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Registration / Account Creation Link */}
-          <div className="flex items-center justify-center gap-3 text-xs text-slate-600 dark:text-[#88a0c0] font-mono">
-            <span>Need custom credentials?</span>
+          {/* Registration / Account Creation & Sign In Links */}
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-600 dark:text-[#88a0c0] font-mono">
+            <span>Authentication Gateway:</span>
+            <button
+              onClick={() => { setAuthMode('login'); setAuthModalOpen(true); }}
+              className="text-cyan-600 dark:text-[#00d4ff] hover:underline font-bold cursor-pointer"
+            >
+              Sign In with ID
+            </button>
+            <span>·</span>
             <button
               onClick={() => { setAuthMode('citizen_signup'); setAuthModalOpen(true); }}
               className="text-emerald-600 dark:text-emerald-400 hover:underline font-bold cursor-pointer"
@@ -552,303 +491,13 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* REGISTRATION & SIGN IN MODAL */}
-      {authModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md">
-          <div
-            className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-[#1a3a6b] bg-white dark:bg-[#0d1f3c] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200"
-          >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-[#1a3a6b] bg-slate-50 dark:bg-[#0a1628]">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold bg-[#00d4ff] text-[#050d1a]">
-                  IMD
-                </div>
-                <div>
-                  <div className="text-xs font-bold tracking-wider text-slate-900 dark:text-white font-mono">METEORA Access Gateway</div>
-                  <div className="text-[10px] text-slate-500 dark:text-[#88a0c0] font-mono">Dual-Portal Registration & Authentication</div>
-                </div>
-              </div>
-              <button
-                onClick={() => setAuthModalOpen(false)}
-                className="p-1 rounded text-slate-500 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#102a4c] transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Tab Headers: Citizen Signup | Forecaster Signup | Sign In */}
-            <div className="flex border-b border-slate-200 dark:border-[#1a3a6b] text-xs font-bold font-mono bg-slate-50 dark:bg-[#0a1628]">
-              <button
-                type="button"
-                onClick={() => { setAuthMode('citizen_signup'); setError(''); }}
-                className={`flex-1 py-3 text-center transition-colors border-b-2 ${
-                  authMode === 'citizen_signup'
-                    ? 'border-emerald-500 text-emerald-700 dark:text-emerald-300 bg-white dark:bg-[#0d1f3c]'
-                    : 'border-transparent text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Citizen Sign Up
-              </button>
-              <button
-                type="button"
-                onClick={() => { setAuthMode('forecaster_signup'); setError(''); }}
-                className={`flex-1 py-3 text-center transition-colors border-b-2 ${
-                  authMode === 'forecaster_signup'
-                    ? 'border-cyan-500 text-cyan-700 dark:text-[#00d4ff] bg-white dark:bg-[#0d1f3c]'
-                    : 'border-transparent text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Forecaster Sign Up
-              </button>
-              <button
-                type="button"
-                onClick={() => { setAuthMode('login'); setError(''); }}
-                className={`flex-1 py-3 text-center transition-colors border-b-2 ${
-                  authMode === 'login'
-                    ? 'border-cyan-500 text-slate-900 dark:text-white bg-white dark:bg-[#0d1f3c]'
-                    : 'border-transparent text-slate-600 dark:text-[#88a0c0] hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Sign In
-              </button>
-            </div>
-
-            <div className="p-5 max-h-[75vh] overflow-y-auto">
-              {error && (
-                <div className="mb-4 p-3 rounded-lg flex items-start gap-2 text-xs border border-red-300 dark:border-red-500/50 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 font-mono">
-                  <X size={14} className="flex-shrink-0 mt-0.5 text-red-500" />
-                  <span>{error}</span>
-                </div>
-              )}
-
-              {/* 1. CITIZEN SIGNUP FORM */}
-              {authMode === 'citizen_signup' && (
-                <form onSubmit={handleCitizenSignup} className="space-y-3 font-mono">
-                  <div>
-                    <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Full Name</label>
-                    <div className="relative">
-                      <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#88a0c0]" />
-                      <input
-                        type="text"
-                        required
-                        value={citizenSignupData.name}
-                        onChange={e => setCitizenSignupData({ ...citizenSignupData, name: e.target.value })}
-                        placeholder="e.g. Rajesh Mohapatra"
-                        className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 font-sans"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Mobile for SMS</label>
-                      <div className="relative">
-                        <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#88a0c0]" />
-                        <input
-                          type="tel"
-                          required
-                          value={citizenSignupData.phone}
-                          onChange={e => setCitizenSignupData({ ...citizenSignupData, phone: e.target.value })}
-                          placeholder="+91 Mobile"
-                          className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">District</label>
-                      <select
-                        value={citizenSignupData.district}
-                        onChange={e => setCitizenSignupData({ ...citizenSignupData, district: e.target.value })}
-                        className="w-full px-2 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
-                      >
-                        <option value="Puri">Puri (Odisha)</option>
-                        <option value="Jagatsinghpur">Jagatsinghpur (Odisha)</option>
-                        <option value="Kendrapara">Kendrapara (Odisha)</option>
-                        <option value="Balasore">Balasore (Odisha)</option>
-                        <option value="East Midnapore / Digha">Digha (West Bengal)</option>
-                        <option value="Visakhapatnam">Visakhapatnam (Andhra)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Password</label>
-                      <input
-                        type="password"
-                        required
-                        value={citizenSignupData.password}
-                        onChange={e => setCitizenSignupData({ ...citizenSignupData, password: e.target.value })}
-                        placeholder="Min 6 chars"
-                        className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Confirm Password</label>
-                      <input
-                        type="password"
-                        required
-                        value={citizenSignupData.confirmPassword}
-                        onChange={e => setCitizenSignupData({ ...citizenSignupData, confirmPassword: e.target.value })}
-                        placeholder="Re-enter"
-                        className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-2.5 rounded-lg font-bold text-xs sm:text-sm text-white dark:text-slate-950 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-600 dark:hover:bg-emerald-300 disabled:opacity-50 mt-2 bg-emerald-500 dark:bg-emerald-400 cursor-pointer"
-                  >
-                    <span>{loading ? 'Creating Citizen Profile...' : 'Sign Up as Citizen & Open Portal'}</span>
-                    <ArrowRight size={15} />
-                  </button>
-                </form>
-              )}
-
-              {/* 2. FORECASTER SIGNUP FORM */}
-              {authMode === 'forecaster_signup' && (
-                <form onSubmit={handleForecasterSignup} className="space-y-3 font-mono">
-                  <div>
-                    <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Full Name & Title</label>
-                    <div className="relative">
-                      <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#88a0c0]" />
-                      <input
-                        type="text"
-                        required
-                        value={forecasterSignupData.name}
-                        onChange={e => setForecasterSignupData({ ...forecasterSignupData, name: e.target.value })}
-                        placeholder="e.g. Dr. Rajesh Verma"
-                        className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 font-sans"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Official Email Address</label>
-                    <div className="relative">
-                      <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#88a0c0]" />
-                      <input
-                        type="email"
-                        required
-                        value={forecasterSignupData.email}
-                        onChange={e => setForecasterSignupData({ ...forecasterSignupData, email: e.target.value })}
-                        placeholder="r.verma@imd.gov.in"
-                        className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Role</label>
-                      <select
-                        value={forecasterSignupData.role}
-                        onChange={e => setForecasterSignupData({ ...forecasterSignupData, role: e.target.value })}
-                        className="w-full px-2 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white"
-                      >
-                        <option>Operational Forecaster</option>
-                        <option>Senior Meteorologist</option>
-                        <option>Disaster Response Officer</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Department</label>
-                      <input
-                        type="text"
-                        value={forecasterSignupData.department}
-                        onChange={e => setForecasterSignupData({ ...forecasterSignupData, department: e.target.value })}
-                        className="w-full px-2 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Password</label>
-                      <input
-                        type="password"
-                        required
-                        value={forecasterSignupData.password}
-                        onChange={e => setForecasterSignupData({ ...forecasterSignupData, password: e.target.value })}
-                        placeholder="Min 6 chars"
-                        className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Confirm Password</label>
-                      <input
-                        type="password"
-                        required
-                        value={forecasterSignupData.confirmPassword}
-                        onChange={e => setForecasterSignupData({ ...forecasterSignupData, confirmPassword: e.target.value })}
-                        placeholder="Re-enter"
-                        className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-2.5 rounded-lg font-bold text-xs sm:text-sm text-white dark:text-[#050d1a] flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 transition-all hover:bg-cyan-600 dark:hover:bg-cyan-300 disabled:opacity-50 mt-2 bg-cyan-500 dark:bg-[#00d4ff] cursor-pointer"
-                  >
-                    <span>{loading ? 'Creating Forecaster Account...' : 'Complete Sign Up & Launch Command Center'}</span>
-                    <ArrowRight size={15} />
-                  </button>
-                </form>
-              )}
-
-              {/* 3. LOGIN FORM */}
-              {authMode === 'login' && (
-                <form onSubmit={handleManualLogin} className="space-y-3.5 font-mono">
-                  <div>
-                    <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">
-                      Email Address / Forecaster ID / Citizen Email
-                    </label>
-                    <div className="relative">
-                      <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#88a0c0]" />
-                      <input
-                        type="email"
-                        value={loginEmail}
-                        onChange={e => setLoginEmail(e.target.value)}
-                        placeholder="e.g. dr.kumar@imd.gov.in or citizen@coastal.in"
-                        className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-slate-600 dark:text-[#88a0c0] font-medium block mb-1">Password</label>
-                    <div className="relative">
-                      <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#88a0c0]" />
-                      <input
-                        type="password"
-                        value={loginPassword}
-                        onChange={e => setLoginPassword(e.target.value)}
-                        placeholder="password123"
-                        className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 dark:border-[#1a3a6b] bg-white dark:bg-[#0a1628] text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-2.5 rounded-lg font-bold text-xs sm:text-sm text-white dark:text-[#050d1a] flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 transition-all hover:bg-cyan-600 dark:hover:bg-cyan-300 disabled:opacity-50 mt-2 bg-cyan-500 dark:bg-[#00d4ff] cursor-pointer"
-                  >
-                    <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
-                    <ArrowRight size={15} />
-                  </button>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* DEDICATED AUTHENTICATION & ACCESS GATEWAY MODAL */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        initialMode={authMode.includes('signup') ? 'signup' : 'login'}
+        initialRole={authMode.includes('citizen') ? 'citizen' : 'forecaster'}
+      />
     </div>
   );
 }

@@ -25,8 +25,9 @@ export default function App() {
           <ToastProvider>
             <BrowserRouter>
               <Routes>
-                {/* 1. Landing Page: Dual portal options for User */}
+                {/* 1. Landing Page / Authentication Portal */}
                 <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<LandingPage />} />
 
                 {/* 2. Citizen Safety & Emergency Portal (Strictly for Authenticated Citizens) */}
                 <Route

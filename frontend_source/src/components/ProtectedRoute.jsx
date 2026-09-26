@@ -1,11 +1,12 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export function AdminProtectedRoute({ children }) {
   const { isAuthenticated, currentUser } = useAuth();
+  const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // Strict Privacy: Citizens cannot access Administrator Command Center
@@ -18,9 +19,10 @@ export function AdminProtectedRoute({ children }) {
 
 export function CitizenProtectedRoute({ children }) {
   const { isAuthenticated, currentUser } = useAuth();
+  const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // Strict Privacy: Administrators cannot access Citizen Portal
@@ -32,3 +34,4 @@ export function CitizenProtectedRoute({ children }) {
 }
 
 export default AdminProtectedRoute;
+
